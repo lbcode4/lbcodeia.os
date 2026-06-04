@@ -1,0 +1,41 @@
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Editores
+.vscode/
+.idea/
+
+# Claude Code (sessões locais, não devem ir pro repo)
+.claude/projects/
+.claude/sessions/
+.claude/shell-snapshots/
+.claude/telemetry/
+.claude/file-history/
+.claude/backups/
+
+# Segredos
+.env
+.env.local
+
+# Dependências
+node_modules/
+
+# Arquivos temporários
+*.log
+*.tmp
+
+# Drop zone do usuário (só o README vai versionado)
+dados/*
+!dados/README.md
+transcricoes/*
+
+# Integrações — credenciais e outputs (NUNCA commitar)
+integracoes/credentials/*.env
+integracoes/credentials/*.yaml
+integracoes/*/output/*.html
+integracoes/*/output/*.json
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
