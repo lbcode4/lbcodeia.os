@@ -1,4 +1,4 @@
-﻿---
+---
 name: lb-sistema-instalar
 description: >
   Instala LBCode.IA em 10-12min. Extrai site/Instagram, entrevista 18 perguntas

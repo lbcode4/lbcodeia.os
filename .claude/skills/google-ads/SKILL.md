@@ -1,4 +1,4 @@
-﻿---
+---
 name: lb-google-ads
 description: >
   Cria estrutura completa de campanha do Google Ads a partir de um briefing ou da pesquisa SEO.
