@@ -1,7 +1,7 @@
 # [Seu Nome] — LBCode.IA
 
 > Perfil **criador solo** — marca pessoal + negócio digital. O sistema gira
-> em torno de conteúdo, audiência e ofertas. O `/sistema-instalar` adapta
+> em torno de conteúdo, audiência e ofertas. O `/lb-sistema-instalar` adapta
 > esse molde com a sua realidade.
 
 ## O que é esse workspace
@@ -58,13 +58,13 @@ Evitar: [o que destoa do seu estilo]
 
 ## Skills principais
 
-- `/conteudo-carrossel` — criar carrossel com RETINA + GCC
-- `/conteudo-reels` — roteiro de vídeo curto
-- `/conteudo-calendario` — planejar mês de conteúdo
-- `/meta-campanha-whatsapp` — campanha de conversão
-- `/meta-campanha-seguidores` — campanha de crescimento
-- `/venda-proposta` — gerar proposta comercial
-- `/negocio-analisar-dados` — analisar resultado de campanha
+- `/lb-conteudo-carrossel` — criar carrossel com RETINA + GCC
+- `/lb-conteudo-reels` — roteiro de vídeo curto
+- `/lb-conteudo-calendario` — planejar mês de conteúdo
+- `/lb-meta-campanha-whatsapp` — campanha de conversão
+- `/lb-meta-campanha-seguidores` — campanha de crescimento
+- `/lb-venda-proposta` — gerar proposta comercial
+- `/lb-negocio-analisar-dados` — analisar resultado de campanha
 
 ## Ferramentas conectadas
 

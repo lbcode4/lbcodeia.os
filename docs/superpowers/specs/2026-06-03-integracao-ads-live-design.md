@@ -177,10 +177,10 @@ de interpretação** via framework — exigência do CLAUDE.md ("cada skill tira
 
 ## 6. Fluxo de dado + tratamento de erro
 
-### Fluxo end-to-end (ex: `/meta-dashboard` Dordrian)
+### Fluxo end-to-end (ex: `/lb-meta-dashboard` Dordrian)
 
 ```
-usuário: /meta-dashboard Dordrian
+usuário: /lb-meta-dashboard Dordrian
   → skill lê _memoria/contas-ads.md → resolve "Dordrian" = act_1388795691981562
   → skill chama: python integracoes/meta-ads/scripts/relatorio.py --cliente "Dordrian"
       → meta_api.py lê token de credentials/meta.env
@@ -205,7 +205,7 @@ Script parseia a tabela → pega a linha do cliente. Mesmo padrão dos projetos,
 
 | Erro | Comportamento |
 |---|---|
-| token ausente/inválido | `MetaAPIError` → skill manda rodar `/ads-conectar` |
+| token ausente/inválido | `MetaAPIError` → skill manda rodar `/lb-ads-conectar` |
 | API 400/401/403 | extrai `error.message` do JSON, mostra limpo (sem stack) |
 | cliente não achado no mapa | lista clientes disponíveis em `_memoria/contas-ads.md` |
 | Google OAuth faltando | camada Meta segue, Google avisa "falta credencial" |

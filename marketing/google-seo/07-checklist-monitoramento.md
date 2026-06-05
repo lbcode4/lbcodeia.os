@@ -7,7 +7,7 @@
 
 - [ ] Verificar posição nos top 10 termos (buscar manualmente no Google: "software sob medida Santarém" + variações)
 - [ ] Responder avaliações no Google Meu Negócio (prazo máximo: 48h)
-- [ ] Publicar 1 post no GMB (usar template de `/google-meu-negocio`)
+- [ ] Publicar 1 post no GMB (usar template de `/lb-google-meu-negocio`)
 - [ ] Verificar mensagens no perfil GMB
 
 ---

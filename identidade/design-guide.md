@@ -90,4 +90,4 @@ Se a marca mudar:
 3. Documentação fica versionada
 
 Linha adicionada: data + mudança.
-- `[2026-06-03] /sistema-instalar — reescrito do template laranja/minimalista pro brand real dark + neon roxo→ciano (carrosséis @lbcode.ia)`
+- `[2026-06-03] /lb-sistema-instalar — reescrito do template laranja/minimalista pro brand real dark + neon roxo→ciano (carrosséis @lbcode.ia)`

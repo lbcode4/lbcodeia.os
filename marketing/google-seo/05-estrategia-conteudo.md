@@ -112,7 +112,7 @@ Cada página deve ter (~800 palavras):
 | Agosto | Demais landings (academia, imobiliária, serviços) | Site |
 | Agosto | Post 7: Código 100% seu | Blog + Carrossel IG |
 
-> Cada item de blog vira também carrossel ou reels via `/conteudo-carrossel`
+> Cada item de blog vira também carrossel ou reels via `/lb-conteudo-carrossel`
 
 ---
 
@@ -120,6 +120,6 @@ Cada página deve ter (~800 palavras):
 
 - **1 post blog/mês** (prioridade alta pra SEO)
 - **1 landing page/mês** (até completar as 5)
-- **4 carrosséis/mês** (adaptados dos posts via `/conteudo-carrossel`)
+- **4 carrosséis/mês** (adaptados dos posts via `/lb-conteudo-carrossel`)
 
 Total: ~6 horas/mês de conteúdo com apoio da IA.

@@ -10,12 +10,12 @@ Conforme você for ativando skills, isso aqui vai sendo populado. Lista do que c
 
 | Skill | Script esperado | O que faz |
 |---|---|---|
-| `/conteudo-carrossel` (com foto IA) | `gerar-imagem.js` | Gera foto realista via OpenAI API (DALL-E 3) |
-| `/conteudo-carrossel` (render PNG) | `render.js` (gerado por carrossel, fica na pasta do conteúdo) | Playwright tira screenshot 1080x1350 de cada slide |
-| `/conteudo-aprovar` | `postar-instagram.js` | Publica carrossel no Instagram via Meta Graph API |
-| `/conteudo-aprovar` | `postar-facebook.js` | Publica carrossel no Facebook via Meta Graph API |
-| `/google-ads` | (nenhum — gera CSV direto) | — |
-| `/meta-relatorio` | (lê CSV exportado das plataformas) | — |
+| `/lb-conteudo-carrossel` (com foto IA) | `gerar-imagem.js` | Gera foto realista via OpenAI API (DALL-E 3) |
+| `/lb-conteudo-carrossel` (render PNG) | `render.js` (gerado por carrossel, fica na pasta do conteúdo) | Playwright tira screenshot 1080x1350 de cada slide |
+| `/lb-conteudo-aprovar` | `postar-instagram.js` | Publica carrossel no Instagram via Meta Graph API |
+| `/lb-conteudo-aprovar` | `postar-facebook.js` | Publica carrossel no Facebook via Meta Graph API |
+| `/lb-google-ads` | (nenhum — gera CSV direto) | — |
+| `/lb-meta-relatorio` | (lê CSV exportado das plataformas) | — |
 
 ## Pré-requisitos comuns
 

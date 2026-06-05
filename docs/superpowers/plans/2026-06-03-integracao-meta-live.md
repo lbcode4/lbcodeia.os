@@ -496,7 +496,7 @@ por:
 E na mensagem de erro logo abaixo, trocar referências a `CLAUDE.md` / `setup_bootcamp.py` / `/configurar-ambiente` por:
 ```python
         print(f"ERRO: mapa de contas não encontrado em: {path}")
-        print("Crie _memoria/contas-ads.md (ver skill /ads-conectar).")
+        print("Crie _memoria/contas-ads.md (ver skill /lb-ads-conectar).")
 ```
 
 > O parser interno (`_parsear_tabela_multi`) procura a seção `## Contas Conectadas` e colunas `meta ad account` / `ig user id` / `handle ig` / `google ads id` — que é exatamente o formato de `_memoria/contas-ads.md` (Task 3). Nenhuma outra edição no parser.
@@ -561,13 +561,13 @@ name: lb-meta-dashboard
 description: >
   Puxa performance Meta Ads LIVE da Graph API e gera dashboard HTML completo
   (hierarquia campanha→adset→ad, comparativo de período, funil de vídeo, dark/light).
-  Resolve a conta do cliente em _memoria/contas-ads.md. Diferente de /meta-relatorio
+  Resolve a conta do cliente em _memoria/contas-ads.md. Diferente de /lb-meta-relatorio
   (que lê CSV manual) — este puxa direto da API. Use quando o usuário pedir
   "dashboard meta live", "puxar dados do meta", "relatório meta da API",
-  "performance ao vivo", ou /meta-dashboard.
+  "performance ao vivo", ou /lb-meta-dashboard.
 ---
 
-# /meta-dashboard — Dashboard Meta Ads (live API)
+# /lb-meta-dashboard — Dashboard Meta Ads (live API)
 
 Puxa dado real da Graph API v21.0 → HTML. Não é CSV manual.
 
@@ -576,7 +576,7 @@ Puxa dado real da Graph API v21.0 → HTML. Não é CSV manual.
 - **Conta:** `_memoria/contas-ads.md` (resolve via --cliente)
 - **Framework:** `_memoria/framework-trafego.md` (Bolo de Cenoura)
 - **Contexto/voz:** `_memoria/empresa.md`, `estrategia.md`, `preferencias.md`
-- **Credencial:** `integracoes/credentials/meta.env` (validar com `python integracoes/meta-ads/scripts/meta_api.py --test`; skill `/ads-conectar` chega no Plano 2)
+- **Credencial:** `integracoes/credentials/meta.env` (validar com `python integracoes/meta-ads/scripts/meta_api.py --test`; skill `/lb-ads-conectar` chega no Plano 2)
 
 ## Passos
 1. Carregar contexto + voz de `_memoria/`.
@@ -590,7 +590,7 @@ Puxa dado real da Graph API v21.0 → HTML. Não é CSV manual.
 6. Devolver: caminho do HTML + os 3 insights.
 
 ## Erros
-- Token faltando → conferir `integracoes/credentials/meta.env` e rodar `python integracoes/meta-ads/scripts/meta_api.py --test` (skill `/ads-conectar` chega no Plano 2).
+- Token faltando → conferir `integracoes/credentials/meta.env` e rodar `python integracoes/meta-ads/scripts/meta_api.py --test` (skill `/lb-ads-conectar` chega no Plano 2).
 - Cliente não achado → listar disponíveis de `_memoria/contas-ads.md`.
 - NUNCA exibir o token em resposta/log.
 ```
@@ -751,7 +751,7 @@ git commit -m "docs: registrar integração Meta live no CLAUDE.md, skills-catal
 - [ ] `python integracoes/meta-ads/scripts/relatorio.py --cliente Dordrian` gera HTML em `output/`
 - [ ] Nenhum path Windows em `integracoes/meta-ads/scripts/`
 - [ ] `integracoes/credentials/meta.env` gitignored (token nunca commitado)
-- [ ] 6 skills `lb-meta-*` (dashboard/diagnostico/auditoria/reels/copy/gerenciar) criadas e registradas no skills-catalogo (a infra `/ads-conectar` é do Plano 2)
+- [ ] 6 skills `lb-meta-*` (dashboard/diagnostico/auditoria/reels/copy/gerenciar) criadas e registradas no skills-catalogo (a infra `/lb-ads-conectar` é do Plano 2)
 - [ ] `_memoria/contas-ads.md` é a fonte única de conta
 
 **Próximo:** Plano 2 — Google Ads live (Fases 4-6 do spec): porta `google-ads/lib` do ClaudeCode, OAuth2, dashboard unificado, `lb-ads-negativas`, `lb-ads-conectar`. Escrever após este rodar verde.

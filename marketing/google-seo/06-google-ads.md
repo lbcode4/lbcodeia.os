@@ -3,7 +3,7 @@
 
 > **Nota:** Estratégia atual (`_memoria/estrategia.md`) define tráfego pago como baixa prioridade agora.
 > Este plano fica pronto pra quando o orçamento de ads abrir.
-> A skill `/google-ads` consome este arquivo e gera CSV pra importar no Google Ads.
+> A skill `/lb-google-ads` consome este arquivo e gera CSV pra importar no Google Ads.
 
 ---
 

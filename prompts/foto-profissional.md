@@ -48,7 +48,7 @@ Style reference: corporate headshot photography, natural editorial style.
 ## Workflow no script
 
 ```bash
-# Usar script Gemini do projeto (mesmo do /conteudo-carrossel)
+# Usar script Gemini do projeto (mesmo do /lb-conteudo-carrossel)
   node --env-file=.env scripts/gerar-imagem-gemini.js \
        "PROMPT_ACIMA" \
        "marketing/auditoria-ig/<handle>-foto-profissional.png" \

@@ -15,7 +15,7 @@
 | **Negócio local** | Empresa, restaurante, loja física | GBP + Ads geo-segmentados → clientes do bairro |
 | **Criador solo** | Influencer, infoprodutor | Conteúdo orgânico + Meta Ads → produto digital |
 
-Cada projeto-filho (`/sistema-novo-projeto`) se encaixa em 1 desses modelos — definido no `CLAUDE.md`
+Cada projeto-filho (`/lb-sistema-novo-projeto`) se encaixa em 1 desses modelos — definido no `CLAUDE.md`
 do projeto. A matriz abaixo diz quais skills ativar por modelo. O parent é genérico: carrega
 todas, cada filho usa o subconjunto do seu modelo.
 
@@ -25,48 +25,48 @@ todas, cada filho usa o subconjunto do seu modelo.
 
 | Skill | SaaS B2B | Agência | Local | Criador | Notas |
 |-------|----------|---------|-------|---------|-------|
-| `/sistema-abrir` | ✅ | ✅ | ✅ | ✅ | Núcleo |
-| `/sistema-instalar` | ✅ | ✅ | ✅ | ✅ | Núcleo |
-| `/sistema-atualizar` | ✅ | ✅ | ✅ | ✅ | Núcleo |
-| `/sistema-salvar` | ✅ | ✅ | ✅ | ✅ | Núcleo |
-| `/sistema-novo-projeto` | ✅ | ✅ | ✅ | ✅ | Núcleo |
-| `/negocio-mapear-rotinas` | ✅ | ✅ | ✅ | ✅ | Núcleo |
-| `/conteudo-carrossel` | ✅ | ✅ | ✅ | ✅ | Universal |
-| `/conteudo-publicar` | ✅ | ✅ | ✅ | ✅ | Universal |
-| `/conteudo-aprovar` | ✅ | ✅ | ✅ | ✅ | Universal |
-| `/google-seo` | ✅ | ✅ | ✅ | ⚠️ | Passo 3 GMB inútil pra SaaS |
-| `/google-ads` | ✅ | ✅ | ✅ | ⚠️ | Modo B Dominação Top 1 inútil pra SaaS |
-| `/ads-conectar` | ✅ | ✅ | ✅ | ✅ | Infra — valida token Meta + cadastra conta em `_memoria/contas-ads.md` (Google no Plano 2) |
-| `/meta-relatorio` | ✅ | ✅ | ✅ | ✅ | Universal — lê CSV/print manual (vs /meta-dashboard live) |
-| `/meta-campanha-whatsapp` | ✅ | ✅ | ✅ | ⚠️ | Adaptar mensagem inicial por modelo |
-| `/meta-dashboard` | ✅ | ✅ | ✅ | ✅ | Live API → HTML; precisa conta em `_memoria/contas-ads.md` + token |
-| `/meta-completo` | ✅ | ✅ | ✅ | ✅ | Live API — dashboard completo (pago vs orgânico, seguidores, resumo exec); precisa act_id + IG ID |
-| `/meta-diagnostico` | ✅ | ✅ | ✅ | ✅ | Live API — KPIs + alertas; precisa conta + token |
-| `/meta-auditoria` | ✅ | ✅ | ✅ | ✅ | Live API — quick wins adsets/placements; precisa conta + token |
-| `/meta-reels` | ✅ | ✅ | ✅ | ✅ | Live API — ranking reels + impulsionamento; precisa conta + token |
-| `/meta-copy` | ✅ | ✅ | ✅ | ✅ | Live API — copy dos top criativos; precisa conta + token |
-| `/meta-gerenciar` | ✅ | ✅ | ✅ | ✅ | Live API mutate — pausar/ativar com confirmação + log; precisa conta + token |
-| `/google-dashboard` | ✅ | ✅ | ✅ | ⚠️ | Live API Google → HTML; precisa Google Ads ID + yaml |
-| `/ads-unificado` | ✅ | ✅ | ✅ | ⚠️ | Funde Google+Meta; precisa ambos os IDs + ambas as creds |
-| `/ads-negativas` | ✅ | ✅ | ✅ | ❌ | Live API — termos de busca → negativas; só faz sentido com Google Ads |
-| `/meta-campanha-seguidores` | 🟡 | ✅ | ✅ | ✅ | Dormente pra SaaS até perfil ter tração |
-| `/conteudo-auditoria-insta` | 🟡 | ✅ | ✅ | ✅ | Útil pra qualquer perfil — IG bloqueia WebFetch, depende prints |
-| `/negocio-analisar-dados` | ✅ | ✅ | ✅ | ✅ | Universal |
-| `/venda-email` | ✅ | ✅ | ✅ | ✅ | Universal |
-| `/google-meu-negocio` | ❌ | ✅ | ✅ | ❌ | SaaS nacional não tem endereço físico |
-| `/google-avaliacoes` | ❌ | ✅ | ✅ | ❌ | Sem GBP = sem avaliações Google |
-| `/venda-prospectar` | ✅¹ | ✅ | ❌ | ❌ | ¹SaaS fase pré-tração: prospecção 1:1 pra fechar primeiros clientes |
-| `/venda-dossie` | ✅¹ | ✅ | ❌ | ❌ | ¹Idem — dossiê é pré-requisito de abordagem personalizada |
-| `/venda-proposta` | ✅ | ✅ | ❌ | ❌ | Fecha funil comercial; HTML→PNG 2 páginas estilo pack |
-| `/venda-diagnostico` | ✅ | ✅ | ✅ | ❌ | Isca de venda — diagnóstico grátis abre conversa |
-| `/venda-objecoes` | ✅ | ✅ | ❌ | ❌ | Banco das 10 objeções B2B + contornos |
-| `/venda-follow-up` | ✅ | ✅ | ❌ | ❌ | Sequência 5 msgs pós-abordagem; complementa /venda-prospectar |
-| `/conteudo-reels` | ✅ | ✅ | ✅ | ✅ | Formato de maior alcance orgânico — complementa /conteudo-carrossel |
-| `/conteudo-stories` | ✅ | ✅ | ✅ | ✅ | Sequência 5-7 stories interativos baseada em RETINA |
-| `/conteudo-calendario` | ✅ | ✅ | ✅ | ✅ | Calendário mensal 20-25 posts nos 6 pilares RETINA |
-| `/venda-precificar` | ✅ | ✅ | ❌ | ❌ | Calcula preço SaaS/serviço com margem e benchmark |
-| `/negocio-plano-mensal` | ✅ | ✅ | ✅ | ✅ | Plano executivo do mês integrando todas as frentes |
-| `/negocio-site` | ✅ | ✅ | ✅ | ✅ | Cria site/LP via frontend-design; pergunta tipo (landing/demo/institucional/campanha) |
+| `/lb-sistema-abrir` | ✅ | ✅ | ✅ | ✅ | Núcleo |
+| `/lb-sistema-instalar` | ✅ | ✅ | ✅ | ✅ | Núcleo |
+| `/lb-sistema-atualizar` | ✅ | ✅ | ✅ | ✅ | Núcleo |
+| `/lb-sistema-salvar` | ✅ | ✅ | ✅ | ✅ | Núcleo |
+| `/lb-sistema-novo-projeto` | ✅ | ✅ | ✅ | ✅ | Núcleo |
+| `/lb-negocio-mapear-rotinas` | ✅ | ✅ | ✅ | ✅ | Núcleo |
+| `/lb-conteudo-carrossel` | ✅ | ✅ | ✅ | ✅ | Universal |
+| `/lb-conteudo-publicar` | ✅ | ✅ | ✅ | ✅ | Universal |
+| `/lb-conteudo-aprovar` | ✅ | ✅ | ✅ | ✅ | Universal |
+| `/lb-google-seo` | ✅ | ✅ | ✅ | ⚠️ | Passo 3 GMB inútil pra SaaS |
+| `/lb-google-ads` | ✅ | ✅ | ✅ | ⚠️ | Modo B Dominação Top 1 inútil pra SaaS |
+| `/lb-ads-conectar` | ✅ | ✅ | ✅ | ✅ | Infra — valida token Meta + cadastra conta em `_memoria/contas-ads.md` (Google no Plano 2) |
+| `/lb-meta-relatorio` | ✅ | ✅ | ✅ | ✅ | Universal — lê CSV/print manual (vs /lb-meta-dashboard live) |
+| `/lb-meta-campanha-whatsapp` | ✅ | ✅ | ✅ | ⚠️ | Adaptar mensagem inicial por modelo |
+| `/lb-meta-dashboard` | ✅ | ✅ | ✅ | ✅ | Live API → HTML; precisa conta em `_memoria/contas-ads.md` + token |
+| `/lb-meta-completo` | ✅ | ✅ | ✅ | ✅ | Live API — dashboard completo (pago vs orgânico, seguidores, resumo exec); precisa act_id + IG ID |
+| `/lb-meta-diagnostico` | ✅ | ✅ | ✅ | ✅ | Live API — KPIs + alertas; precisa conta + token |
+| `/lb-meta-auditoria` | ✅ | ✅ | ✅ | ✅ | Live API — quick wins adsets/placements; precisa conta + token |
+| `/lb-meta-reels` | ✅ | ✅ | ✅ | ✅ | Live API — ranking reels + impulsionamento; precisa conta + token |
+| `/lb-meta-copy` | ✅ | ✅ | ✅ | ✅ | Live API — copy dos top criativos; precisa conta + token |
+| `/lb-meta-gerenciar` | ✅ | ✅ | ✅ | ✅ | Live API mutate — pausar/ativar com confirmação + log; precisa conta + token |
+| `/lb-google-dashboard` | ✅ | ✅ | ✅ | ⚠️ | Live API Google → HTML; precisa Google Ads ID + yaml |
+| `/lb-ads-unificado` | ✅ | ✅ | ✅ | ⚠️ | Funde Google+Meta; precisa ambos os IDs + ambas as creds |
+| `/lb-ads-negativas` | ✅ | ✅ | ✅ | ❌ | Live API — termos de busca → negativas; só faz sentido com Google Ads |
+| `/lb-meta-campanha-seguidores` | 🟡 | ✅ | ✅ | ✅ | Dormente pra SaaS até perfil ter tração |
+| `/lb-conteudo-auditoria-insta` | 🟡 | ✅ | ✅ | ✅ | Útil pra qualquer perfil — IG bloqueia WebFetch, depende prints |
+| `/lb-negocio-analisar-dados` | ✅ | ✅ | ✅ | ✅ | Universal |
+| `/lb-venda-email` | ✅ | ✅ | ✅ | ✅ | Universal |
+| `/lb-google-meu-negocio` | ❌ | ✅ | ✅ | ❌ | SaaS nacional não tem endereço físico |
+| `/lb-google-avaliacoes` | ❌ | ✅ | ✅ | ❌ | Sem GBP = sem avaliações Google |
+| `/lb-venda-prospectar` | ✅¹ | ✅ | ❌ | ❌ | ¹SaaS fase pré-tração: prospecção 1:1 pra fechar primeiros clientes |
+| `/lb-venda-dossie` | ✅¹ | ✅ | ❌ | ❌ | ¹Idem — dossiê é pré-requisito de abordagem personalizada |
+| `/lb-venda-proposta` | ✅ | ✅ | ❌ | ❌ | Fecha funil comercial; HTML→PNG 2 páginas estilo pack |
+| `/lb-venda-diagnostico` | ✅ | ✅ | ✅ | ❌ | Isca de venda — diagnóstico grátis abre conversa |
+| `/lb-venda-objecoes` | ✅ | ✅ | ❌ | ❌ | Banco das 10 objeções B2B + contornos |
+| `/lb-venda-follow-up` | ✅ | ✅ | ❌ | ❌ | Sequência 5 msgs pós-abordagem; complementa /lb-venda-prospectar |
+| `/lb-conteudo-reels` | ✅ | ✅ | ✅ | ✅ | Formato de maior alcance orgânico — complementa /lb-conteudo-carrossel |
+| `/lb-conteudo-stories` | ✅ | ✅ | ✅ | ✅ | Sequência 5-7 stories interativos baseada em RETINA |
+| `/lb-conteudo-calendario` | ✅ | ✅ | ✅ | ✅ | Calendário mensal 20-25 posts nos 6 pilares RETINA |
+| `/lb-venda-precificar` | ✅ | ✅ | ❌ | ❌ | Calcula preço SaaS/serviço com margem e benchmark |
+| `/lb-negocio-plano-mensal` | ✅ | ✅ | ✅ | ✅ | Plano executivo do mês integrando todas as frentes |
+| `/lb-negocio-site` | ✅ | ✅ | ✅ | ✅ | Cria site/LP via frontend-design; pergunta tipo (landing/demo/institucional/campanha) |
 
 Legenda: ✅ útil · 🟡 dormente (ativar em fase certa) · ⚠️ útil parcial (sub-features inúteis) · ❌ não se aplica
 
@@ -99,27 +99,27 @@ abrir, instalar, atualizar, salvar, novo-projeto, mapear-rotinas, carrossel, pub
 ¹Fase pré-tração: prospecção 1:1 é o caminho pra fechar os primeiros clientes SaaS.
 
 **Dormentes (ativar depois):**
-- `/conteudo-auditoria-insta` — sempre útil, marcar bio antes de campanha
-- `/meta-campanha-seguidores` — quando o perfil tiver bio + 9 quadros + ≥100 seguidores
+- `/lb-conteudo-auditoria-insta` — sempre útil, marcar bio antes de campanha
+- `/lb-meta-campanha-seguidores` — quando o perfil tiver bio + 9 quadros + ≥100 seguidores
 
 **Não aplicáveis (preservar pra outros projetos):**
-- `/google-meu-negocio`, `/google-avaliacoes`
+- `/lb-google-meu-negocio`, `/lb-google-avaliacoes`
 - 3 templates: gbp-setup, foto-profissional, script-prospeccao
 
 **Sub-features a ignorar dentro de skills úteis:**
-- `/google-seo` Passo 3 (GMB)
-- `/google-ads` Modo B (Dominação Top 1)
+- `/lb-google-seo` Passo 3 (GMB)
+- `/lb-google-ads` Modo B (Dominação Top 1)
 
 ---
 
 ## Quando ativar cada modo
 
 Se um dia [seu produto] mudar modelo:
-- **Abrir braço de agência** → ativar `/venda-prospectar`, `/venda-dossie`, persona Modo B, script-prospeccao
-- **Lançar unidade física** → ativar `/google-meu-negocio`, `/google-avaliacoes`, gbp-setup, Passo 3 SEO, Modo B Anuncio
+- **Abrir braço de agência** → ativar `/lb-venda-prospectar`, `/lb-venda-dossie`, persona Modo B, script-prospeccao
+- **Lançar unidade física** → ativar `/lb-google-meu-negocio`, `/lb-google-avaliacoes`, gbp-setup, Passo 3 SEO, Modo B Anuncio
 - **Trocar founder por equipe** → ativar foto-profissional pra perfis profissionais individuais
 
-Se criar OS pra cliente diferente (`/sistema-novo-projeto`):
+Se criar OS pra cliente diferente (`/lb-sistema-novo-projeto`):
 - **Cliente é agência** → todas as 22 skills + 8 templates fazem sentido
 - **Cliente é negócio local** → ativar GBP + responder-avaliacoes, desativar prospectar
 - **Cliente é criador solo** → desativar GBP/prospectar, focar conteúdo + Meta seguidores

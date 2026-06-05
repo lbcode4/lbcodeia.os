@@ -26,38 +26,38 @@ Gerado em 03/06/2026 | 9 posts de feed + 3 sequências de stories | Mix: 42% car
 
 | Data | Dia | Pilar | Tema sugerido | Gancho (GCC) | Formato | Skill | Status |
 |------|-----|-------|---------------|--------------|---------|-------|--------|
-| 04/jun | Qui | A | "Software sob medida vs sistema pronto: por que 'código 100% seu' economiza dinheiro" | Contraintuitivo — "O problema da sua empresa NÃO é falta de sistema. É depender do sistema dos outros." | Carrossel | `/conteudo-carrossel` | ⬜ |
-| 06/jun | Sáb | N | "Sua empresa perde cliente às 22h? Atendimento que não dorme" | Pergunta — "Quantos clientes você perde fora do horário comercial?" | Reel | `/conteudo-reels` | ⬜ |
+| 04/jun | Qui | A | "Software sob medida vs sistema pronto: por que 'código 100% seu' economiza dinheiro" | Contraintuitivo — "O problema da sua empresa NÃO é falta de sistema. É depender do sistema dos outros." | Carrossel | `/lb-conteudo-carrossel` | ⬜ |
+| 06/jun | Sáb | N | "Sua empresa perde cliente às 22h? Atendimento que não dorme" | Pergunta — "Quantos clientes você perde fora do horário comercial?" | Reel | `/lb-conteudo-reels` | ⬜ |
 
 ## Semana 2 (08/jun — 14/jun)
 
 | Data | Dia | Pilar | Tema sugerido | Gancho (GCC) | Formato | Skill | Status |
 |------|-----|-------|---------------|--------------|---------|-------|--------|
-| 09/jun | Ter | T | "De planilha manual a dashboard em tempo real: o antes e depois de uma PME" | História — "Ela tomava decisão por feeling. Hoje decide por número." | Carrossel | `/conteudo-carrossel` | ⬜ |
-| 11/jun | Qui | N | "Dia dos Namorados: a PME que automatiza o WhatsApp vende o dobro" (data: 12/jun) | Segmentado — "Dono de loja: leia antes do Dia dos Namorados." | Reel | `/conteudo-reels` | ⬜ |
-| 12/jun | Sex | I | Stories — enquete "Qual seu maior gargalo hoje?" (atendimento / agenda / dados) + CTA diagnóstico | Pergunta direta na enquete | Stories | `/conteudo-stories` | ⬜ |
+| 09/jun | Ter | T | "De planilha manual a dashboard em tempo real: o antes e depois de uma PME" | História — "Ela tomava decisão por feeling. Hoje decide por número." | Carrossel | `/lb-conteudo-carrossel` | ⬜ |
+| 11/jun | Qui | N | "Dia dos Namorados: a PME que automatiza o WhatsApp vende o dobro" (data: 12/jun) | Segmentado — "Dono de loja: leia antes do Dia dos Namorados." | Reel | `/lb-conteudo-reels` | ⬜ |
+| 12/jun | Sex | I | Stories — enquete "Qual seu maior gargalo hoje?" (atendimento / agenda / dados) + CTA diagnóstico | Pergunta direta na enquete | Stories | `/lb-conteudo-stories` | ⬜ |
 
 ## Semana 3 (15/jun — 21/jun)
 
 | Data | Dia | Pilar | Tema sugerido | Gancho (GCC) | Formato | Skill | Status |
 |------|-----|-------|---------------|--------------|---------|-------|--------|
-| 16/jun | Ter | A | "5 processos que toda PME ainda faz na mão (e a IA resolve em semanas)" | Contraintuitivo — "Você não precisa de mais funcionário. Precisa parar de fazer o que a IA já faz." | Carrossel | `/conteudo-carrossel` | ⬜ |
-| 18/jun | Qui | E | "O que é 'código 100% seu' — e por que isso muda tudo pro seu negócio" | Pergunta — "Você sabe de quem é o sistema que faz sua empresa rodar?" | Reel | `/conteudo-reels` | ⬜ |
-| 19/jun | Sex | I | Stories — bastidores "Construindo a LBCode.IA com IA (Claude Code)" + caixa de perguntas | História nos stories | Stories | `/conteudo-stories` | ⬜ |
+| 16/jun | Ter | A | "5 processos que toda PME ainda faz na mão (e a IA resolve em semanas)" | Contraintuitivo — "Você não precisa de mais funcionário. Precisa parar de fazer o que a IA já faz." | Carrossel | `/lb-conteudo-carrossel` | ⬜ |
+| 18/jun | Qui | E | "O que é 'código 100% seu' — e por que isso muda tudo pro seu negócio" | Pergunta — "Você sabe de quem é o sistema que faz sua empresa rodar?" | Reel | `/lb-conteudo-reels` | ⬜ |
+| 19/jun | Sex | I | Stories — bastidores "Construindo a LBCode.IA com IA (Claude Code)" + caixa de perguntas | História nos stories | Stories | `/lb-conteudo-stories` | ⬜ |
 
 ## Semana 4 (22/jun — 28/jun)
 
 | Data | Dia | Pilar | Tema sugerido | Gancho (GCC) | Formato | Skill | Status |
 |------|-----|-------|---------------|--------------|---------|-------|--------|
-| 23/jun | Ter | R | "Por que construí a LBCode.IA aqui em Santarém" (ângulo São João / local — 24/jun) | História — "Não saí do Pará pra empreender. Empreendi de dentro dele." | Carrossel | `/conteudo-carrossel` | ⬜ |
-| 25/jun | Qui | T | "Agendamento inteligente: como uma agenda para de furar e gerar prejuízo" | Pergunta — "Quanto sua empresa perde por mês com agenda desorganizada?" | Reel | `/conteudo-reels` | ⬜ |
-| 26/jun | Sex | I | Stories — sequência "Diagnóstico grátis 15min: como funciona" + CTA WhatsApp/Calendly | CTA único nos stories | Stories | `/conteudo-stories` | ⬜ |
+| 23/jun | Ter | R | "Por que construí a LBCode.IA aqui em Santarém" (ângulo São João / local — 24/jun) | História — "Não saí do Pará pra empreender. Empreendi de dentro dele." | Carrossel | `/lb-conteudo-carrossel` | ⬜ |
+| 25/jun | Qui | T | "Agendamento inteligente: como uma agenda para de furar e gerar prejuízo" | Pergunta — "Quanto sua empresa perde por mês com agenda desorganizada?" | Reel | `/lb-conteudo-reels` | ⬜ |
+| 26/jun | Sex | I | Stories — sequência "Diagnóstico grátis 15min: como funciona" + CTA WhatsApp/Calendly | CTA único nos stories | Stories | `/lb-conteudo-stories` | ⬜ |
 
 ## Semana 5 (29/jun — 30/jun) · parcial
 
 | Data | Dia | Pilar | Tema sugerido | Gancho (GCC) | Formato | Skill | Status |
 |------|-----|-------|---------------|--------------|---------|-------|--------|
-| 30/jun | Ter | N | "Diagnóstico grátis de 15min: descubra se vale automatizar seu processo" | Segmentado — "PME que fatura na mão: esse diagnóstico é pra você." | Carrossel | `/conteudo-carrossel` | ⬜ |
+| 30/jun | Ter | N | "Diagnóstico grátis de 15min: descubra se vale automatizar seu processo" | Segmentado — "PME que fatura na mão: esse diagnóstico é pra você." | Carrossel | `/lb-conteudo-carrossel` | ⬜ |
 
 ---
 

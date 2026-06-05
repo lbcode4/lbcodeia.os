@@ -10,7 +10,7 @@ Seu negócio em máquina que aprende a cada execução.
 - ❌ "Preciso de agência" → Você precisa estrutura, não gente
 - ❌ "Não sai conteúdo rápido" → Estrutura + IA = 30min. Conteúdo. Framework.
 - ❌ "Ads não trazem retorno" → 4 Campanhas funciona. Precisa repetição.
-- ❌ "Não tenho pipeline" → `/venda-prospectar` + `/venda-proposta` = pipeline montado
+- ❌ "Não tenho pipeline" → `/lb-venda-prospectar` + `/lb-venda-proposta` = pipeline montado
 - ❌ "Não sei se tá funcionando" → Tudo documentado no GitHub. ROI visível.
 
 ---
@@ -37,11 +37,11 @@ Seu negócio documentado, lido antes de cada ação:
 
 ### 3. EXECUÇÃO (skills)
 30+ workflows prontos, cada um framework-first:
-- **Conteúdo:** `/conteudo-carrossel`, `/google-seo`, `/conteudo-publicar`, `/conteudo-reels`
-- **Trafego pago:** `/google-ads`, `/campanha-meta-*`, `/meta-relatorio`
-- **Prospecção:** `/venda-prospectar`, `/venda-dossie`, `/venda-proposta`, `/venda-follow-up`
-- **Operação:** `/negocio-analisar-dados`, `/venda-precificar`, `/venda-diagnostico`
-- **Planejamento:** `/negocio-plano-mensal`, `/conteudo-calendario`, `/negocio-mapear-rotinas`
+- **Conteúdo:** `/lb-conteudo-carrossel`, `/lb-google-seo`, `/lb-conteudo-publicar`, `/lb-conteudo-reels`
+- **Trafego pago:** `/lb-google-ads`, `/campanha-meta-*`, `/lb-meta-relatorio`
+- **Prospecção:** `/lb-venda-prospectar`, `/lb-venda-dossie`, `/lb-venda-proposta`, `/lb-venda-follow-up`
+- **Operação:** `/lb-negocio-analisar-dados`, `/lb-venda-precificar`, `/lb-venda-diagnostico`
+- **Planejamento:** `/lb-negocio-plano-mensal`, `/lb-conteudo-calendario`, `/lb-negocio-mapear-rotinas`
 
 ---
 
@@ -53,7 +53,7 @@ cd LBCode.IA
 code .
 ```
 
-No terminal: `/sistema-instalar`
+No terminal: `/lb-sistema-instalar`
 
 Entrevista negócio + identidade + foco. Preenche memória automaticamente.  
 Depois: renomeia pasta pro nome da empresa. Pronto.
@@ -62,28 +62,28 @@ Depois: renomeia pasta pro nome da empresa. Pronto.
 
 ## Dia a Dia (3 Comandos)
 
-- **`/sistema-abrir`** — carrega contexto antes de trabalhar
-- **`/sistema-salvar`** — commit + push (resultado versionado no GitHub)
-- **`/sistema-atualizar`** — varre projeto, sincroniza memória
+- **`/lb-sistema-abrir`** — carrega contexto antes de trabalhar
+- **`/lb-sistema-salvar`** — commit + push (resultado versionado no GitHub)
+- **`/lb-sistema-atualizar`** — varre projeto, sincroniza memória
 
 ---
 
 ## Semana Tipo
 
-**Segunda:** `/sistema-abrir` + planar semana em `estrategia.md`
+**Segunda:** `/lb-sistema-abrir` + planar semana em `estrategia.md`
 
 **Terça–Quarta:** 
-- 3× `/conteudo-carrossel` = posts prontos
-- `/google-seo` = artigo + visual + legendas  
-- `/google-ads` = campanha CSV pronta
+- 3× `/lb-conteudo-carrossel` = posts prontos
+- `/lb-google-seo` = artigo + visual + legendas  
+- `/lb-google-ads` = campanha CSV pronta
 
 **Quinta:**
-- `/venda-prospectar` = lista + pesquisa
-- `/venda-proposta` = 2-3 propostas
+- `/lb-venda-prospectar` = lista + pesquisa
+- `/lb-venda-proposta` = 2-3 propostas
 
 **Sexta:**
-- `/meta-relatorio` = identifica o que rompeu
-- `/sistema-salvar` = tudo documentado
+- `/lb-meta-relatorio` = identifica o que rompeu
+- `/lb-sistema-salvar` = tudo documentado
 
 **Resultado:** 5 posts + 1 artigo + 1 campanha + 10+ prospecções + 3 propostas.  
 Tudo com framework. Pronto pra repetir.

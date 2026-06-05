@@ -2,7 +2,7 @@
 **Negócio:** LBCode.IA | **Data:** 2026-06-04
 
 > Responder 100% das avaliações em até 48h. Sempre incluir keyword + cidade.
-> Para gestão detalhada: chamar `/google-avaliacoes`.
+> Para gestão detalhada: chamar `/lb-google-avaliacoes`.
 
 ---
 

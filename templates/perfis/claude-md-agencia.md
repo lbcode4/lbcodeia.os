@@ -2,7 +2,7 @@
 
 > Perfil **agência** — equipe pequena entregando pra múltiplos clientes.
 > O sistema gira em torno de prospecção, proposta, produção e relatório.
-> O `/sistema-instalar` adapta esse molde com a sua realidade.
+> O `/lb-sistema-instalar` adapta esse molde com a sua realidade.
 
 ## O que é esse workspace
 
@@ -36,13 +36,13 @@ Time: [N pessoas]. Capacidade: [N clientes ativos simultâneos].
 
 ## Clientes ativos
 
-[Lista. O `/sistema-atualizar` mantém isso sincronizado com `clientes/`.]
+[Lista. O `/lb-sistema-atualizar` mantém isso sincronizado com `clientes/`.]
 
 ## Pipeline comercial
 
 - **Prospecção:** [como captamos novos clientes]
 - **Diagnóstico:** [como qualificamos — ex. diagnóstico grátis 30min]
-- **Proposta:** [formato — ex. HTML gerado pelo `/venda-proposta`]
+- **Proposta:** [formato — ex. HTML gerado pelo `/lb-venda-proposta`]
 - **Follow-up:** [cadência pós-proposta]
 
 ## Tom de voz
@@ -62,14 +62,14 @@ Evitar: [o que destoa do posicionamento]
 
 ## Skills principais
 
-- `/venda-prospectar` — montar lista de prospects qualificados
-- `/venda-dossie` — pesquisar prospect antes da abordagem
-- `/venda-proposta` — gerar proposta comercial em HTML
-- `/venda-follow-up` — sequência pós-proposta
-- `/meta-relatorio` — relatório mensal de performance Meta
-- `/google-ads` — criar/ajustar campanhas Google
-- `/conteudo-carrossel` — conteúdo de autoridade pra agência
-- `/negocio-analisar-dados` — análise de resultado de cliente
+- `/lb-venda-prospectar` — montar lista de prospects qualificados
+- `/lb-venda-dossie` — pesquisar prospect antes da abordagem
+- `/lb-venda-proposta` — gerar proposta comercial em HTML
+- `/lb-venda-follow-up` — sequência pós-proposta
+- `/lb-meta-relatorio` — relatório mensal de performance Meta
+- `/lb-google-ads` — criar/ajustar campanhas Google
+- `/lb-conteudo-carrossel` — conteúdo de autoridade pra agência
+- `/lb-negocio-analisar-dados` — análise de resultado de cliente
 
 ## Ferramentas conectadas
 

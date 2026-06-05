@@ -196,12 +196,12 @@ Skills que coletam 10+ dados específicos do negócio (GBP, campanhas, auditoria
 > 15. (opcional) Avaliações ruins anteriores e contexto"
 
 ### Skills que aplicam esse pattern
-- `/sistema-instalar` (já aplica — base do LBCode.IA)
-- `/google-meu-negocio` (caso clássico)
-- `/google-ads` Modo B (Dominação Top 1)
-- `/meta-campanha-whatsapp` (oferta + público + diferencial)
-- `/meta-campanha-seguidores` (publicações + público alvo)
-- `/conteudo-auditoria-insta` (alternativa pra quando user não tem prints)
+- `/lb-sistema-instalar` (já aplica — base do LBCode.IA)
+- `/lb-google-meu-negocio` (caso clássico)
+- `/lb-google-ads` Modo B (Dominação Top 1)
+- `/lb-meta-campanha-whatsapp` (oferta + público + diferencial)
+- `/lb-meta-campanha-seguidores` (publicações + público alvo)
+- `/lb-conteudo-auditoria-insta` (alternativa pra quando user não tem prints)
 
 ### Quando NÃO usar entrevista
 - Skill puxa tudo do `_memoria/empresa.md` (info já documentada)

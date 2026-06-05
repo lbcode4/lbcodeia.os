@@ -1,13 +1,13 @@
 # Passo 3 — Google Meu Negócio (resumo)
 **Negócio:** LBCode.IA | **Data:** 2026-06-04
 
-> **Este passo é executado pela skill `/google-meu-negocio`.**
-> Executar `/google-meu-negocio` para os 9 passos completos.
+> **Este passo é executado pela skill `/lb-google-meu-negocio`.**
+> Executar `/lb-google-meu-negocio` para os 9 passos completos.
 > Outputs completos vão em `marketing/gbp/2026-06-04/`.
 
 ---
 
-## Inputs para o `/google-meu-negocio`
+## Inputs para o `/lb-google-meu-negocio`
 
 - **Keyword principal:** software sob medida Santarém
 - **Nome do negócio:** LBCode.IA (LB Code — Soluções Digitais)
@@ -36,4 +36,4 @@ Concorrentes no Maps para "software Santarém":
 
 ## Próximo passo
 
-Executar: `/google-meu-negocio`
+Executar: `/lb-google-meu-negocio`

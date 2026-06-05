@@ -6,7 +6,7 @@ Tudo que as skills de marketing produzem cai aqui. Skills do LBCode.IA já sabem
 
 ```
 marketing/
-├── conteudo/                    saídas do /conteudo-carrossel e /conteudo-publicar
+├── conteudo/                    saídas do /lb-conteudo-carrossel e /lb-conteudo-publicar
 │   └── <tipo>-<tema>-<YYYY-MM-DD>/
 │       ├── carrossel.html
 │       ├── render.js
@@ -14,7 +14,7 @@ marketing/
 │       ├── legenda.md
 │       └── legenda-linkedin.md
 │
-├── seo/                         saídas do /google-seo (8 passos)
+├── seo/                         saídas do /lb-google-seo (8 passos)
 │   ├── 01-pesquisa-demanda.md
 │   ├── 02-analise-concorrencia.md
 │   ├── 03-google-meu-negocio.md
@@ -24,21 +24,21 @@ marketing/
 │   ├── 07-checklist-monitoramento.md
 │   └── 08-geo-otimizacao-ia.md
 │
-├── campanhas/                   saídas do /google-ads e /meta-relatorio
+├── campanhas/                   saídas do /lb-google-ads e /lb-meta-relatorio
 │   ├── google-ads-<YYYY-MM-DD>/  CSVs prontos pra importar
 │   └── relatorios/               relatórios semanais
 │
-└── avaliacoes-google/           histórico do /google-avaliacoes (opcional)
+└── avaliacoes-google/           histórico do /lb-google-avaliacoes (opcional)
 ```
 
 ## Como funciona
 
-- **`/conteudo-carrossel` ou `/conteudo-publicar`** → cria pasta em `conteudo/<tipo>-<tema>-<data>/`
-- **`/google-seo`** → preenche os 8 arquivos numerados em `seo/`
-- **`/google-ads`** → cria pasta em `campanhas/google-ads-<data>/` com CSVs
-- **`/meta-relatorio`** → cria arquivo em `campanhas/relatorios/<data>-relatorio.md`
-- **`/google-avaliacoes`** → opcionalmente salva histórico em `avaliacoes-google/`
+- **`/lb-conteudo-carrossel` ou `/lb-conteudo-publicar`** → cria pasta em `conteudo/<tipo>-<tema>-<data>/`
+- **`/lb-google-seo`** → preenche os 8 arquivos numerados em `seo/`
+- **`/lb-google-ads`** → cria pasta em `campanhas/google-ads-<data>/` com CSVs
+- **`/lb-meta-relatorio`** → cria arquivo em `campanhas/relatorios/<data>-relatorio.md`
+- **`/lb-google-avaliacoes`** → opcionalmente salva histórico em `avaliacoes-google/`
 
 ## Versionamento
 
-Tudo aqui versiona no git pelo `/sistema-salvar`. Útil pra comparar evolução de SEO entre meses, rever copies antigas, ou recuperar peça depois de mexer no Insta.
+Tudo aqui versiona no git pelo `/lb-sistema-salvar`. Útil pra comparar evolução de SEO entre meses, rever copies antigas, ou recuperar peça depois de mexer no Insta.

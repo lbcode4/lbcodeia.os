@@ -7,7 +7,7 @@ mensurado, repetível.
 Aqui moram as regras — como Claude carrega contexto, aprende de feedback, 
 mantém framework vivo, calibra execução conforme negócio evolui.
 
-Editável. `/sistema-instalar` complementa fim do arquivo com regras do seu negócio.
+Editável. `/lb-sistema-instalar` complementa fim do arquivo com regras do seu negócio.
 
 ---
 
@@ -18,10 +18,10 @@ LBCode.IA não é coleção solta de skills. É **máquina que executa framework
 
 Cada skill tira força do framework, não do acaso.
 
-- `/conteudo-carrossel` executa RETINA + GCC em visual
-- `/google-ads` executa 4 Campanhas + GCC em CSV
-- `/venda-prospectar` executa OPA + RETINA em lead pesquisado
-- `/meta-relatorio` fecha loop feedback do framework
+- `/lb-conteudo-carrossel` executa RETINA + GCC em visual
+- `/lb-google-ads` executa 4 Campanhas + GCC em CSV
+- `/lb-venda-prospectar` executa OPA + RETINA em lead pesquisado
+- `/lb-meta-relatorio` fecha loop feedback do framework
 
 Framework documentado em `_memoria/framework-trafego.md`. Skills carregam sob demanda.
 
@@ -42,7 +42,7 @@ Não confirmar leitura. Usar naturalmente.
 | Arquivo | Carregar quando |
 |---------|----------------|
 | `identidade/design-guide.md` | tarefa visual: carrossel, site, stories, identidade, design |
-| `_memoria/skills-catalogo.md` | criar projeto novo, selecionar skills, `/sistema-novo-projeto` |
+| `_memoria/skills-catalogo.md` | criar projeto novo, selecionar skills, `/lb-sistema-novo-projeto` |
 | `_memoria/framework-trafego.md` | marketing, ads, prospecção, conteúdo — **não opcional nesse caso** |
 | `integracoes/meta-ads/` (scripts + STYLE-GUIDE) | rodar skill `lb-meta-*` live (dashboard/diagnóstico/auditoria/reels/copy/gerenciar) — puxa Graph API |
 | `integracoes/google-ads/` (lib + tests) | rodar skill `lb-google-dashboard` / `lb-ads-unificado` / `lb-ads-negativas` live (Google Ads API) |
@@ -115,7 +115,7 @@ Só editar linha — não reformatar tudo.
 - Conversas/perguntas simples
 - Mudanças já salvas em feedback loop
 
-Cmd `/sistema-atualizar` faz varredura completa quando há dúvida.
+Cmd `/lb-sistema-atualizar` faz varredura completa quando há dúvida.
 
 ---
 

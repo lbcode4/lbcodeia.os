@@ -128,13 +128,13 @@ Distribuição em [N] dias (alternando tipo RETINA + formatos + ritmo visual de 
 
 ## PRÓXIMOS PASSOS
 Pra cada post, recomendar:
-- Rodar `/conteudo-carrossel` se for carrossel/foto
-- Rodar `/conteudo-aprovar` quando finalizado
+- Rodar `/lb-conteudo-carrossel` se for carrossel/foto
+- Rodar `/lb-conteudo-aprovar` quando finalizado
 - Salvar em `marketing/conteudo/<slug>-<YYYY-MM-DD>/`
 ```
 
 ## Output esperado
-N posts completos + calendário. Cada post pronto pra entrar em `/conteudo-carrossel`.
+N posts completos + calendário. Cada post pronto pra entrar em `/lb-conteudo-carrossel`.
 
 ## Regras
 - Sempre respeitar mix RETINA solicitado (não enviesar pra N+A só porque vendem)

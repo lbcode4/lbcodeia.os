@@ -1,7 +1,7 @@
 # Criador de GBP (Google Business Profile)
 
 ## Quando usar
-Otimização de GBP ou criação de ficha nova. Roda dentro da skill `/google-meu-negocio`.
+Otimização de GBP ou criação de ficha nova. Roda dentro da skill `/lb-google-meu-negocio`.
 
 ## Inputs necessários (questionário)
 1. Nome do negócio (registrado)
@@ -101,7 +101,7 @@ Esperamos te ver de novo aqui na [Nome com bairro]."
 Quer contar mais pra gente resolver? Fala com a gente: [WhatsApp]."
 
 ⚠️ Negativa: SEMPRE alinhar com user antes de responder (chamar
-`/google-avaliacoes`).
+`/lb-google-avaliacoes`).
 
 ## 7. SUGESTÕES DE PUBLICAÇÃO (4 posts iniciais)
 
@@ -139,7 +139,7 @@ Semana 4: pedir 5+ avaliações pra clientes recentes
 
 Após 30 dias do GBP rodando:
 - Rodar Campanha #3 "Dominação Top 1" (botão Anunciar dentro do GBP) —
-  chamar `/google-ads` modo B
+  chamar `/lb-google-ads` modo B
 - Monitorar posição local mensalmente
 - Cadastrar em diretórios secundários (Bing Places, Apple Maps)
 ```

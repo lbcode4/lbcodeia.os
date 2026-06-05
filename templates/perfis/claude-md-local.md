@@ -2,7 +2,7 @@
 
 > Perfil **negócio local** — empresa estabelecida com presença física ou
 > regional. O sistema gira em torno de tráfego pago local, reputação online
-> e conversão. O `/sistema-instalar` adapta esse molde com a sua realidade.
+> e conversão. O `/lb-sistema-instalar` adapta esse molde com a sua realidade.
 
 ## O que é esse workspace
 
@@ -56,14 +56,14 @@ Evitar: [o que destoa da marca]
 
 ## Skills principais
 
-- `/google-meu-negocio` — otimizar perfil e responder avaliações
-- `/google-avaliacoes` — responder avaliações Google
-- `/google-seo` — SEO local e conteúdo de busca
-- `/meta-campanha-whatsapp` — campanha de conversão local
-- `/conteudo-carrossel` — conteúdo de autoridade no nicho
-- `/conteudo-stories` — stories de engajamento e oferta
-- `/meta-relatorio` — relatório mensal de performance
-- `/negocio-analisar-dados` — análise de resultado de campanha
+- `/lb-google-meu-negocio` — otimizar perfil e responder avaliações
+- `/lb-google-avaliacoes` — responder avaliações Google
+- `/lb-google-seo` — SEO local e conteúdo de busca
+- `/lb-meta-campanha-whatsapp` — campanha de conversão local
+- `/lb-conteudo-carrossel` — conteúdo de autoridade no nicho
+- `/lb-conteudo-stories` — stories de engajamento e oferta
+- `/lb-meta-relatorio` — relatório mensal de performance
+- `/lb-negocio-analisar-dados` — análise de resultado de campanha
 
 ## Ferramentas conectadas
 

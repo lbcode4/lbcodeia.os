@@ -1,11 +1,11 @@
 # Criador de Script de Prospecção
 
 ## Quando usar
-Dossiê do prospect já levantado (via `/venda-dossie`) + persona do dono pronta (via `persona.md` Modo B). Gera roteiro 10 pontos personalizado pra abordagem.
+Dossiê do prospect já levantado (via `/lb-venda-dossie`) + persona do dono pronta (via `persona.md` Modo B). Gera roteiro 10 pontos personalizado pra abordagem.
 
 ## Inputs necessários
 - Perfil do gestor (quem aborda — nome, formação, anos de experiência)
-- Dossiê do prospect (output completo de `/venda-dossie`)
+- Dossiê do prospect (output completo de `/lb-venda-dossie`)
 - Persona do dono (output de `persona.md` Modo B)
 - Canal de abordagem (WhatsApp / cold call / email / presencial)
 - Oferta (o que vai oferecer — serviço + faixa de preço)
@@ -24,7 +24,7 @@ QUEM ABORDA (gestor):
 
 PROSPECT (dossiê):
 <<<
-[colar dossiê completo de /venda-dossie]
+[colar dossiê completo de /lb-venda-dossie]
 >>>
 
 PERSONA DO DONO DESSE NICHO:

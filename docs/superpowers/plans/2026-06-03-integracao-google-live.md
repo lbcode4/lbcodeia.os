@@ -284,7 +284,7 @@ por:
 E as 3 linhas de erro logo abaixo (linhas ~98-99) e a mensagem da linha ~124-126, trocar referências a `CLAUDE.md` / `setup_bootcamp.py` / `/configurar-ambiente` por:
 ```python
         print(f"ERRO: mapa de contas não encontrado em: {path}")
-        print("Crie _memoria/contas-ads.md e preencha a coluna 'Google Ads ID' (ver skill /ads-conectar).")
+        print("Crie _memoria/contas-ads.md e preencha a coluna 'Google Ads ID' (ver skill /lb-ads-conectar).")
 ```
 > O parser (`_parsear_tabela_multi`, coluna `google ads id`) já casa com `_memoria/contas-ads.md`. Nenhuma outra mudança no parser.
 
@@ -394,7 +394,7 @@ Expected: FAIL — `ModuleNotFoundError: No module named 'negativas'`
 ```python
 """
 negativas.py — puxa search_term_view da Google Ads API para análise de negativas.
-A análise (categorizar desperdício, sugerir negativas) é feita pela skill /ads-negativas
+A análise (categorizar desperdício, sugerir negativas) é feita pela skill /lb-ads-negativas
 usando o agente em system-prompts. Aqui só extraímos os dados crus.
 """
 import os
@@ -574,12 +574,12 @@ cp /home/luan/LBCodeOS/ClaudeCode/system-prompts/agents/agente-negativas.md inte
 name: lb-google-dashboard
 description: >
   Puxa performance Google Ads LIVE da API e gera dashboard HTML completo. Resolve a conta
-  do cliente pela coluna 'Google Ads ID' de _memoria/contas-ads.md. Diferente de /google-ads
+  do cliente pela coluna 'Google Ads ID' de _memoria/contas-ads.md. Diferente de /lb-google-ads
   (que gera CSV pra criar campanha) — este puxa performance real. Use quando o usuário pedir
-  "dashboard google", "performance google ads", "relatório google live", ou /google-dashboard.
+  "dashboard google", "performance google ads", "relatório google live", ou /lb-google-dashboard.
 ---
 
-# /google-dashboard — Dashboard Google Ads (live API)
+# /lb-google-dashboard — Dashboard Google Ads (live API)
 
 Puxa dado real da Google Ads API → HTML.
 
@@ -588,7 +588,7 @@ Puxa dado real da Google Ads API → HTML.
 - **Conta:** `_memoria/contas-ads.md` (coluna Google Ads ID, resolve via --cliente)
 - **Framework:** `_memoria/framework-trafego.md` (Bolo de Cenoura)
 - **Contexto/voz:** `_memoria/empresa.md`, `estrategia.md`, `preferencias.md`
-- **Credencial:** `integracoes/credentials/google-ads.yaml` (validar com `/ads-conectar`)
+- **Credencial:** `integracoes/credentials/google-ads.yaml` (validar com `/lb-ads-conectar`)
 
 ## Passos
 1. Carregar contexto + voz de `_memoria/`.
@@ -599,8 +599,8 @@ Puxa dado real da Google Ads API → HTML.
 6. Devolver: caminho do HTML + os 3 insights.
 
 ## Erros
-- Credencial faltando → instruir `/ads-conectar` (ramo Google).
-- Cliente sem Google Ads ID → avisar e pedir cadastro via `/ads-conectar`.
+- Credencial faltando → instruir `/lb-ads-conectar` (ramo Google).
+- Cliente sem Google Ads ID → avisar e pedir cadastro via `/lb-ads-conectar`.
 - NUNCA exibir credenciais em resposta/log.
 ```
 
@@ -613,10 +613,10 @@ description: >
   Gera relatório unificado Google Ads + Meta Ads num HTML só, com resumo cross-platform.
   Roda os dois motores live e funde. Resolve a conta em _memoria/contas-ads.md (precisa
   Google Ads ID E Meta Ad Account preenchidos). Use quando o usuário pedir "relatório
-  unificado", "google e meta juntos", "dashboard geral de ads", ou /ads-unificado.
+  unificado", "google e meta juntos", "dashboard geral de ads", ou /lb-ads-unificado.
 ---
 
-# /ads-unificado — Relatório unificado Google + Meta (live)
+# /lb-ads-unificado — Relatório unificado Google + Meta (live)
 
 Funde os 2 dashboards num HTML cross-platform.
 
@@ -636,7 +636,7 @@ Funde os 2 dashboards num HTML cross-platform.
 
 ## Erros
 - Falta credencial de uma plataforma → rodar só a que tem + avisar.
-- Cliente sem um dos IDs → instruir cadastro via `/ads-conectar`.
+- Cliente sem um dos IDs → instruir cadastro via `/lb-ads-conectar`.
 ```
 
 - [ ] **Step 4: `ads-negativas/SKILL.md`**
@@ -649,10 +649,10 @@ description: >
   negativas pronta pra implementar, agrupada por tema, com gasto desperdiçado justificando cada
   uma. Resolve a conta pela coluna Google Ads ID de _memoria/contas-ads.md. Use quando o usuário
   pedir "negativas", "palavras-chave negativas", "termos de busca", "onde tô gastando à toa no
-  google", ou /ads-negativas.
+  google", ou /lb-ads-negativas.
 ---
 
-# /ads-negativas — Lista de negativas Google Ads (live)
+# /lb-ads-negativas — Lista de negativas Google Ads (live)
 
 Puxa search_term_view → categoriza desperdício → lista de negativas.
 
@@ -672,7 +672,7 @@ Puxa search_term_view → categoriza desperdício → lista de negativas.
 6. Devolver: lista pronta pra implementar + justificativa de gasto por negativa.
 
 ## Erros
-- Credencial faltando → instruir `/ads-conectar` (ramo Google).
+- Credencial faltando → instruir `/lb-ads-conectar` (ramo Google).
 - NUNCA exibir credenciais.
 ```
 
@@ -734,11 +734,11 @@ Na tabela "Sob demanda", adicionar:
 
 - [ ] **Step 2: Registrar as 3 skills no skills-catalogo.md**
 
-Adicionar, após a linha de `/meta-gerenciar`, na matriz (colunas SaaS B2B | Agência | Local | Criador):
+Adicionar, após a linha de `/lb-meta-gerenciar`, na matriz (colunas SaaS B2B | Agência | Local | Criador):
 ```markdown
-| `/google-dashboard` | ✅ | ✅ | ✅ | ⚠️ | Live API Google → HTML; precisa Google Ads ID + yaml |
-| `/ads-unificado` | ✅ | ✅ | ✅ | ⚠️ | Funde Google+Meta; precisa ambos os IDs + ambas as creds |
-| `/ads-negativas` | ✅ | ✅ | ✅ | ❌ | Live API — termos de busca → negativas; só faz sentido com Google Ads |
+| `/lb-google-dashboard` | ✅ | ✅ | ✅ | ⚠️ | Live API Google → HTML; precisa Google Ads ID + yaml |
+| `/lb-ads-unificado` | ✅ | ✅ | ✅ | ⚠️ | Funde Google+Meta; precisa ambos os IDs + ambas as creds |
+| `/lb-ads-negativas` | ✅ | ✅ | ✅ | ❌ | Live API — termos de busca → negativas; só faz sentido com Google Ads |
 ```
 E atualizar a contagem no topo de `37 skills` para `40 skills`.
 

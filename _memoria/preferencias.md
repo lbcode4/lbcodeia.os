@@ -1,7 +1,7 @@
 # Preferências
 
 > Como o Claude escreve em nome do seu negócio. Tom, estilo, vícios a evitar.
-> Preenchido pelo `/sistema-instalar` — você pode editar a qualquer momento pra calibrar.
+> Preenchido pelo `/lb-sistema-instalar` — você pode editar a qualquer momento pra calibrar.
 
 ## Tom de voz
 - Formal, com autoridade. Direto, foco em benefício e ROI quantificado.

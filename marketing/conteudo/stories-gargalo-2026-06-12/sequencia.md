@@ -93,4 +93,4 @@
 - **Publicar:** 12/06 entre 18h–20h (engajamento pós-trabalho, sexta)
 - **Monitorar:** respostas da enquete + caixa de perguntas nas primeiras 2h — responder TODOS os que responderem (cada resposta é um lead quente)
 - **Quem responder a caixa de perguntas:** iniciar conversa no DM: *"Vi que você respondeu sobre [gargalo]. Posso te contar como a gente resolveu isso pra outras empresas em 2-3 semanas?"*
-- **Sequência de FUP:** quem clicar no link WhatsApp → já entrou no funil. Usar script de diagnóstico (`/venda-diagnostico`)
+- **Sequência de FUP:** quem clicar no link WhatsApp → já entrou no funil. Usar script de diagnóstico (`/lb-venda-diagnostico`)

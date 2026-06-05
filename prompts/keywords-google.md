@@ -121,7 +121,7 @@ Link: https://answerthepublic.com/
 ```
 
 ## Output esperado
-9 seções estruturadas. Top 5-8 da seção 6 alimenta direto o `/google-ads` (campo keywords) e `/google-seo` (pesquisa-demanda).
+9 seções estruturadas. Top 5-8 da seção 6 alimenta direto o `/lb-google-ads` (campo keywords) e `/lb-google-seo` (pesquisa-demanda).
 
 ## Regras
 - Nunca aceitar lista crua sem 9 seções

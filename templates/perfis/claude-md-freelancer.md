@@ -1,7 +1,7 @@
 # [Seu Nome] — LBCode.IA
 
 > Perfil **freelancer** — vende tempo e talento pra clientes terceiros.
-> O sistema gira em torno de captar, entregar e cobrar. O `/sistema-instalar`
+> O sistema gira em torno de captar, entregar e cobrar. O `/lb-sistema-instalar`
 > adapta esse molde com a sua realidade.
 
 ## O que é esse workspace
@@ -35,7 +35,7 @@ Ticket médio: [valor]. Capacidade: [N clientes simultâneos].
 
 ## Clientes ativos
 
-[Lista. O `/sistema-atualizar` mantém isso sincronizado com `clientes/`.]
+[Lista. O `/lb-sistema-atualizar` mantém isso sincronizado com `clientes/`.]
 
 ## Como capto clientes
 
@@ -57,12 +57,12 @@ Evitar: [o que destoa do seu posicionamento]
 
 ## Skills principais
 
-- `/venda-prospectar` — montar lista de prospects qualificados
-- `/venda-proposta` — gerar proposta comercial em HTML
-- `/venda-follow-up` — sequência de follow-up pós-proposta
-- `/venda-objecoes` — banco de objeções e respostas
-- `/conteudo-carrossel` — conteúdo de atração pra fechar mais clientes
-- `/negocio-analisar-dados` — analisar resultado de entrega
+- `/lb-venda-prospectar` — montar lista de prospects qualificados
+- `/lb-venda-proposta` — gerar proposta comercial em HTML
+- `/lb-venda-follow-up` — sequência de follow-up pós-proposta
+- `/lb-venda-objecoes` — banco de objeções e respostas
+- `/lb-conteudo-carrossel` — conteúdo de atração pra fechar mais clientes
+- `/lb-negocio-analisar-dados` — analisar resultado de entrega
 
 ## Ferramentas conectadas
 
