@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LBCode.IA — Software sob medida com IA para PMEs</title>
+<meta name="description" content="A LBCode.IA cria software personalizado pra PMEs em 2 a 6 semanas. Código 100% seu, sem mensalidade, sem dependência.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────
+   TOKENS
+───────────────────────────────────────── */
+:root {
+  --bg:       #06060C;
+  --bg2:      #0A0A18;
+  --bg3:      #0E0E22;
+  --ink:      #FFFFFF;
+  --muted:    #C9C9D6;
+  --dim:      #6E6E88;
+  --purple:   #A24BFF;
+  --cyan:     #29C5FF;
+  --midblue:  #6C7BFF;
+  --grad:     linear-gradient(100deg, #A24BFF 0%, #6C7BFF 50%, #29C5FF 100%);
+  --grad-r:   linear-gradient(280deg, #A24BFF 0%, #6C7BFF 50%, #29C5FF 100%);
+  --glow-p:   0 0 40px rgba(162,75,255,0.35);
+  --glow-c:   0 0 40px rgba(41,197,255,0.25);
+  --radius:   20px;
+  --nav-h:    72px;
+  --font-display: 'Poppins', sans-serif;
+  --font-mono:    'Space Mono', monospace;
+  --font-body:    'Inter', sans-serif;
+}
+
+/* ─────────────────────────────────────────
+   RESET & BASE
+───────────────────────────────────────── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button, .btn { cursor: pointer; border: none; font-family: var(--font-display); }
+
+/* circuit bg pattern (reusable) */
+.circuit-bg {
+  background-image:
+    radial-gradient(ellipse 900px 600px at 80% -10%, rgba(162,75,255,0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 700px 500px at -10% 80%, rgba(41,197,255,0.12) 0%, transparent 60%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'><circle cx='40' cy='40' r='1' fill='%23A24BFF' opacity='0.15'/><line x1='40' y1='40' x2='80' y2='40' stroke='%23A24BFF' stroke-width='0.4' opacity='0.08'/><line x1='40' y1='40' x2='40' y2='80' stroke='%2329C5FF' stroke-width='0.4' opacity='0.06'/></svg>");
+  background-size: auto, auto, 80px 80px;
+}
+
+/* ─────────────────────────────────────────
+   UTILITIES
+───────────────────────────────────────── */
+.grad-text {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 24px;
+  height: 2px;
+  background: var(--cyan);
+  border-radius: 2px;
+  box-shadow: var(--glow-c);
+}
+.rule {
+  width: 60px; height: 3px;
+  background: var(--grad);
+  border-radius: 3px;
+  margin: 20px 0;
+}
+
+/* neon card border */
+.card-neon {
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background:
+    linear-gradient(var(--bg3), var(--bg3)) padding-box,
+    var(--grad) border-box;
+  box-shadow: 0 0 30px rgba(108,123,255,0.15), inset 0 0 30px rgba(41,197,255,0.03);
+}
+
+/* pill tag */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  border: 1px solid rgba(41,197,255,0.3);
+  border-radius: 40px;
+  padding: 8px 20px;
+  background: rgba(41,197,255,0.06);
+  backdrop-filter: blur(8px);
+}
+.pill .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+  flex-shrink: 0;
+}
+
+/* buttons */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  color: #06060C;
+  background: var(--grad);
+  border-radius: 50px;
+  padding: 16px 36px;
+  box-shadow: 0 0 30px rgba(108,123,255,0.4);
+  transition: transform .2s, box-shadow .2s;
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 50px rgba(108,123,255,0.6);
+}
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--muted);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 50px;
+  padding: 15px 32px;
+  transition: border-color .2s, color .2s;
+  backdrop-filter: blur(8px);
+}
+.btn-ghost:hover {
+  border-color: rgba(41,197,255,0.5);
+  color: var(--cyan);
+}
+
+/* section wrapper */
+.section {
+  padding: 120px 0;
+}
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+.section-header {
+  margin-bottom: 64px;
+}
+
+/* animate on scroll */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity .7s ease, transform .7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: .1s; }
+.reveal-delay-2 { transition-delay: .2s; }
+.reveal-delay-3 { transition-delay: .3s; }
+.reveal-delay-4 { transition-delay: .4s; }
+
+/* hex icon container */
+.hex-icon {
+  width: 64px; height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+  border: 1.5px solid transparent;
+  background:
+    linear-gradient(var(--bg2), var(--bg2)) padding-box,
+    var(--grad) border-box;
+  box-shadow: 0 0 20px rgba(108,123,255,0.2);
+  flex-shrink: 0;
+}
+.hex-icon svg {
+  width: 28px; height: 28px;
+}
+
+/* ─────────────────────────────────────────
+   NAV
+───────────────────────────────────────── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--nav-h);
+  z-index: 100;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(6,6,12,0.75);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  transition: background .3s;
+}
+.nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nav-logo img {
+  height: 44px;
+  width: auto;
+}
+.nav-links {
+  display: flex;
+  gap: 36px;
+  list-style: none;
+}
+.nav-links a {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--dim);
+  transition: color .2s;
+}
+.nav-links a:hover { color: var(--ink); }
+.nav-cta {
+  font-size: 13px;
+  padding: 10px 24px;
+}
+
+/* ─────────────────────────────────────────
+   HERO
+───────────────────────────────────────── */
+#hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding-top: var(--nav-h);
+  position: relative;
+  overflow: hidden;
+}
+#hero .circuit-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+/* animated glow orbs */
+#hero::before {
+  content: '';
+  position: absolute;
+  width: 700px; height: 700px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(162,75,255,0.12) 0%, transparent 70%);
+  top: -200px; right: -200px;
+  pointer-events: none;
+  animation: orb-float 8s ease-in-out infinite;
+}
+#hero::after {
+  content: '';
+  position: absolute;
+  width: 500px; height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(41,197,255,0.08) 0%, transparent 70%);
+  bottom: -100px; left: -100px;
+  pointer-events: none;
+  animation: orb-float 10s ease-in-out infinite reverse;
+}
+@keyframes orb-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%       { transform: translate(20px, -30px) scale(1.05); }
+}
+.hero-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 100px 40px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+.hero-left {}
+.hero-pill { margin-bottom: 32px; }
+.hero-headline {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(44px, 5.5vw, 72px);
+  line-height: 1.0;
+  letter-spacing: -0.04em;
+  margin-bottom: 24px;
+}
+.hero-sub {
+  font-size: 18px;
+  line-height: 1.65;
+  color: var(--muted);
+  max-width: 500px;
+  margin-bottom: 40px;
+}
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.hero-right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.hero-card {
+  padding: 24px 28px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(14,14,34,0.7);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  transition: border-color .2s, transform .2s;
+}
+.hero-card:hover {
+  border-color: rgba(162,75,255,0.35);
+  transform: translateX(4px);
+}
+.hero-card-body h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 6px;
+}
+.hero-card-body p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+/* terminal-style bottom strip */
+.hero-terminal {
+  margin-top: 48px;
+  padding: 16px 24px;
+  background: rgba(10,10,24,0.9);
+  border: 1px solid rgba(41,197,255,0.2);
+  border-radius: 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--cyan);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  backdrop-filter: blur(8px);
+}
+.hero-terminal .cursor {
+  display: inline-block;
+  width: 8px; height: 14px;
+  background: var(--cyan);
+  animation: blink 1s step-end infinite;
+  border-radius: 1px;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* hero stats bar */
+.hero-stats {
+  position: relative;
+  z-index: 2;
+  max-width: 1200px;
+  margin: 0 auto 60px;
+  padding: 0 40px;
+  display: flex;
+  gap: 0;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.hero-stat {
+  flex: 1;
+  padding: 28px 0;
+  text-align: center;
+  border-right: 1px solid rgba(255,255,255,0.07);
+}
+.hero-stat:last-child { border-right: none; }
+.hero-stat .num {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 36px;
+  line-height: 1;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  letter-spacing: -0.03em;
+}
+.hero-stat .label {
+  font-size: 12px;
+  color: var(--dim);
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ─────────────────────────────────────────
+   SEÇÃO 2 — DOR
+───────────────────────────────────────── */
+#dor {
+  background: var(--bg2);
+  position: relative;
+  overflow: hidden;
+}
+#dor::before {
+  content: '';
+  position: absolute;
+  right: -100px; top: 50%;
+  transform: translateY(-50%);
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(162,75,255,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+.dor-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+.dor-left h2 {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(36px, 4vw, 56px);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  margin: 16px 0 24px;
+}
+.dor-left p {
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+.dor-right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.dor-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  padding: 22px 26px;
+  border-radius: 14px;
+  background: rgba(6,6,12,0.6);
+  border: 1px solid rgba(255,255,255,0.05);
+  transition: border-color .2s;
+}
+.dor-item:hover { border-color: rgba(162,75,255,0.3); }
+.dor-item .icon {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 10px;
+  background: rgba(162,75,255,0.12);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.dor-item .icon svg { width: 18px; height: 18px; }
+.dor-item h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+.dor-item p { font-size: 14px; color: var(--muted); line-height: 1.5; }
+
+/* ─────────────────────────────────────────
+   SEÇÃO 3 — MECANISMO
+───────────────────────────────────────── */
+#mecanismo {
+  position: relative;
+}
+.mec-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 64px;
+}
+.mec-card {
+  padding: 40px 36px;
+  border-radius: var(--radius);
+  position: relative;
+  overflow: hidden;
+  transition: transform .3s;
+}
+.mec-card:hover { transform: translateY(-6px); }
+.mec-card .num-big {
+  font-family: var(--font-mono);
+  font-size: 72px;
+  font-weight: 700;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  line-height: 1;
+  margin-bottom: 24px;
+  opacity: 0.5;
+}
+.mec-card h3 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 22px;
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+.mec-card p {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+/* ─────────────────────────────────────────
+   SEÇÃO 4 — FEATURES
+───────────────────────────────────────── */
+#features {
+  background: var(--bg2);
+  overflow: hidden;
+  position: relative;
+}
+#features::after {
+  content: '';
+  position: absolute;
+  left: -200px; bottom: -200px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(41,197,255,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 64px;
+}
+.feature-item {
+  padding: 24px;
+  border-radius: 14px;
+  background: rgba(6,6,12,0.6);
+  border: 1px solid rgba(255,255,255,0.05);
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  transition: border-color .2s, background .2s, transform .2s;
+}
+.feature-item:hover {
+  border-color: rgba(162,75,255,0.4);
+  background: rgba(162,75,255,0.04);
+  transform: translateY(-3px);
+}
+.feature-item .fhex {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(162,75,255,0.1);
+  flex-shrink: 0;
+}
+.feature-item .fhex svg { width: 22px; height: 22px; }
+.feature-item h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+.feature-item p { font-size: 12px; color: var(--dim); line-height: 1.4; }
+
+/* ─────────────────────────────────────────
+   SEÇÃO 5 — NÚMEROS / PROVA
+───────────────────────────────────────── */
+#numeros {
+  position: relative;
+  text-align: center;
+  overflow: hidden;
+}
+#numeros::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 800px 400px at 50% 50%, rgba(108,123,255,0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  background: rgba(255,255,255,0.05);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-top: 80px;
+}
+.stat-item {
+  padding: 72px 40px;
+  background: var(--bg);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.stat-item::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 2px;
+  background: var(--grad);
+}
+.stat-val {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(64px, 7vw, 96px);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.stat-unit {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 36px;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.stat-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-top: 14px;
+}
+.stat-desc {
+  font-size: 14px;
+  color: var(--muted);
+  max-width: 240px;
+  margin: 12px auto 0;
+  line-height: 1.5;
+}
+
+/* ─────────────────────────────────────────
+   SEÇÃO 6 — PLANOS
+───────────────────────────────────────── */
+#planos {
+  background: var(--bg2);
+}
+.planos-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 64px;
+  align-items: start;
+}
+.plano-card {
+  border-radius: var(--radius);
+  padding: 40px 36px;
+  background: rgba(6,6,12,0.8);
+  border: 1px solid rgba(255,255,255,0.08);
+  transition: transform .3s;
+  position: relative;
+}
+.plano-card:hover { transform: translateY(-6px); }
+.plano-card.destaque {
+  background:
+    linear-gradient(var(--bg3), var(--bg3)) padding-box,
+    var(--grad) border-box;
+  border: 1.5px solid transparent;
+  box-shadow: 0 0 60px rgba(108,123,255,0.2);
+}
+.plano-badge {
+  position: absolute;
+  top: -14px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--grad);
+  color: #06060C;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 6px 18px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.plano-name {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 16px;
+}
+.plano-price {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 40px;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.plano-price span {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0;
+}
+.plano-desc {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 16px 0 28px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.plano-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.plano-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.plano-features li::before {
+  content: '';
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid var(--cyan);
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(41,197,255,0.08);
+  flex-shrink: 0;
+  margin-top: 1px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><polyline points='2.5,6 5,8.5 9.5,3.5' fill='none' stroke='%2329C5FF' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-size: 12px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.plano-cta {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 16px;
+}
+
+/* ─────────────────────────────────────────
+   SEÇÃO 7 — FAQ
+───────────────────────────────────────── */
+#faq {
+  max-width: 760px;
+  margin: 0 auto;
+}
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 56px;
+}
+.faq-item {
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(14,14,34,0.5);
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.faq-item.open { border-color: rgba(162,75,255,0.35); }
+.faq-q {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 28px;
+  background: transparent;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--ink);
+  text-align: left;
+  gap: 16px;
+  transition: color .2s;
+}
+.faq-q:hover { color: var(--cyan); }
+.faq-icon {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: transform .3s, border-color .2s, background .2s;
+}
+.faq-item.open .faq-icon {
+  transform: rotate(45deg);
+  border-color: var(--purple);
+  background: rgba(162,75,255,0.12);
+}
+.faq-icon svg { width: 14px; height: 14px; }
+.faq-a {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .4s ease, padding .4s ease;
+  padding: 0 28px;
+}
+.faq-item.open .faq-a {
+  max-height: 300px;
+  padding: 0 28px 24px;
+}
+.faq-a p {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+/* ─────────────────────────────────────────
+   SEÇÃO 8 — CTA FINAL
+───────────────────────────────────────── */
+#cta-final {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  padding: 160px 40px;
+}
+#cta-final::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 1000px 600px at 50% 50%,
+      rgba(162,75,255,0.15) 0%,
+      rgba(108,123,255,0.1) 40%,
+      transparent 70%);
+  pointer-events: none;
+}
+/* animated ring */
+#cta-final::after {
+  content: '';
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px; height: 600px;
+  border: 1px solid rgba(162,75,255,0.1);
+  border-radius: 50%;
+  animation: ring-pulse 4s ease-in-out infinite;
+}
+@keyframes ring-pulse {
+  0%, 100% { transform: translate(-50%,-50%) scale(1); opacity: .4; }
+  50%       { transform: translate(-50%,-50%) scale(1.1); opacity: .1; }
+}
+.cta-final-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.cta-final-inner h2 {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(40px, 5vw, 64px);
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  margin: 20px 0 24px;
+}
+.cta-final-inner p {
+  font-size: 18px;
+  color: var(--muted);
+  line-height: 1.65;
+  margin-bottom: 48px;
+}
+.cta-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.cta-note {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--dim);
+  letter-spacing: 0.1em;
+}
+
+/* ─────────────────────────────────────────
+   FOOTER
+───────────────────────────────────────── */
+footer {
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 48px 0;
+  background: rgba(6,6,12,0.9);
+}
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+.footer-logo img {
+  height: 40px;
+  opacity: 0.8;
+}
+.footer-info {
+  text-align: right;
+  font-size: 13px;
+  color: var(--dim);
+  line-height: 1.8;
+}
+.footer-info a { color: var(--cyan); }
+
+/* ─────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────── */
+@media (max-width: 900px) {
+  .hero-inner { grid-template-columns: 1fr; gap: 48px; }
+  .hero-right { display: none; }
+  .dor-inner { grid-template-columns: 1fr; gap: 48px; }
+  .mec-cards { grid-template-columns: 1fr; }
+  .features-grid { grid-template-columns: repeat(2, 1fr); }
+  .planos-grid { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+  .hero-stats { flex-direction: column; }
+  .hero-stat { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.07); }
+  .hero-stat:last-child { border-bottom: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     NAV
+════════════════════════════════════════ -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">
+      <img src="../../identidade/logo.png" alt="LBCode.IA">
+    </div>
+    <ul class="nav-links">
+      <li><a href="#mecanismo">Como funciona</a></li>
+      <li><a href="#features">Soluções</a></li>
+      <li><a href="#planos">Planos</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <a href="https://wa.me/5593981234567" class="btn-primary btn nav-cta">Diagnóstico grátis</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════
+     HERO
+════════════════════════════════════════ -->
+<section id="hero">
+  <div class="circuit-bg"></div>
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="pill hero-pill reveal">
+        <span class="dot"></span>Software sob medida · IA First · Santarém, PA
+      </div>
+      <h1 class="hero-headline reveal reveal-delay-1">
+        Seu negócio merece um sistema que funciona
+        <span class="grad-text">do seu jeito.</span>
+      </h1>
+      <p class="hero-sub reveal reveal-delay-2">
+        A LBCode.IA cria software personalizado pra PMEs em 2 a 6 semanas — com inteligência artificial, sem mensalidade eterna, sem você depender de ninguém.
+      </p>
+      <div class="hero-actions reveal reveal-delay-3">
+        <a href="https://wa.me/5593981234567" class="btn-primary">Agendar diagnóstico grátis →</a>
+        <a href="#features" class="btn-ghost">Ver o que entregamos</a>
+      </div>
+      <div class="hero-terminal reveal reveal-delay-4">
+        <span style="color:var(--dim)">$</span> lbcode.ia --diagnóstico --grátis --15min<span class="cursor"></span>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-card reveal reveal-delay-1">
+        <div class="hex-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="url(#g1)" stroke-width="1.8" stroke-linecap="round">
+            <defs><linearGradient id="g1" x1="0" y1="0" x2="24" y2="24"><stop offset="0" stop-color="#A24BFF"/><stop offset="1" stop-color="#29C5FF"/></linearGradient></defs>
+            <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+          </svg>
+        </div>
+        <div class="hero-card-body">
+          <h4>Código 100% seu</h4>
+          <p>Sem mensalidade. Sem licença. O código fica com você para sempre.</p>
+        </div>
+      </div>
+      <div class="hero-card reveal reveal-delay-2">
+        <div class="hex-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="url(#g2)" stroke-width="1.8" stroke-linecap="round">
+            <defs><linearGradient id="g2" x1="0" y1="0" x2="24" y2="24"><stop offset="0" stop-color="#A24BFF"/><stop offset="1" stop-color="#29C5FF"/></linearGradient></defs>
+            <circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+          </svg>
+        </div>
+        <div class="hero-card-body">
+          <h4>5x mais rápido com IA</h4>
+          <p>Claude Code acelera o desenvolvimento. MVP em 2 a 6 semanas.</p>
+        </div>
+      </div>
+      <div class="hero-card reveal reveal-delay-3">
+        <div class="hex-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="url(#g3)" stroke-width="1.8" stroke-linecap="round">
+            <defs><linearGradient id="g3" x1="0" y1="0" x2="24" y2="24"><stop offset="0" stop-color="#A24BFF"/><stop offset="1" stop-color="#29C5FF"/></linearGradient></defs>
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <div class="hero-card-body">
+          <h4>ROI em 2 a 3 meses</h4>
+          <p>O sistema se paga rápido. Sem aluguel eterno corroendo seu caixa.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat reveal">
+      <div class="num">5x</div>
+      <div class="label">mais rápido com IA</div>
+    </div>
+    <div class="hero-stat reveal reveal-delay-1">
+      <div class="num">2–6</div>
+      <div class="label">semanas de entrega</div>
+    </div>
+    <div class="hero-stat reveal reveal-delay-2">
+      <div class="num">50+</div>
+      <div class="label">módulos disponíveis</div>
+    </div>
+    <div class="hero-stat reveal reveal-delay-3">
+      <div class="num">R$0</div>
+      <div class="label">mensalidade no código</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     DOR
+════════════════════════════════════════ -->
+<section id="dor" class="section">
+  <div class="container">
+    <div class="dor-inner">
+      <div class="dor-left reveal">
+        <div class="eyebrow">O problema real</div>
+        <h2>Todo sistema de prateleira foi feito pra <span class="grad-text">outra empresa.</span></h2>
+        <div class="rule"></div>
+        <p>Você instala. Paga mensalidade. Adapta o seu processo pra caber no que já existe. Resultado: fluxo quebrado, funcionalidade faltando — e o dono do seu processo passa a ser o software, não você.<br><br>Toda mensalidade é aluguel. E aluguel nunca vira propriedade.</p>
+      </div>
+      <div class="dor-right">
+        <div class="dor-item reveal reveal-delay-1">
+          <div class="icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#A24BFF" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          </div>
+          <div>
+            <h4>Você se adapta ao sistema</h4>
+            <p>Não o contrário. Seu processo real não cabe nas funcionalidades padrão.</p>
+          </div>
+        </div>
+        <div class="dor-item reveal reveal-delay-2">
+          <div class="icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#A24BFF" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          </div>
+          <div>
+            <h4>Mensalidade eterna</h4>
+            <p>Paga todo mês, pra sempre. Se um dia parar de pagar, perde tudo — porque nada é seu.</p>
+          </div>
+        </div>
+        <div class="dor-item reveal reveal-delay-3">
+          <div class="icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#A24BFF" stroke-width="2" stroke-linecap="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+          </div>
+          <div>
+            <h4>Dados presos no fornecedor</h4>
+            <p>Quando quiser trocar ou evoluir, a migração é complexa — e cara.</p>
+          </div>
+        </div>
+        <div class="dor-item reveal reveal-delay-4">
+          <div class="icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#A24BFF" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div>
+            <h4>Tempo perdido em processos manuais</h4>
+            <p>Sem automação que se encaixe no seu fluxo, a equipe faz à mão o que IA resolve.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     MECANISMO
+════════════════════════════════════════ -->
+<section id="mecanismo" class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="eyebrow">Como funciona</div>
+      <h2 style="font-family:var(--font-display);font-weight:900;font-size:clamp(36px,4vw,54px);line-height:1.05;letter-spacing:-0.035em;margin:16px 0 0;">
+        Desenvolvemos em semanas o que antes<br>
+        <span class="grad-text">levava meses.</span>
+      </h2>
+    </div>
+    <div class="mec-cards">
+      <div class="mec-card card-neon reveal reveal-delay-1">
+        <div class="num-big">01</div>
+        <h3>Sob medida</h3>
+        <p>O sistema é construído em cima do seu processo, não o contrário. Cada tela, cada fluxo, cada automação — do jeito que o seu negócio funciona.</p>
+      </div>
+      <div class="mec-card card-neon reveal reveal-delay-2">
+        <div class="num-big">02</div>
+        <h3>IA First</h3>
+        <p>Usamos Claude Code — a mesma IA dos melhores times de desenvolvimento — pra entregar 5x mais rápido. MVP real em 2 a 6 semanas, sem atalhos.</p>
+      </div>
+      <div class="mec-card card-neon reveal reveal-delay-3">
+        <div class="num-big">03</div>
+        <h3>Código 100% seu</h3>
+        <p>Você é dono do código. Sem licença. Sem mensalidade. Sem dependência de fornecedor. O sistema fica na sua mão para sempre.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     FEATURES
+════════════════════════════════════════ -->
+<section id="features" class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="eyebrow">Módulos disponíveis</div>
+      <h2 style="font-family:var(--font-display);font-weight:900;font-size:clamp(36px,4vw,54px);line-height:1.05;letter-spacing:-0.035em;margin:16px 0 16px;">
+        50+ soluções prontas pra encaixar<br>
+        <span class="grad-text">no seu negócio.</span>
+      </h2>
+      <p style="color:var(--muted);font-size:17px;max-width:560px;">Cada módulo é adaptado ao seu fluxo. Você escolhe o que faz sentido — entregamos o que você precisa.</p>
+    </div>
+    <div class="features-grid">
+
+      <div class="feature-item reveal reveal-delay-1">
+        <div class="fhex">
+          <svg viewBox="0 0 24 24" fill="none" stroke="url(#fg1)" stroke-width="1.8" stroke-linecap="round">
+            <defs><linearGradient id="fg1" x1="0" y1="0" x2="24" y2="24"><stop offset="0" stop-color="#A24BFF"/><stop offset="1" stop-color="#29C5FF"/></linearGradient></defs>
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <div>
+          <h4>Automação de WhatsApp</h4>
+          <p>API oficial · atende, qualifica e agenda</p>
+        </div>
+      </div>
+
+      <div class="feature-item reveal reveal-delay-2">
+        <div class="fhex">
+          <svg viewBox="0 0 24 24" fill="none" stroke="url(#fg2)" stroke-width="1.8" stroke-linecap="round">
+            <defs><linearGradient id="fg2" x1="0" y1="0" x2="24" y2="24"><stop offset="0" stop-color="#A24BFF"/><stop offset="1" stop-color="#29C5FF"/></linearGradient></defs>
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+        </div>
+        <div>
+          <h4>Agendamento inteligente</h4>
+          <p>Sem secretária · sincroniza calendários</p>
+        </div>
+      </div>
+
+      <div class="feature-item reveal reveal-delay-3">
+        <div class="fhex">
+          <svg viewBox="0 0 24 24" fill="none" stroke="url(#fg3)" stroke-width="1.8" stroke-linecap="round">
+            <defs><linearGradient id="fg3" x1="0" y1="0" x2="24" y2="24"><stop offset="0" stop-color="#A24BFF"/><stop offset="1" stop-color="#29C5FF"/></linearGradient></defs>
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <div>
+          <h4>CRM de clientes</h4>
+          <p>Histórico completo · pipeline de vendas</p>
+        </div>
+      </div>
+
+      <div class="feature-item reveal reveal-delay-4">
+        <div class="fhex">
+          <svg viewBox="0 0 24 24" fill="none" stroke="url(#fg4)" stroke-width="1.8" stroke-linecap="round">
+            <defs><linearGradient id="fg4" x1="0" y1="0" x2="24" y2="24"><stop offset="0" stop-color="#A24BFF"/><stop offset="1" stop-color="#29C5FF"/></linearGradient></defs>
+            <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+          </svg>
+        </div>
+        <div>
+          <h4>Dashboard com IA</h4>
+          <p>LTV · CAC · ROI em tempo real</p>
+        </div>
+      </div>
+
+      <div class="feature-item reveal reveal-delay-1">
+        <div class="fhex">
+          <svg viewBox="0 0 24 24" fill="none" stroke="url(#fg5)" stroke-width="1.8" stroke-linecap="round">
+            <defs><linearGradient id="fg5" x1="0" y1="0" x2="24" y2="24"><stop offset="0" stop-color="#A24BFF"/><stop offset="1" stop-color="#29C5FF"/></linearGradient></defs>
+            <circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>
+          </svg>
+        </div>
+        <div>
+          <h4>Chatbot de atendimento</h4>
+          <p>IA 24h · resolve dúvidas · escalona humano</p>
+        </div>
+      </div>
+
+      <div class="feature-item reveal reveal-delay-2">
+        <div class="fhex">
+          <svg viewBox="0 0 24 24" fill="none" stroke="url(#fg6)" stroke-width="1.8" stroke-linecap="round">
+            <defs><linearGradient id="fg6" x1="0" y1="0" x2="24" y2="24"><stop offset="0" stop-color="#A24BFF"/><stop offset="1" stop-color="#29C5FF"/></linearGradient></defs>
+            <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+        </div>
+        <div>
+          <h4>Gestão financeira</h4>
+          <p>Fluxo de caixa · contas · relatórios</p>
+        </div>
+      </div>
+
+      <div class="feature-item reveal reveal-delay-3">
+        <div class="fhex">
+          <svg viewBox="0 0 24 24" fill="none" stroke="url(#fg7)" stroke-width="1.8" stroke-linecap="round">
+            <defs><linearGradient id="fg7" x1="0" y1="0" x2="24" y2="24"><stop offset="0" stop-color="#A24BFF"/><stop offset="1" stop-color="#29C5FF"/></linearGradient></defs>
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+          </svg>
+        </div>
+        <div>
+          <h4>App mobile</h4>
+          <p>iOS + Android · acesso de qualquer lugar</p>
+        </div>
+      </div>
+
+      <div class="feature-item reveal reveal-delay-4">
+        <div class="fhex">
+          <svg viewBox="0 0 24 24" fill="none" stroke="url(#fg8)" stroke-width="1.8" stroke-linecap="round">
+            <defs><linearGradient id="fg8" x1="0" y1="0" x2="24" y2="24"><stop offset="0" stop-color="#A24BFF"/><stop offset="1" stop-color="#29C5FF"/></linearGradient></defs>
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+          </svg>
+        </div>
+        <div>
+          <h4>Relatórios automáticos</h4>
+          <p>Gerados por IA · enviados por email/WhatsApp</p>
+        </div>
+      </div>
+
+      <div class="feature-item reveal reveal-delay-1">
+        <div class="fhex">
+          <svg viewBox="0 0 24 24" fill="none" stroke="url(#fg9)" stroke-width="1.8" stroke-linecap="round">
+            <defs><linearGradient id="fg9" x1="0" y1="0" x2="24" y2="24"><stop offset="0" stop-color="#A24BFF"/><stop offset="1" stop-color="#29C5FF"/></linearGradient></defs>
+            <rect x="1" y="2" width="20" height="20" rx="2" ry="2"/><path d="M7 2v20M1 12h20"/>
+          </svg>
+        </div>
+        <div>
+          <h4>Controle de estoque</h4>
+          <p>Entradas, saídas, alertas automáticos</p>
+        </div>
+      </div>
+
+      <div class="feature-item reveal reveal-delay-2">
+        <div class="fhex">
+          <svg viewBox="0 0 24 24" fill="none" stroke="url(#fg10)" stroke-width="1.8" stroke-linecap="round">
+            <defs><linearGradient id="fg10" x1="0" y1="0" x2="24" y2="24"><stop offset="0" stop-color="#A24BFF"/><stop offset="1" stop-color="#29C5FF"/></linearGradient></defs>
+            <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+          </svg>
+        </div>
+        <div>
+          <h4>Integrações</h4>
+          <p>Conecta com sistemas já existentes</p>
+        </div>
+      </div>
+
+      <div class="feature-item reveal reveal-delay-3">
+        <div class="fhex">
+          <svg viewBox="0 0 24 24" fill="none" stroke="url(#fg11)" stroke-width="1.8" stroke-linecap="round">
+            <defs><linearGradient id="fg11" x1="0" y1="0" x2="24" y2="24"><stop offset="0" stop-color="#A24BFF"/><stop offset="1" stop-color="#29C5FF"/></linearGradient></defs>
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+        <div>
+          <h4>Portal do cliente</h4>
+          <p>Acompanhamento em tempo real, autoatendimento</p>
+        </div>
+      </div>
+
+      <div class="feature-item reveal reveal-delay-4" style="grid-column: span 1; background: rgba(162,75,255,0.06); border-color: rgba(162,75,255,0.25);">
+        <div class="fhex" style="background: rgba(162,75,255,0.15);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="url(#fg12)" stroke-width="1.8" stroke-linecap="round">
+            <defs><linearGradient id="fg12" x1="0" y1="0" x2="24" y2="24"><stop offset="0" stop-color="#A24BFF"/><stop offset="1" stop-color="#29C5FF"/></linearGradient></defs>
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+        </div>
+        <div>
+          <h4>+ 40 módulos</h4>
+          <p>Diagnóstico define o que você precisa</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     NÚMEROS
+════════════════════════════════════════ -->
+<section id="numeros" class="section" style="background: var(--bg2);">
+  <div class="container">
+    <div class="section-header reveal" style="text-align:center;">
+      <div class="eyebrow" style="justify-content:center;">Resultado em números</div>
+      <h2 style="font-family:var(--font-display);font-weight:900;font-size:clamp(32px,4vw,50px);line-height:1.05;letter-spacing:-0.035em;margin:16px auto 0;max-width:600px;">
+        Sob medida não precisa mais ser<br><span class="grad-text">lento nem caro.</span>
+      </h2>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-item reveal">
+        <div><span class="stat-val">5</span><span class="stat-unit">x</span></div>
+        <div class="stat-label">mais rápido</div>
+        <p class="stat-desc">Do que desenvolvimento tradicional, com IA integrada ao processo.</p>
+      </div>
+      <div class="stat-item reveal reveal-delay-2">
+        <div><span class="stat-val">2–6</span></div>
+        <div class="stat-label">semanas · do brief ao MVP</div>
+        <p class="stat-desc">Diagnóstico, desenvolvimento, entrega e treinamento incluídos.</p>
+      </div>
+      <div class="stat-item reveal reveal-delay-3">
+        <div><span class="stat-val">2–3</span></div>
+        <div class="stat-label">meses · e o sistema se paga</div>
+        <p class="stat-desc">Automação elimina custo operacional. Sem mensalidade corroendo o caixa.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     PLANOS
+════════════════════════════════════════ -->
+<section id="planos" class="section">
+  <div class="container">
+    <div class="section-header reveal" style="text-align:center;">
+      <div class="eyebrow" style="justify-content:center;">Invista uma vez. Use pra sempre.</div>
+      <h2 style="font-family:var(--font-display);font-weight:900;font-size:clamp(32px,4vw,50px);line-height:1.05;letter-spacing:-0.035em;margin:16px auto 0;max-width:500px;">
+        Sem mensalidade.<br><span class="grad-text">Sem surpresa.</span>
+      </h2>
+    </div>
+    <div class="planos-grid">
+
+      <div class="plano-card reveal reveal-delay-1">
+        <div class="plano-name">MVP Light</div>
+        <div class="plano-price">R$3–8k<span></span></div>
+        <p class="plano-desc">Automação de 1 a 2 processos críticos. Ideal pra validar e gerar resultado rápido.</p>
+        <ul class="plano-features">
+          <li>1–2 automações sob medida</li>
+          <li>Entrega em 2 a 4 semanas</li>
+          <li>Código 100% do cliente</li>
+          <li>Treinamento incluso</li>
+          <li>Suporte no 1º mês</li>
+        </ul>
+        <a href="https://wa.me/5593981234567" class="btn-ghost plano-cta">Começar com diagnóstico grátis</a>
+      </div>
+
+      <div class="plano-card destaque reveal reveal-delay-2">
+        <div class="plano-badge">Mais escolhido</div>
+        <div class="plano-name">PME Pro</div>
+        <div class="plano-price">R$8–15k<span></span></div>
+        <p class="plano-desc">Ecossistema completo: automações + CRM + dashboard IA + integrações. Negócio no piloto automático.</p>
+        <ul class="plano-features">
+          <li>Ecossistema completo de automações</li>
+          <li>CRM + Dashboard IA (LTV/CAC/ROI)</li>
+          <li>WhatsApp API oficial integrado</li>
+          <li>Entrega em 4 a 6 semanas</li>
+          <li>Código 100% do cliente</li>
+          <li>Treinamento + suporte 1º mês</li>
+        </ul>
+        <a href="https://wa.me/5593981234567" class="btn-primary plano-cta">Agendar diagnóstico grátis →</a>
+      </div>
+
+      <div class="plano-card reveal reveal-delay-3">
+        <div class="plano-name">Enterprise</div>
+        <div class="plano-price">Sob consulta</div>
+        <p class="plano-desc">Projetos complexos, multi-setor, com arquitetura customizada e squad dedicado.</p>
+        <ul class="plano-features">
+          <li>Escopo definido em diagnóstico</li>
+          <li>Múltiplos módulos integrados</li>
+          <li>App mobile incluso</li>
+          <li>SLA e suporte estendido</li>
+          <li>Entrega faseada quinzenal</li>
+        </ul>
+        <a href="https://wa.me/5593981234567" class="btn-ghost plano-cta">Falar sobre o projeto</a>
+      </div>
+
+    </div>
+    <p class="reveal" style="text-align:center;margin-top:36px;font-family:var(--font-mono);font-size:12px;color:var(--dim);letter-spacing:0.1em;">
+      Todos os planos incluem diagnóstico grátis · código entregue ao cliente · suporte no primeiro mês
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     FAQ
+════════════════════════════════════════ -->
+<section class="section" style="background:var(--bg2);">
+  <div id="faq" class="container">
+    <div class="section-header reveal" style="text-align:center;">
+      <div class="eyebrow" style="justify-content:center;">Perguntas frequentes</div>
+      <h2 style="font-family:var(--font-display);font-weight:900;font-size:clamp(32px,4vw,50px);line-height:1.05;letter-spacing:-0.035em;margin:16px auto 0;">
+        Dúvidas <span class="grad-text">comuns.</span>
+      </h2>
+    </div>
+    <div class="faq-list reveal">
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Em quanto tempo fica pronto?
+          <span class="faq-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </span>
+        </button>
+        <div class="faq-a"><p>De 2 a 6 semanas após o briefing aprovado. Sistemas mais complexos podem ser faseados com entregas parciais a cada 2 semanas — você começa a usar antes de tudo estar pronto.</p></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Preciso ter equipe técnica pra usar?
+          <span class="faq-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </span>
+        </button>
+        <div class="faq-a"><p>Não. Entregamos o sistema pronto, com treinamento incluso. Você e sua equipe operam sem precisar saber programar. O sistema é feito pra ser simples de usar — só complexo por baixo dos panos.</p></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          E se eu quiser modificar depois?
+          <span class="faq-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </span>
+        </button>
+        <div class="faq-a"><p>O código é 100% seu. Você pode contratar qualquer desenvolvedor pra evoluir — sem precisar de nós. A LBCode.IA também oferece suporte contínuo opcional pra quem prefere manter o mesmo time.</p></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Como começa o processo?
+          <span class="faq-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </span>
+        </button>
+        <div class="faq-a"><p>Com um diagnóstico grátis de 15 minutos. A gente mapeia o que dá pra automatizar no seu negócio e já apresenta estimativa de prazo e custo. Sem compromisso.</p></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     CTA FINAL
+════════════════════════════════════════ -->
+<section id="cta-final" class="circuit-bg">
+  <div class="cta-final-inner reveal">
+    <div class="eyebrow" style="justify-content:center;">Diagnóstico grátis · 15 minutos</div>
+    <h2>Descubra o que dá pra automatizar no seu negócio.</h2>
+    <p>Sem compromisso. A gente mapeia o que a IA resolve — e quanto isso te devolve em tempo e dinheiro.</p>
+    <div class="cta-actions">
+      <a href="https://wa.me/5593981234567" class="btn-primary" style="font-size:17px;padding:20px 48px;">
+        Agendar diagnóstico grátis →
+      </a>
+      <p class="cta-note">É gratuito · seg–sex 9h–18h · Santarém, PA</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     FOOTER
+════════════════════════════════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">
+      <img src="../../identidade/logo.png" alt="LBCode.IA">
+    </div>
+    <div class="footer-info">
+      <div>@lbcode.ia &nbsp;·&nbsp; Santarém, PA</div>
+      <div><a href="mailto:contato@lbcode.ia">contato@lbcode.ia</a></div>
+      <div style="margin-top:4px;font-size:11px;color:rgba(110,110,136,0.6);">© 2026 LBCode.IA — Soluções Digitais</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ── scroll reveal ── */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(el => {
+    if (el.isIntersecting) {
+      el.target.classList.add('visible');
+      observer.unobserve(el.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+/* ── FAQ accordion ── */
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+</script>
+</body>
+</html>

@@ -10,7 +10,7 @@ from meta_api import MetaAPIClient, MetaAPIError
 DATE_PRESETS = {7: "last_7d", 14: "last_14d", 30: "last_30d", 90: "last_90d"}
 INSIGHT_FIELDS = (
     "campaign_id,campaign_name,adset_id,adset_name,"
-    "spend,impressions,frequency,actions,cpm,publisher_platform"
+    "spend,impressions,frequency,actions,cpm,ctr,clicks"
 )
 
 

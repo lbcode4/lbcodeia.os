@@ -13,7 +13,7 @@ Uso:
   python gerar_dashboard_completo.py --periodo yesterday
 """
 import sys, io, json, os, re
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from pathlib import Path
 
 if 'pytest' not in sys.modules:
@@ -291,6 +291,10 @@ def parse_periodo(periodo_str):
     days_count = (until - since).days
     prev_until = since - timedelta(days=1)
     prev_since = prev_until - timedelta(days=days_count)
+    # API limita 37 meses retroativos — cap no período anterior se necessário
+    min_date = date.today() - timedelta(days=37 * 30)
+    if prev_since < min_date:
+        prev_since = min_date
     return since, until, prev_since, prev_until
 
 # ═══════════════════════════════════════

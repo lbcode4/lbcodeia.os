@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #111; display: flex; flex-wrap: wrap; gap: 0; }
+
+  .slide {
+    width: 1080px;
+    height: 1350px;
+    position: relative;
+    overflow: hidden;
+    font-family: 'Inter', 'Arial', sans-serif;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ===== SLIDE 1 — CAPA: Comparativo ===== */
+  .slide-1 {
+    background: linear-gradient(160deg, #0B0D14 0%, #0D1020 40%, #08111F 100%);
+  }
+  .slide-1 .bg-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,212,255,0.12) 0%, transparent 70%);
+    top: -100px; right: -100px;
+    pointer-events: none;
+  }
+  .slide-1 .bg-glow-2 {
+    position: absolute;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,87,51,0.10) 0%, transparent 70%);
+    bottom: 100px; left: -80px;
+    pointer-events: none;
+  }
+  .slide-1 .header {
+    position: absolute;
+    top: 52px; left: 72px; right: 72px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .slide-1 .brand {
+    font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.01em;
+  }
+  .slide-1 .brand span { color: #00D4FF; }
+  .slide-1 .counter {
+    font-size: 15px; font-weight: 500; color: rgba(255,255,255,0.35); letter-spacing: 0.18em;
+  }
+  .slide-1 .main-content {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex; flex-direction: column;
+    justify-content: center;
+    padding: 160px 72px 120px;
+  }
+  .slide-1 .eyebrow {
+    font-size: 13px; font-weight: 800; letter-spacing: 0.28em;
+    color: #00D4FF; text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .slide-1 .title {
+    font-size: 88px; font-weight: 900;
+    color: #fff; line-height: 0.96;
+    letter-spacing: -0.04em;
+    margin-bottom: 32px;
+  }
+  .slide-1 .title .hl { color: #00D4FF; }
+  .slide-1 .subtitle {
+    font-size: 26px; font-weight: 500;
+    color: rgba(255,255,255,0.6); line-height: 1.45;
+    max-width: 700px;
+    margin-bottom: 56px;
+  }
+  .slide-1 .cards-row {
+    display: flex; gap: 24px;
+  }
+  .slide-1 .mini-card {
+    flex: 1;
+    border-radius: 20px;
+    padding: 28px 28px 24px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .slide-1 .mini-card.gps {
+    background: rgba(0,212,255,0.10);
+    border: 1.5px solid rgba(0,212,255,0.25);
+  }
+  .slide-1 .mini-card.nogps {
+    background: rgba(255,255,255,0.06);
+    border: 1.5px solid rgba(255,255,255,0.12);
+  }
+  .slide-1 .mini-card .tag {
+    font-size: 11px; font-weight: 800; letter-spacing: 0.24em;
+    text-transform: uppercase; margin-bottom: 4px;
+  }
+  .slide-1 .mini-card.gps .tag { color: #00D4FF; }
+  .slide-1 .mini-card.nogps .tag { color: rgba(255,255,255,0.5); }
+  .slide-1 .mini-card .card-title {
+    font-size: 22px; font-weight: 800; color: #fff;
+    line-height: 1.1; letter-spacing: -0.02em;
+  }
+  .slide-1 .mini-card .card-desc {
+    font-size: 16px; font-weight: 500; color: rgba(255,255,255,0.55);
+    line-height: 1.4;
+  }
+  .slide-1 .footer {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 80px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex; align-items: center;
+    padding: 0 72px;
+    justify-content: space-between;
+  }
+  .slide-1 .footer .handle {
+    font-size: 16px; font-weight: 600; color: rgba(255,255,255,0.4);
+    letter-spacing: 0.04em;
+  }
+  .slide-1 .footer .swipe {
+    font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.35);
+    letter-spacing: 0.12em; text-transform: uppercase;
+  }
+
+  /* ===== SLIDE 2 — COM GPS ===== */
+  .slide-2 {
+    background: linear-gradient(150deg, #07111C 0%, #0A1628 50%, #071018 100%);
+  }
+  .slide-2 .accent-bar {
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 5px;
+    background: linear-gradient(90deg, #00D4FF, #0090FF);
+  }
+  .slide-2 .glow-top {
+    position: absolute;
+    width: 700px; height: 400px;
+    background: radial-gradient(ellipse, rgba(0,212,255,0.10) 0%, transparent 70%);
+    top: -100px; left: 50%; transform: translateX(-50%);
+    pointer-events: none;
+  }
+  .slide-2 .header {
+    position: absolute;
+    top: 52px; left: 72px; right: 72px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .slide-2 .brand {
+    font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.01em;
+  }
+  .slide-2 .brand span { color: #00D4FF; }
+  .slide-2 .counter {
+    font-size: 15px; font-weight: 500; color: rgba(255,255,255,0.35); letter-spacing: 0.18em;
+  }
+  .slide-2 .badge {
+    position: absolute;
+    top: 130px; left: 72px;
+    background: #00D4FF;
+    color: #03080E;
+    font-size: 13px; font-weight: 800; letter-spacing: 0.22em;
+    text-transform: uppercase;
+    padding: 8px 20px;
+    border-radius: 100px;
+  }
+  .slide-2 .main-content {
+    position: absolute;
+    top: 200px; left: 72px; right: 72px; bottom: 80px;
+    display: flex; flex-direction: column;
+    justify-content: center; gap: 0;
+  }
+  .slide-2 .rule {
+    width: 56px; height: 4px;
+    background: #00D4FF;
+    border-radius: 2px;
+    margin-bottom: 22px;
+  }
+  .slide-2 .heading {
+    font-size: 72px; font-weight: 900;
+    color: #fff; line-height: 0.98;
+    letter-spacing: -0.04em;
+    margin-bottom: 28px;
+  }
+  .slide-2 .heading .hl { color: #00D4FF; }
+  .slide-2 .desc {
+    font-size: 22px; font-weight: 500;
+    color: rgba(255,255,255,0.55); line-height: 1.5;
+    margin-bottom: 52px;
+    max-width: 680px;
+  }
+  .slide-2 .specs {
+    display: flex; flex-direction: column; gap: 18px;
+  }
+  .slide-2 .spec-item {
+    display: flex; align-items: center; gap: 18px;
+  }
+  .slide-2 .spec-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: #00D4FF; flex-shrink: 0;
+  }
+  .slide-2 .spec-text {
+    font-size: 20px; font-weight: 600; color: #fff;
+  }
+  .slide-2 .spec-sub {
+    font-size: 16px; font-weight: 400; color: rgba(255,255,255,0.45);
+    margin-left: auto;
+  }
+  .slide-2 .products-row {
+    margin-top: 48px;
+    display: flex; gap: 18px;
+  }
+  .slide-2 .prod-pill {
+    background: rgba(0,212,255,0.10);
+    border: 1.5px solid rgba(0,212,255,0.22);
+    border-radius: 14px;
+    padding: 14px 22px;
+  }
+  .slide-2 .prod-name {
+    font-size: 16px; font-weight: 700; color: #fff;
+    letter-spacing: -0.01em;
+  }
+  .slide-2 .prod-label {
+    font-size: 13px; font-weight: 500; color: rgba(0,212,255,0.7);
+    margin-top: 3px;
+  }
+  .slide-2 .footer {
+    position: absolute;
+    bottom: 0; left: 0; right: 0; height: 80px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex; align-items: center; padding: 0 72px;
+    justify-content: space-between;
+  }
+  .slide-2 .footer .handle {
+    font-size: 16px; font-weight: 600; color: rgba(255,255,255,0.35);
+  }
+  .slide-2 .footer .cta-hint {
+    font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.3);
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+
+  /* ===== SLIDE 3 — SEM GPS ===== */
+  .slide-3 {
+    background: linear-gradient(150deg, #0E0B08 0%, #1A1208 50%, #0E0C08 100%);
+  }
+  .slide-3 .accent-bar {
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 5px;
+    background: linear-gradient(90deg, #FF5733, #FF8A00);
+  }
+  .slide-3 .glow-top {
+    position: absolute;
+    width: 700px; height: 400px;
+    background: radial-gradient(ellipse, rgba(255,87,51,0.09) 0%, transparent 70%);
+    top: -100px; left: 50%; transform: translateX(-50%);
+    pointer-events: none;
+  }
+  .slide-3 .header {
+    position: absolute;
+    top: 52px; left: 72px; right: 72px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .slide-3 .brand {
+    font-size: 22px; font-weight: 800; color: #fff;
+  }
+  .slide-3 .brand span { color: #FF5733; }
+  .slide-3 .counter {
+    font-size: 15px; font-weight: 500; color: rgba(255,255,255,0.35); letter-spacing: 0.18em;
+  }
+  .slide-3 .badge {
+    position: absolute;
+    top: 130px; left: 72px;
+    background: #FF5733;
+    color: #fff;
+    font-size: 13px; font-weight: 800; letter-spacing: 0.22em;
+    text-transform: uppercase;
+    padding: 8px 20px;
+    border-radius: 100px;
+  }
+  .slide-3 .main-content {
+    position: absolute;
+    top: 200px; left: 72px; right: 72px; bottom: 80px;
+    display: flex; flex-direction: column;
+    justify-content: center;
+  }
+  .slide-3 .rule {
+    width: 56px; height: 4px;
+    background: #FF5733; border-radius: 2px;
+    margin-bottom: 22px;
+  }
+  .slide-3 .heading {
+    font-size: 72px; font-weight: 900;
+    color: #fff; line-height: 0.98;
+    letter-spacing: -0.04em;
+    margin-bottom: 28px;
+  }
+  .slide-3 .heading .hl { color: #FF5733; }
+  .slide-3 .desc {
+    font-size: 22px; font-weight: 500;
+    color: rgba(255,255,255,0.55); line-height: 1.5;
+    margin-bottom: 52px; max-width: 680px;
+  }
+  .slide-3 .specs {
+    display: flex; flex-direction: column; gap: 18px;
+  }
+  .slide-3 .spec-item {
+    display: flex; align-items: center; gap: 18px;
+  }
+  .slide-3 .spec-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: #FF5733; flex-shrink: 0;
+  }
+  .slide-3 .spec-text {
+    font-size: 20px; font-weight: 600; color: #fff;
+  }
+  .slide-3 .spec-sub {
+    font-size: 16px; font-weight: 400; color: rgba(255,255,255,0.45);
+    margin-left: auto;
+  }
+  .slide-3 .products-row {
+    margin-top: 48px;
+    display: flex; gap: 18px;
+  }
+  .slide-3 .prod-pill {
+    background: rgba(255,87,51,0.10);
+    border: 1.5px solid rgba(255,87,51,0.22);
+    border-radius: 14px;
+    padding: 14px 22px;
+  }
+  .slide-3 .prod-name {
+    font-size: 16px; font-weight: 700; color: #fff;
+  }
+  .slide-3 .prod-label {
+    font-size: 13px; font-weight: 500; color: rgba(255,87,51,0.75);
+    margin-top: 3px;
+  }
+  .slide-3 .footer {
+    position: absolute;
+    bottom: 0; left: 0; right: 0; height: 80px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex; align-items: center; padding: 0 72px;
+    justify-content: space-between;
+  }
+  .slide-3 .footer .handle {
+    font-size: 16px; font-weight: 600; color: rgba(255,255,255,0.35);
+  }
+  .slide-3 .footer .cta-hint {
+    font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.3);
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+
+  /* ===== SLIDE 4 — CTA FINAL ===== */
+  .slide-4 {
+    background: linear-gradient(140deg, #0B0D14 0%, #0E1220 50%, #07111C 100%);
+  }
+  .slide-4 .glow-center {
+    position: absolute;
+    width: 800px; height: 800px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,212,255,0.09) 0%, rgba(255,87,51,0.06) 40%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .slide-4 .header {
+    position: absolute;
+    top: 52px; left: 72px; right: 72px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .slide-4 .brand {
+    font-size: 22px; font-weight: 800; color: #fff;
+  }
+  .slide-4 .brand .c { color: #00D4FF; }
+  .slide-4 .brand .o { color: #FF5733; }
+  .slide-4 .counter {
+    font-size: 15px; font-weight: 500; color: rgba(255,255,255,0.35); letter-spacing: 0.18em;
+  }
+  .slide-4 .main-content {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 0 80px;
+    text-align: center;
+    gap: 0;
+  }
+  .slide-4 .eyebrow {
+    font-size: 13px; font-weight: 800; letter-spacing: 0.28em;
+    color: rgba(255,255,255,0.45); text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .slide-4 .question {
+    font-size: 72px; font-weight: 900;
+    color: #fff; line-height: 0.97;
+    letter-spacing: -0.04em;
+    margin-bottom: 20px;
+  }
+  .slide-4 .question .c { color: #00D4FF; }
+  .slide-4 .question .o { color: #FF5733; }
+  .slide-4 .sub {
+    font-size: 24px; font-weight: 500;
+    color: rgba(255,255,255,0.5); line-height: 1.45;
+    max-width: 640px; margin-bottom: 64px;
+  }
+  .slide-4 .vs-row {
+    display: flex; gap: 20px; align-items: center;
+    margin-bottom: 60px;
+  }
+  .slide-4 .vs-pill {
+    padding: 18px 36px;
+    border-radius: 100px;
+    font-size: 18px; font-weight: 800;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+  }
+  .slide-4 .vs-pill.a {
+    background: rgba(0,212,255,0.15);
+    border: 2px solid rgba(0,212,255,0.4);
+    color: #00D4FF;
+  }
+  .slide-4 .vs-pill.b {
+    background: rgba(255,87,51,0.15);
+    border: 2px solid rgba(255,87,51,0.4);
+    color: #FF5733;
+  }
+  .slide-4 .vs-label {
+    font-size: 20px; font-weight: 900; color: rgba(255,255,255,0.3);
+  }
+  .slide-4 .cta-btn {
+    background: linear-gradient(135deg, #00D4FF 0%, #0090FF 100%);
+    color: #03080E;
+    font-size: 20px; font-weight: 800;
+    letter-spacing: 0.01em;
+    padding: 22px 56px;
+    border-radius: 100px;
+    margin-bottom: 22px;
+  }
+  .slide-4 .handle {
+    font-size: 18px; font-weight: 600; color: rgba(255,255,255,0.4);
+    letter-spacing: 0.04em;
+  }
+  .slide-4 .footer {
+    position: absolute;
+    bottom: 0; left: 0; right: 0; height: 80px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex; align-items: center; padding: 0 72px;
+    justify-content: center;
+  }
+  .slide-4 .footer .brand-full {
+    font-size: 17px; font-weight: 700; color: rgba(255,255,255,0.3);
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1 — CAPA Comparativo -->
+<div class="slide slide-1">
+  <div class="bg-glow"></div>
+  <div class="bg-glow-2"></div>
+  <div class="header">
+    <div class="brand"><span>Dordrian</span> Store</div>
+    <div class="counter">01 / 04</div>
+  </div>
+  <div class="main-content">
+    <div class="eyebrow">Smartwatch — Compare antes de comprar</div>
+    <div class="title">GPS ou<br><span class="hl">Bateria?</span></div>
+    <div class="subtitle">Qual faz mais sentido pra sua rotina?<br>Depende de como você usa.</div>
+    <div class="cards-row">
+      <div class="mini-card gps">
+        <div class="tag">Com GPS</div>
+        <div class="card-title">Rota no pulso</div>
+        <div class="card-desc">Treina sem celular. Rota exata em tempo real.</div>
+      </div>
+      <div class="mini-card nogps">
+        <div class="tag">Sem GPS</div>
+        <div class="card-title">14 dias sem carregar</div>
+        <div class="card-desc">Bateria duradoura pra uso diário.</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <div class="handle">@dordrianstore</div>
+    <div class="swipe">Arraste →</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 — COM GPS -->
+<div class="slide slide-2">
+  <div class="accent-bar"></div>
+  <div class="glow-top"></div>
+  <div class="header">
+    <div class="brand"><span>Dordrian</span> Store</div>
+    <div class="counter">02 / 04</div>
+  </div>
+  <div class="badge">✦ COM GPS</div>
+  <div class="main-content">
+    <div class="rule"></div>
+    <div class="heading">Treino sem<br><span class="hl">celular.</span></div>
+    <div class="desc">Ideal pra corredores, ciclistas e quem<br>pratica esporte do lado de fora.</div>
+    <div class="specs">
+      <div class="spec-item">
+        <div class="spec-dot"></div>
+        <div class="spec-text">Rota GPS integrado</div>
+        <div class="spec-sub">sem celular</div>
+      </div>
+      <div class="spec-item">
+        <div class="spec-dot"></div>
+        <div class="spec-text">Frequência cardíaca 24h</div>
+        <div class="spec-sub">em tempo real</div>
+      </div>
+      <div class="spec-item">
+        <div class="spec-dot"></div>
+        <div class="spec-text">Resistente à água</div>
+        <div class="spec-sub">5 ATM — nada tranquilo</div>
+      </div>
+      <div class="spec-item">
+        <div class="spec-dot"></div>
+        <div class="spec-text">18–100+ modos de esporte</div>
+        <div class="spec-sub">corrida, bike, natação</div>
+      </div>
+    </div>
+    <div class="products-row">
+      <div class="prod-pill">
+        <div class="prod-name">Zeblaze Stratos 2</div>
+        <div class="prod-label">18 modos · GPS · 5 ATM</div>
+      </div>
+      <div class="prod-pill">
+        <div class="prod-name">NORTH EDGE CROSS FIT 3</div>
+        <div class="prod-label">100+ modos · GPS · 5 ATM</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <div class="handle">@dordrianstore</div>
+    <div class="cta-hint">próximo →</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 — SEM GPS -->
+<div class="slide slide-3">
+  <div class="accent-bar"></div>
+  <div class="glow-top"></div>
+  <div class="header">
+    <div class="brand"><span>Dordrian</span> Store</div>
+    <div class="counter">03 / 04</div>
+  </div>
+  <div class="badge">✦ SEM GPS</div>
+  <div class="main-content">
+    <div class="rule"></div>
+    <div class="heading">14 dias.<br><span class="hl">Sem carregar.</span></div>
+    <div class="desc">Perfeito pra quem quer tecnologia no<br>dia a dia sem pensar em bateria.</div>
+    <div class="specs">
+      <div class="spec-item">
+        <div class="spec-dot"></div>
+        <div class="spec-text">Amazfit GTR 2</div>
+        <div class="spec-sub">até 14 dias de bateria</div>
+      </div>
+      <div class="spec-item">
+        <div class="spec-dot"></div>
+        <div class="spec-text">Amazfit GTS 2</div>
+        <div class="spec-sub">7 dias · design compacto</div>
+      </div>
+      <div class="spec-item">
+        <div class="spec-dot"></div>
+        <div class="spec-text">Tela AMOLED + Gorilla Glass 3</div>
+        <div class="spec-sub">em ambos</div>
+      </div>
+      <div class="spec-item">
+        <div class="spec-dot"></div>
+        <div class="spec-text">Alexa integrado</div>
+        <div class="spec-sub">65+ comandos de voz</div>
+      </div>
+    </div>
+    <div class="products-row">
+      <div class="prod-pill">
+        <div class="prod-name">Amazfit GTR 2</div>
+        <div class="prod-label">14 dias · circular · elegante</div>
+      </div>
+      <div class="prod-pill">
+        <div class="prod-name">Amazfit GTS 2</div>
+        <div class="prod-label">7 dias · retangular · slim</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <div class="handle">@dordrianstore</div>
+    <div class="cta-hint">próximo →</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 — CTA FINAL -->
+<div class="slide slide-4">
+  <div class="glow-center"></div>
+  <div class="header">
+    <div class="brand"><span class="c">Dordrian</span> Store</div>
+    <div class="counter">04 / 04</div>
+  </div>
+  <div class="main-content">
+    <div class="eyebrow">e aí? qual é o seu?</div>
+    <div class="question">
+      <span class="c">GPS</span> ou<br><span class="o">Bateria?</span>
+    </div>
+    <div class="sub">
+      Comenta aqui embaixo ou manda mensagem<br>e te ajudo a escolher o modelo certo.
+    </div>
+    <div class="vs-row">
+      <div class="vs-pill a">🗺 Com GPS</div>
+      <div class="vs-label">VS</div>
+      <div class="vs-pill b">🔋 Sem GPS</div>
+    </div>
+    <div class="cta-btn">Chama no WhatsApp →</div>
+    <div class="handle">@dordrianstore</div>
+  </div>
+  <div class="footer">
+    <div class="brand-full">Dordrian Store · Santarém, PA</div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#06060C;
+    --ink:#FFFFFF;
+    --muted:#C9C9D6;
+    --dim:#7C7C90;
+    --purple:#A24BFF;
+    --cyan:#29C5FF;
+    --grad:linear-gradient(100deg,#A24BFF 0%,#6C7BFF 48%,#29C5FF 100%);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#222;}
+  .slide{
+    width:1080px;height:1350px;position:relative;overflow:hidden;
+    background:
+      radial-gradient(ellipse 760px 540px at 86% 6%, rgba(162,75,255,0.20), transparent 60%),
+      radial-gradient(ellipse 680px 620px at 8% 98%, rgba(41,197,255,0.16), transparent 62%),
+      var(--bg);
+    font-family:'Inter',sans-serif;color:var(--ink);
+    padding:96px 88px;display:flex;flex-direction:column;
+  }
+  /* faint hexagon texture top-right */
+  .slide::before{
+    content:"";position:absolute;top:-40px;right:-40px;width:420px;height:420px;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='52' viewBox='0 0 60 52'><path d='M15 1 L45 1 L60 26 L45 51 L15 51 L0 26 Z' fill='none' stroke='%23A24BFF' stroke-width='1'/></svg>");
+    background-size:60px 52px;opacity:0.10;pointer-events:none;
+  }
+  /* faint circuit lines bottom-left */
+  .slide::after{
+    content:"";position:absolute;left:0;bottom:160px;width:300px;height:2px;
+    background:linear-gradient(90deg,rgba(41,197,255,0.0),rgba(41,197,255,0.35),rgba(41,197,255,0.0));
+    opacity:0.5;pointer-events:none;
+  }
+
+  /* header */
+  .top{display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:3;}
+  .logo img{display:block;height:100px;width:auto;}
+  .counter{font-family:'Inter';font-weight:600;font-size:16px;letter-spacing:0.18em;color:var(--dim);}
+
+  /* body area */
+  .body{flex:1;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:3;}
+  .eyebrow{font-family:'Inter';font-weight:700;font-size:16px;text-transform:uppercase;letter-spacing:0.30em;color:var(--cyan);margin-bottom:26px;}
+  .rule{width:72px;height:4px;border-radius:4px;background:var(--grad);margin:30px 0;}
+  h1{font-family:'Poppins';font-weight:900;font-size:88px;line-height:1.0;letter-spacing:-0.035em;}
+  h2{font-family:'Poppins';font-weight:800;font-size:66px;line-height:1.05;letter-spacing:-0.03em;}
+  p.lead{font-family:'Inter';font-weight:500;font-size:30px;line-height:1.5;color:var(--muted);max-width:840px;}
+  .sub{font-family:'Inter';font-weight:500;font-size:34px;line-height:1.35;color:var(--muted);margin-top:24px;max-width:820px;}
+  .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .num{font-family:'Poppins';font-weight:900;font-size:300px;line-height:0.85;letter-spacing:-0.05em;
+       background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .numlabel{font-family:'Poppins';font-weight:700;font-size:34px;letter-spacing:0.04em;color:var(--cyan);margin-top:-8px;}
+
+  /* neon frame card */
+  .frame{
+    border:2px solid transparent;border-radius:26px;padding:54px 56px;position:relative;
+    background:
+      linear-gradient(#0B0B16,#0B0B16) padding-box,
+      var(--grad) border-box;
+    box-shadow:0 0 50px rgba(108,123,255,0.25), inset 0 0 40px rgba(41,197,255,0.06);
+  }
+  .quote{font-family:'Poppins';font-weight:900;font-size:200px;line-height:0.6;color:rgba(162,75,255,0.22);height:90px;}
+
+  /* footer */
+  .foot{display:flex;justify-content:space-between;align-items:center;position:relative;z-index:3;
+        border-top:1px solid rgba(255,255,255,0.12);padding-top:26px;}
+  .handle{font-family:'Inter';font-weight:600;font-size:18px;color:var(--muted);}
+  .dots{display:flex;gap:10px;}
+  .dots i{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.18);display:block;}
+  .dots i.on{background:var(--cyan);box-shadow:0 0 10px var(--cyan);}
+
+  /* CTA slide */
+  .ctapill{display:inline-flex;align-items:center;gap:14px;font-family:'Poppins';font-weight:700;font-size:30px;
+    color:#06060C;background:var(--grad);border-radius:60px;padding:24px 48px;margin-top:38px;
+    box-shadow:0 0 40px rgba(108,123,255,0.45);}
+  .icon-hex{width:96px;height:96px;display:flex;align-items:center;justify-content:center;margin-bottom:30px;
+    background:
+      linear-gradient(#0B0B16,#0B0B16) padding-box,
+      var(--grad) border-box;
+    border:2px solid transparent;border-radius:22px;box-shadow:0 0 30px rgba(108,123,255,0.3);}
+  .icon-hex svg{width:48px;height:48px;}
+</style>
+</head>
+<body>
+
+<!-- ============ SLIDE 1 — CAPA ============ -->
+<div class="slide">
+  <div class="top">
+    <div class="logo">
+      <img src="../../../identidade/logo.png" alt="LB Code">
+    </div>
+    <div class="counter">01 / 07</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">Autoridade</div>
+    <h1>O problema não é<br>falta de <span class="grad">sistema</span>.</h1>
+    <div class="sub">É depender do sistema dos&nbsp;outros.</div>
+  </div>
+  <div class="foot">
+    <div class="handle">@lbcode.ia</div>
+    <div class="dots"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  </div>
+</div>
+
+<!-- ============ SLIDE 2 — SOLO ============ -->
+<div class="slide">
+  <div class="top">
+    <div class="logo">
+      <img src="../../../identidade/logo.png" alt="LB Code">
+    </div>
+    <div class="counter">02 / 07</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">Sistema de prateleira</div>
+    <h2>Ele molda o seu<br>negócio à ferramenta.</h2>
+    <div class="rule"></div>
+    <p class="lead">Você muda o seu processo pra caber no que já existe — não o contrário. Quem manda no negócio passa a ser o software.</p>
+  </div>
+  <div class="foot">
+    <div class="handle">@lbcode.ia</div>
+    <div class="dots"><i></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i></div>
+  </div>
+</div>
+
+<!-- ============ SLIDE 3 — CITAÇÃO ============ -->
+<div class="slide">
+  <div class="top">
+    <div class="logo">
+      <img src="../../../identidade/logo.png" alt="LB Code">
+    </div>
+    <div class="counter">03 / 07</div>
+  </div>
+  <div class="body">
+    <div class="quote">&ldquo;</div>
+    <h2>Toda mensalidade<br>é <span class="grad">aluguel</span>.</h2>
+    <div class="rule"></div>
+    <p class="lead">Você paga todo mês, pra sempre — e nunca vira dono de nada.</p>
+  </div>
+  <div class="foot">
+    <div class="handle">@lbcode.ia</div>
+    <div class="dots"><i></i><i></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
+  </div>
+</div>
+
+<!-- ============ SLIDE 4 — SOLO (cyan) ============ -->
+<div class="slide">
+  <div class="top">
+    <div class="logo">
+      <img src="../../../identidade/logo.png" alt="LB Code">
+    </div>
+    <div class="counter">04 / 07</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">Código 100% seu</div>
+    <h2>Feito sob medida<br>pro <span class="grad">seu</span> jeito de<br>trabalhar.</h2>
+    <div class="rule"></div>
+    <p class="lead">O sistema se adapta ao seu processo. E o código fica com você — não alugado, não refém de ninguém.</p>
+  </div>
+  <div class="foot">
+    <div class="handle">@lbcode.ia</div>
+    <div class="dots"><i></i><i></i><i></i><i class="on"></i><i></i><i></i><i></i></div>
+  </div>
+</div>
+
+<!-- ============ SLIDE 5 — NÚMERO 5x ============ -->
+<div class="slide">
+  <div class="top">
+    <div class="logo">
+      <img src="../../../identidade/logo.png" alt="LB Code">
+    </div>
+    <div class="counter">05 / 07</div>
+  </div>
+  <div class="body">
+    <div class="num">5x</div>
+    <h2 style="margin-top:18px;">Mais rápido com IA.</h2>
+    <div class="rule"></div>
+    <p class="lead">O que levava meses sai em 2 a 6 semanas. Sob medida não precisa mais ser lento nem caro.</p>
+  </div>
+  <div class="foot">
+    <div class="handle">@lbcode.ia</div>
+    <div class="dots"><i></i><i></i><i></i><i></i><i class="on"></i><i></i><i></i></div>
+  </div>
+</div>
+
+<!-- ============ SLIDE 6 — NÚMERO 2-3 ============ -->
+<div class="slide">
+  <div class="top">
+    <div class="logo">
+      <img src="../../../identidade/logo.png" alt="LB Code">
+    </div>
+    <div class="counter">06 / 07</div>
+  </div>
+  <div class="body">
+    <div class="num">2&ndash;3</div>
+    <div class="numlabel">MESES</div>
+    <h2 style="margin-top:18px;">E ele se paga.</h2>
+    <div class="rule"></div>
+    <p class="lead">Depois disso, o sistema trabalha por você — sem aluguel eterno corroendo o seu caixa.</p>
+  </div>
+  <div class="foot">
+    <div class="handle">@lbcode.ia</div>
+    <div class="dots"><i></i><i></i><i></i><i></i><i></i><i class="on"></i><i></i></div>
+  </div>
+</div>
+
+<!-- ============ SLIDE 7 — CTA FINAL ============ -->
+<div class="slide">
+  <div class="top">
+    <div class="logo">
+      <img src="../../../identidade/logo.png" alt="LB Code">
+    </div>
+    <div class="counter">07 / 07</div>
+  </div>
+  <div class="body" style="align-items:flex-start;">
+    <div class="icon-hex">
+      <svg viewBox="0 0 24 24" fill="none" stroke="url(#g)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <defs><linearGradient id="g" x1="0" y1="0" x2="24" y2="24">
+          <stop offset="0" stop-color="#A24BFF"/><stop offset="1" stop-color="#29C5FF"/></linearGradient></defs>
+        <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+      </svg>
+    </div>
+    <div class="eyebrow">Diagnóstico grátis</div>
+    <h2>Vale automatizar<br>o seu <span class="grad">processo</span>?</h2>
+    <div class="rule"></div>
+    <p class="lead">15 minutos, sem compromisso. A gente mapeia o que dá pra automatizar e quanto isso te devolve.</p>
+    <div class="ctapill">Chama no WhatsApp →</div>
+  </div>
+  <div class="foot">
+    <div class="handle">@lbcode.ia&nbsp;&nbsp;·&nbsp;&nbsp;Santarém, PA</div>
+    <div class="dots"><i></i><i></i><i></i><i></i><i></i><i></i><i class="on"></i></div>
+  </div>
+</div>
+
+</body>
+</html>

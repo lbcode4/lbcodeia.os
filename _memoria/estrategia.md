@@ -5,23 +5,25 @@
 > Preenchido pelo `/sistema-instalar` — atualizar sempre que prioridade mudar.
 
 ## Gargalo principal
+Conseguir o primeiro cliente (negócio iniciando, sem base ainda).
 
 ## Tarefa repetitiva
+Criação de posts pro Instagram toda semana (candidata a `/negocio-mapear-rotinas`).
 
 ## Objetivo + Métrica
-
-[Ex: 80 agendamentos/mês, ROAS 4x, 500 novos seguidores/mês, 10 propostas enviadas]
+Conseguir os 5 primeiros clientes nos próximos 3-6 meses.
 
 ## Status de tráfego
-
-Orgânico:
-Pago Meta:
-Pago Google:
+Orgânico: Instagram @lbcode.ia (semanal)
+Pago Meta: não (ainda)
+Pago Google: não (ainda)
 
 ## Prioridade #1 — agora
+Posts automáticos pro Instagram — produzir conteúdo semanal sem queimar tempo manual.
+→ Skill recomendada: `/conteudo-carrossel` (ou `/conteudo-calendario` pra planejar o mês).
 
 ## O que pode esperar
+Tráfego pago (Meta/Google) — começar orgânico primeiro, sem orçamento de ads no momento.
 
 ## Contexto com prazo
-
 [Datas relevantes: lançamento agendado, sazonalidade, meta com deadline]

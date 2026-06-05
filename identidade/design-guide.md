@@ -1,126 +1,84 @@
 # Identidade Visual — LBCode.IA
 
-> Marca de quem executa. Confiável, direto, resultado.
+> Marca de quem executa tecnologia. Futurista, técnica, autoridade.
 > Skills de conteúdo, carrossel, post e campanhas leem esse arquivo antes de criar qualquer visual.
 
 ---
 
 ## Filosofia da marca
 
-LBCode.IA não é agência. É operação. Visual simples, direto, que não compete com produto.
-Preferência por **tipografia clara + paleta técnica** (não colorida) que deixa conteúdo em foco.
+LBCode.IA é tecnologia de ponta com IA. Visual **dark tech / neon** — fundo escuro,
+gradiente roxo→ciano, motivos de circuito e hexágono. Transmite inovação, automação,
+autoridade técnica. Não é minimalista nem agência criativa colorida — é **estética de
+produto de IA**.
 
-Objetivo: parecer **ferramente profissional**, não agência criativa.
+Status da identidade: **CONSOLIDADA** (carrosséis e logo já produzidos nesse padrão).
 
 ---
 
 ## Cores
 
 ### Paleta principal
-- **Primária (destaque):** `#1A1A2E` (azul-escuro quase preto — sério, profissional)
-- **Secundária (CTA):** `#FF6B35` (laranja-terra — ação, energia contida)
-- **Neutra (fundo):** `#F5F5F5` (cinza-branco — limpo, sem poluição visual)
-- **Texto principal:** `#1A1A2E` (mesmo da primária — simplicidade)
-- **Subtítulo/body:** `#595959` (cinza-médio — legível mas não compete)
+- **Fundo:** `#07070F` → `#0A0A18` (preto-azulado quase puro; pode ter leve glow roxo nas bordas)
+- **Roxo neon (primária):** `#A24BFF` (destaque, headlines parciais, ícones)
+- **Ciano neon (secundária):** `#29C5FF` (destaque alternado, CTAs, contornos)
+- **Gradiente assinatura:** roxo→ciano diagonal (`#A24BFF` → `#29C5FF`) — em headlines, bordas neon, setas, molduras
+- **Texto principal:** `#FFFFFF` (branco puro, bold)
+- **Texto secundário/body:** `#C9C9D6` (cinza-claro, legível sobre fundo dark)
 
 ### Restrições
-- **Nunca usar:** rosa, roxo pastel, gradientes
-- **Preto puro (#000000) só em:** bordas e tipografia pesada (evitar — usar #1A1A2E)
-- **Contraste mínimo:** AAA em textos pequenos
+- **Sempre fundo escuro** — nunca fundo branco/claro em peça de marca
+- **Gradiente roxo→ciano é a assinatura** — usar em destaques, não no texto corrido todo
+- **Glow/neon** nas molduras e ícones (efeito de brilho), não em excesso no texto
+- Evitar: laranja, verde-claro, paletas pastel, fundo claro
 
 ---
 
 ## Tipografia
 
 ### Títulos e destaques
-- **Fonte:** Sans-serif moderno (`Inter`, `Outfit`, ou similar; fallback: `Arial`)
-- **Peso:** 700 (bold) ou 600 (semibold)
-- **Tamanho mínimo:** 28px (corpo)
-- **Espaçamento (letter-spacing):** -0.5px (aperto, direto)
-- **Altura de linha:** 1.2
+- **Fonte:** Sans-serif geométrico pesado (`Poppins`, `Montserrat`, `Inter`; fallback `Arial`)
+- **Peso:** 700-800 (bold/extrabold)
+- **Cor:** branco, com palavra-chave em gradiente roxo→ciano ou roxo sólido
+- **Tamanho:** título 48-72px (carrossel 1080), letter-spacing -0.5px, line-height 1.1
 
-### Corpo, subtítulos e botões
-- **Fonte:** Mesma sans-serif
-- **Peso:** 400 (regular)
-- **Tamanho:** 14-16px (corpo), 12px (labels)
-- **Altura de linha:** 1.5 (textos longos), 1.2 (buttons)
-- **Contraste:** sempre 4.5:1 mínimo
+### Corpo, subtítulos
+- **Fonte:** mesma sans-serif, peso 400-500
+- **Cor:** `#C9C9D6`
+- **Tamanho:** 24-32px (carrossel), line-height 1.4
 
 ### CTA (botões)
-- **Tamanho:** 16px bold
-- **Padding:** 12px 24px (vertical × horizontal)
-- **Borda arredondada:** 4px (sutil, não 12px)
-- **Cor:** fundo #FF6B35, texto branco
+- **Estilo:** pílula/retângulo com borda ou fundo gradiente roxo→ciano, glow
+- **Texto:** branco bold
 
 ---
 
 ## Elementos
 
-### Estrutura de post/conteudo-carrossel
-- **Grid:** 1080×1350px (Instagram padrão)
-- **Margens:** 40px de todos os lados
-- **Fundo:** #F5F5F5 ou branco puro
-- **Destaque (barra lateral ou topo):** 8px sólido #FF6B35
-- **Sem:** gradientes, sombras, efeitos — limpo
+### Estrutura de post/carrossel (1080×1350 ou 1080×1080)
+- **Fundo:** dark `#07070F` com textura de circuito/hexágono sutil + glow
+- **Moldura neon:** retângulo arredondado com borda gradiente roxo→ciano e brilho
+- **Ícones:** line icons dentro de hexágonos, contorno neon roxo/ciano
+- **Labels topo:** uppercase, letter-spacing alto (ex: "SERVIÇOS", "O PROBLEMA REAL", "SOBRE NÓS")
+- **Pedestal/glow:** elementos centrais sobre base com anel de luz radial
 
-### Cards (propostas, relatórios, etc)
-- **Fundo:** branco
-- **Borda:** 1px #E0E0E0
-- **Sombra:** `box-shadow: 0 2px 4px rgba(0,0,0,0.08)` (quase imperceptível)
-- **Espaçamento interno:** 24px
+### Motivos recorrentes
+- Circuito (PCB traces) saindo dos cards
+- Hexágonos como containers de ícone
+- Partículas/pontos de luz
+- Setas de ciclo (ex: slide "Ciclo de Crescimento")
 
-### Ícones
-- **Estilo:** line icons (não filled)
-- **Stroke:** 1.5px-2px
-- **Cor:** #595959 ou #1A1A2E
-- **Tamanho padrão:** 24px-32px
-- **Fontes recomendadas:** Feather Icons, Heroicons (outline)
-
----
-
-## Padrões
-
-### Sobre identidade visual
-Se você já tem logo, cores ou estilo próprio, **sobrescreve** tudo acima.
-Esse é o padrão padrão. Seu design é mais importante que LBCode.IA parecer coeso.
-
-### Exemplos práticos
-
-**Post de conteúdo**
-```
-[barra #FF6B35 8px topo esquerdo]
-[TITULO 32px bold #1A1A2E]
-[subtítulo 16px regular #595959]
-[corpo 14px #595959, height: 1.5]
-[CTA: botão #FF6B35]
-```
-
-**Carrossel (9 slides)**
-```
-Slide 1: título + intro (minimalista)
-Slides 2-8: conteúdo (máx 3 linhas texto + 1 visual)
-Slide 9: CTA (claro, sem ambiguidade)
-
-Fundo: sempre #F5F5F5 ou branco
-Paleta: restringida a #1A1A2E + #FF6B35 + neutrals
-```
-
-**Email/proposta**
-```
-Header: Logo + #1A1A2E fundo
-Corpo: #F5F5F5 background, texto #1A1A2E
-Destaques: #FF6B35
-CTA: botão sólido #FF6B35, texto branco
-```
+### Logo
+- Monograma **LB** com `</>` (bracket de código) entre as letras
+- Wordmark: **CODE.IA** + "SOLUÇÕES DIGITAIS" + seta `>_`
+- Versão em gradiente roxo→ciano sobre fundo dark
 
 ---
 
 ## Acessibilidade
-
-- Contraste mínimo **AAA** (não WCAG-A)
-- Textos em imagens: mínimo 16px, weight 600+
-- Não usar cor como única informação (ícone + cor)
-- Espaçamento de toque: 44×44px mínimo
+- Contraste branco sobre `#07070F` = altíssimo (OK)
+- Texto em imagem: mínimo 24px, weight 600+
+- Não usar só cor como informação (ícone + cor)
 
 ---
 
@@ -129,6 +87,7 @@ CTA: botão sólido #FF6B35, texto branco
 Se a marca mudar:
 1. Edita esse arquivo com as cores/tipografia novas
 2. Skills carregam automaticamente na próxima execução
-3. Sem redesign manual de posts antigos — documentação fica versionada
+3. Documentação fica versionada
 
-Linha adicionada: data + mudança (ex: `[2026-06-01] Mudou primária de #1A1A2E para #0F1419`)
+Linha adicionada: data + mudança.
+- `[2026-06-03] /sistema-instalar — reescrito do template laranja/minimalista pro brand real dark + neon roxo→ciano (carrosséis @lbcode.ia)`
