@@ -1822,7 +1822,7 @@ def main():
     html = gerar_html(dados, config, args.tema, periodos)
 
     # Salvar
-    output_dir = f"{BASE_DIR}/output/{slug}"
+    output_dir = f"{REPO_ROOT}/saidas/relatorios/{slug}"
     os.makedirs(output_dir, exist_ok=True)
     hoje = datetime.now()
     filename = f"relatorio-meta-{MESES_BR_LOWER[hoje.month]}-{hoje.year}.html"

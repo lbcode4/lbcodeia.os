@@ -123,7 +123,7 @@ Cmd `/lb-sistema-atualizar` faz varredura completa quando há dúvida.
 
 Usuário pede:
 
-1. **Template existe?** Ver `templates/skills/`. Adaptar ao contexto.
+1. **Modelo existe?** Usar skill parecida em `.claude/skills/` como base. Adaptar ao contexto.
 2. **Escopo:** Projeto específico? Ou reutilizável?
    - Projeto → `.claude/skills/nome/SKILL.md`
    - Universal → `~/.claude/skills/nome/SKILL.md`

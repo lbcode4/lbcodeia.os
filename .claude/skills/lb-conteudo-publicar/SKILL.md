@@ -81,7 +81,7 @@ Chamar skill `/lb-conteudo-carrossel` passando:
 - 5-7 pontos principais do artigo
 - Legenda (vai ser composta depois)
 
-Saída: 9 slides PNG (Insta padrão) em `marketing/conteudo/conteudo-carrossel-YYYY-MM-DD/`
+Saída: 9 slides PNG (Insta padrão) em `marketing/conteudo/carrossel/<slug>-YYYY-MM-DD/`
 
 ### Passo 4 — 3 Legendas (Insta/FB/LinkedIn)
 
@@ -109,7 +109,7 @@ Gerar 3 versões + CTA único pra blog:
 [CTA: "Leia na íntegra →"]
 ```
 
-Salvar em: `marketing/conteudo/legendas-YYYY-MM-DD.md`
+Salvar em: `marketing/conteudo/carrossel/<slug>-YYYY-MM-DD/legendas.md`
 
 ### Passo 5 — Resumo
 

@@ -23,7 +23,7 @@ Visão executiva ampla: pago + orgânico + seguidores + otimizações num HTML.
 1. Carregar contexto + voz de `_memoria/`.
 2. Resolver cliente em `_memoria/contas-ads.md` (precisa act_id E IG User ID).
 3. Rodar: `python integracoes/meta-ads/scripts/dashboard_completo.py --cliente "<Cliente>"`
-4. Pegar o HTML gerado em `integracoes/meta-ads/output/<slug>/`.
+4. Pegar o HTML gerado em `saidas/relatorios/<slug>/`.
 5. **Camada framework (Bolo de Cenoura):** ler o resumo executivo + comparativo pago vs orgânico
    e entregar 3 leituras acionáveis na voz LBCode (onde o pago alavanca o orgânico, otimizações).
 6. Devolver: caminho do HTML + as 3 leituras.

@@ -16,7 +16,7 @@ description: >
 - **Framework de tráfego:** `_memoria/framework-trafego.md` — OBRIGATÓRIO (RETINA)
 - **Contexto do negócio:** `_memoria/empresa.md`
 - **Tom de voz:** `_memoria/preferencias.md`
-- **Outputs:** `marketing/conteudo/stories-<tema>-<YYYY-MM-DD>/sequencia.md`
+- **Outputs:** `marketing/conteudo/stories/<tema>-<YYYY-MM-DD>/sequencia.md`
 
 ---
 
@@ -126,7 +126,7 @@ Pedir ao usuário:
 ### Passo 3 — Salvar
 
 ```
-marketing/conteudo/stories-<tema>-<YYYY-MM-DD>/sequencia.md
+marketing/conteudo/stories/<tema>-<YYYY-MM-DD>/sequencia.md
 ```
 
 ### Passo 4 — Próximo passo sugerido

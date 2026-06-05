@@ -1238,7 +1238,7 @@ def main():
                       since, until, period_days)
 
     # Save
-    output_dir = os.path.join(BASE_DIR, "output", slug)
+    output_dir = os.path.join(REPO_ROOT, "saidas", "relatorios", slug)
     os.makedirs(output_dir, exist_ok=True)
     hoje = datetime.now()
     filename = f"dashboard-google-ads-{MESES_BR_LOWER[hoje.month]}-{hoje.year}.html"

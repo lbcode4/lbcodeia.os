@@ -1,14 +1,14 @@
 ---
-name: lb-meta-reels
+name: lb-meta-analise-reels
 description: >
-  Puxa ranking de Reels Instagram LIVE via Graph API — classifica por performance
+  Analisa Reels Instagram LIVE via Graph API — classifica por performance
   e recomenda quais impulsionar alinhado ao posicionamento do negócio.
   Resolve a conta do cliente em _memoria/contas-ads.md. Use quando o usuário pedir
-  "reels meta", "ranking de reels", "qual reel impulsionar", "melhores reels",
-  ou /lb-meta-reels.
+  "analisar reels", "ranking de reels", "qual reel impulsionar", "melhores reels",
+  "reels meta", ou /lb-meta-analise-reels.
 ---
 
-# /lb-meta-reels — Ranking de Reels Instagram (live API)
+# /lb-meta-analise-reels — Análise + ranking de Reels Instagram (live API)
 
 Puxa dado real da Graph API v21.0 → ranking de Reels + recomendação de impulsionamento.
 

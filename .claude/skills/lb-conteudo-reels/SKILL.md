@@ -17,7 +17,7 @@ description: >
 - **Framework de tráfego:** `_memoria/framework-trafego.md` — OBRIGATÓRIO (RETINA + 4 ganchos)
 - **Contexto do negócio:** `_memoria/empresa.md`
 - **Tom de voz:** `_memoria/preferencias.md`
-- **Outputs:** `marketing/conteudo/reels-<tema>-<YYYY-MM-DD>/roteiro.md`
+- **Outputs:** `marketing/conteudo/reels/<tema>-<YYYY-MM-DD>/roteiro.md`
 
 ---
 
@@ -114,7 +114,7 @@ Pedir ao usuário (ou inferir do contexto):
 ### Passo 3 — Salvar
 
 ```
-marketing/conteudo/reels-<tema>-<YYYY-MM-DD>/roteiro.md
+marketing/conteudo/reels/<tema>-<YYYY-MM-DD>/roteiro.md
 ```
 
 ### Passo 4 — Próximo passo sugerido

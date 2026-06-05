@@ -279,7 +279,7 @@ def main():
     }
     periodo_label = periodo_labels.get(args.periodo, args.periodo)
 
-    output_dir = os.path.join(BASE_DIR, "output", slug)
+    output_dir = os.path.join(REPO_ROOT, "saidas", "relatorios", slug)
     os.makedirs(output_dir, exist_ok=True)
     hoje = datetime.now()
     filename = f"dashboard-unificado-{MESES_BR_LOWER[hoje.month]}-{hoje.year}.html"

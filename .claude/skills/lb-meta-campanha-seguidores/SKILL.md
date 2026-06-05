@@ -19,7 +19,7 @@ Roda via Meta Business Suite (não pelo botão Turbinar do iPhone — 30% taxa A
 - **Auditoria perfil:** `/lb-conteudo-auditoria-insta` — rodar antes. Score <5/7 = não anunciar
 - **Contexto do negócio:** `_memoria/empresa.md`
 - **Tom de voz:** `_memoria/preferencias.md`
-- **Outputs:** `marketing/campanhas/meta-seguidores-<YYYY-MM-DD>/`
+- **Outputs:** `marketing/campanhas/engajamento/meta-seguidores-<YYYY-MM-DD>/`
 
 ---
 
@@ -102,7 +102,7 @@ Resultado começa em 24-48h. Custo por seguidor varia R$0,30-R$2,00 dependendo n
 ## Output
 
 ```
-marketing/campanhas/meta-seguidores-<YYYY-MM-DD>/
+marketing/campanhas/engajamento/meta-seguidores-<YYYY-MM-DD>/
   configuracao.md       ← 5 passos com escolhas + screenshots tutorial
   publicacoes-escolhidas.md  ← lista das 5 publicações (URL/print) + por que cada uma
   publico.md            ← idade + gênero + localização configurados

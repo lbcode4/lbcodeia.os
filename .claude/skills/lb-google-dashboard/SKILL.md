@@ -23,7 +23,7 @@ Puxa dado real da Google Ads API → HTML.
 1. Carregar contexto + voz de `_memoria/`.
 2. Resolver cliente em `_memoria/contas-ads.md` (precisa Google Ads ID preenchido).
 3. Rodar: `python integracoes/google-ads/lib/dashboard_google.py --cliente "<Cliente>"`
-4. Pegar o HTML gerado em `integracoes/google-ads/output/`.
+4. Pegar o HTML gerado em `saidas/relatorios/<slug>/`.
 5. **Camada framework (Bolo de Cenoura):** ler KPIs e entregar 3 insights na voz LBCode.
 6. Devolver: caminho do HTML + os 3 insights.
 

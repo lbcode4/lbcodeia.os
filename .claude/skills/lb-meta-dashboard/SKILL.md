@@ -25,7 +25,7 @@ Puxa dado real da Graph API v21.0 → HTML. Não é CSV manual.
 2. Identificar o cliente. Se não dito, listar os de `_memoria/contas-ads.md`.
 3. Rodar:
    `python integracoes/meta-ads/scripts/relatorio.py --cliente "<Cliente>"`
-4. Pegar o caminho do HTML gerado em `integracoes/meta-ads/output/`.
+4. Pegar o caminho do HTML gerado em `saidas/relatorios/<slug>/`.
 5. **Camada framework (Bolo de Cenoura + GCC):** ler os KPIs e entregar
    3 insights acionáveis na voz LBCode — validar consistência termo→anúncio→landing,
    apontar queima de orçamento, CTR baixo, criativo quebrando.

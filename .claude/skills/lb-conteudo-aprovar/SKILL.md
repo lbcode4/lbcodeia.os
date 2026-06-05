@@ -35,8 +35,8 @@ Falta algo? Parar e avisar — criar `marketing/setup-automacao-meta.md` se prec
 
 1. **Validar**
    - Arquivo blog existe em `marketing/blog/como-conservar-produto.md`?
-   - Carrossel PNG existe em `marketing/conteudo/conteudo-carrossel-2026-06-01/`?
-   - Legendas existem em `marketing/conteudo/legendas-2026-06-01.md`?
+   - Carrossel PNG existe em `marketing/conteudo/carrossel/<slug>-2026-06-01/`?
+   - Legendas existem em `marketing/conteudo/carrossel/<slug>-2026-06-01/legendas.md`?
 
 2. **Publicar site**
    - Mudar status do blog: `draft: true` → `draft: false`

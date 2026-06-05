@@ -1393,8 +1393,8 @@ def main():
                       ig_profile, ig_organic, followers_days, followers_values,
                       optimizations, resumo, since, until, period_days)
 
-    # Save — output dinâmico por cliente
-    output_dir = os.path.join(BASE_DIR, "output", slug)
+    # Save — output dinâmico por cliente (entregáveis vão em saidas/, não enterrados na integração)
+    output_dir = os.path.join(REPO_ROOT, "saidas", "relatorios", slug)
     os.makedirs(output_dir, exist_ok=True)
     hoje = datetime.now()
     filename = f"dashboard-completo-{MESES_BR_LOWER[hoje.month]}-{hoje.year}.html"
