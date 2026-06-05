@@ -82,6 +82,35 @@ Status da identidade: **CONSOLIDADA** (carrosséis e logo já produzidos nesse p
 
 ---
 
+## Galeria de referência
+
+Peças já produzidas no padrão consolidado. Skill visual deve **olhar essas antes de gerar**
+— são a fonte de verdade do que "está no brand". Cada uma fixa um padrão reutilizável.
+
+### Convenção de nome
+
+Todo arquivo de referência segue **`ref-<formato>-<conceito>.png`** — minúsculo, kebab-case, sem espaço/acento.
+- `<formato>`: `post` (1:1), `slide` (4:5), `card`, `logo`
+- `<conceito>`: o tema/layout (`servico`, `problema`, `ciclo`, `pilares`, `cerebro`…)
+
+Exemplos: `ref-post-servico.png`, `ref-slide-ciclo.png`. Ordena junto, auto-documenta, sem nome opaco tipo `1.png` ou `ChatGPT Image....png`.
+
+**Auto-rename:** se cair imagem nova em `identidade/` com nome fora do padrão (`1.png`, `ChatGPT Image....png`, `WhatsApp....jpg`), a **skill visual renomeia** — lê a imagem, classifica formato+conceito, aplica `ref-<formato>-<conceito>.png` (via `git mv`, preserva histórico) e adiciona linha na tabela abaixo. `logo.png` é exceção (asset oficial, não-ref).
+
+| Peça | Formato | Padrão que ensina |
+|------|---------|-------------------|
+| [logo.png](logo.png) | Logo | Monograma **LB** com `</>` + wordmark CODE.IA / "SOLUÇÕES DIGITAIS" + seta `>_`, gradiente roxo→ciano sobre dark. Versão oficial — não recriar. |
+| [ref-post-servico.png](ref-post-servico.png) | Post 1:1 | **Ouro do post de serviço:** moldura neon retangular, ícone line dentro do card, headline 2 linhas (1ª branca / 2ª gradiente), 4 bullets com ícone hexágono, pedestal de luz radial na base, circuito + hexágonos no fundo. |
+| [ref-post-cerebro.png](ref-post-cerebro.png) | Post 1:1 | Label uppercase topo ("SERVIÇOS"), headline com **palavra-chave em gradiente**, sub em cinza, arte central de circuito (cérebro), dots de paginação, logo canto. |
+| [ref-card-servico.png](ref-card-servico.png) | Card 1:1 | Card de serviço quadrado: moldura neon arredondada, ícone hexágono, título bold + bullets com dot neon, fundo hexágono sutil. |
+| [ref-slide-problema.png](ref-slide-problema.png) | Slide 4:5 | **Grid 2×2 de dores:** label topo, headline com trecho em gradiente, 4 cards (título + dado em roxo + corpo cinza), chips de logo (OpenAI/Gemini). Layout pro slide "problema". |
+| [ref-slide-ciclo.png](ref-slide-ciclo.png) | Infográfico 4:5 | **Ciclo:** 4 cards nos cantos ligados por anel de setas neon, núcleo central com glow + ícone cérebro, linha de reforço embaixo. Padrão de slide-conceito. |
+| [ref-slide-pilares.png](ref-slide-pilares.png) | Slide 1:1 | **Grid 2×2 de pilares:** 4 cards com ícone hexágono + título 2 linhas, circuito/cérebro saindo da borda esquerda, logo canto. |
+
+**Regra:** novo visual deve casar com pelo menos uma dessas referências em estrutura (moldura neon, label topo, headline gradiente, ícone hexágono, pedestal de luz). Fugir do padrão = fora do brand.
+
+---
+
 ## Quando evoluir
 
 Se a marca mudar:
@@ -91,3 +120,5 @@ Se a marca mudar:
 
 Linha adicionada: data + mudança.
 - `[2026-06-03] /lb-sistema-instalar — reescrito do template laranja/minimalista pro brand real dark + neon roxo→ciano (carrosséis @lbcode.ia)`
+- `[2026-06-05] Galeria de referência — 7 peças produzidas catalogadas com o padrão que cada uma fixa; skill visual consulta antes de gerar`
+- `[2026-06-05] Convenção ref-<formato>-<conceito>.png + auto-rename de imagem solta pela skill visual; arquivos antigos (1.png, ChatGPT...) renomeados`
