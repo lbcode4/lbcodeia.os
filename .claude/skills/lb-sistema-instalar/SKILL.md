@@ -47,8 +47,6 @@ Se limpo, seguir.
 
 ---
 
-## Fase 0 — Site + Instagram
-
 ## Fase 0 — Site + Instagram (atalho)
 
 **Perguntar ANTES das outras perguntas:**
@@ -252,14 +250,6 @@ Uma por vez. Se vaga, repetir 1x pedindo concretude. Registrar do jeito que vem.
 
 *Registro:* Prioridade clara.
 **Por que:** Resposta mais valiosa. Define primeira skill a rodar.
-
----
-
-## Fase 2 — Entrevista
-
-Fazer essas perguntas em ordem, esperando a resposta de cada uma antes de seguir. Se vier resposta vaga, repetir uma vez pedindo concretude. Não insistir mais que isso — registrar o que vier.
-
-### Passo 0 — Site + Instagram (perguntar PRIMEIRO)
 
 ---
 
