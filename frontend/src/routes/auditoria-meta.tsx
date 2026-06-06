@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
 import { PageHeader, Card, Button } from "@/components/app-shell";
 import { auditRows, quickWins, fmtBRL } from "@/lib/mock";
-import { Check, AlertTriangle, TrendingDown } from "lucide-react";
+import { Check, AlertTriangle, TrendingDown, Loader2 } from "lucide-react";
+import { fetchContas, runSkill, type Conta } from "@/lib/skill-client";
 
 export const Route = createFileRoute("/auditoria-meta")({
   head: () => ({ meta: [{ title: "Auditoria Meta — LBCode Ads" }, { name: "description", content: "Auditoria de conjuntos, posicionamentos e quick wins." }] }),
@@ -10,9 +12,106 @@ export const Route = createFileRoute("/auditoria-meta")({
 
 function AuditoriaMeta() {
   const total = quickWins.reduce((s, q) => s + q.economy, 0);
+  const [contas, setContas] = useState<Conta[]>([]);
+  const [cliente, setCliente] = useState("");
+  const [liveData, setLiveData] = useState<null | {
+    estrutura: { campanhas: number; conjuntos: number; anuncios: number };
+    copys: Array<{ anuncio: string; problema: string; sugestao: string }>;
+    segmentacoes: Array<{ conjunto: string; problema: string }>;
+    itensCriticos: string[];
+  }>(null);
+  const [running, setRunning] = useState(false);
+  const [statusMsg, setStatusMsg] = useState("");
+
+  useEffect(() => {
+    fetchContas().then((cs) => { setContas(cs); if (cs[0]) setCliente(cs[0].cliente); }).catch(() => {});
+  }, []);
+
+  const executarAnalise = async () => {
+    setRunning(true);
+    setStatusMsg("Analisando conta…");
+    try {
+      await runSkill({ skill: "lb-meta-auditoria", cliente, input: "" }, (ev) => {
+        if (ev.type === "status") setStatusMsg(ev.text);
+        else if (ev.type === "data") setLiveData(ev.payload as typeof liveData);
+        else if (ev.type === "done") setStatusMsg("");
+        else if (ev.type === "error") { setStatusMsg(""); console.error(ev.text); }
+      });
+    } finally {
+      setRunning(false);
+    }
+  };
+
   return (
     <>
       <PageHeader title="Auditoria Meta" subtitle="Análise por conjunto e posicionamento — economia rápida sugerida." />
+
+      <div className="flex items-center gap-3 mb-6 p-4 bg-muted/30 rounded-lg border border-border flex-wrap">
+        <select
+          value={cliente}
+          onChange={(e) => setCliente(e.target.value)}
+          className="h-9 px-3 rounded-md border border-border bg-card text-[13px]"
+        >
+          {contas.map((c) => <option key={c.cliente} value={c.cliente}>{c.cliente}</option>)}
+        </select>
+        <button
+          onClick={executarAnalise}
+          disabled={running || !cliente}
+          className="h-9 px-4 rounded-md bg-primary text-primary-foreground text-[13px] font-medium disabled:opacity-50 inline-flex items-center gap-2"
+        >
+          {running && <Loader2 size={13} className="animate-spin" />}
+          {running ? statusMsg || "Analisando…" : "Executar análise real"}
+        </button>
+        {liveData && <span className="text-[12px] text-muted-foreground ml-auto">Dados ao vivo</span>}
+      </div>
+
+      {liveData && (
+        <div className="space-y-4 mb-6">
+          <div className="grid grid-cols-3 gap-3">
+            <Card className="!p-4 text-center">
+              <div className="text-[11px] text-muted-foreground uppercase tracking-wide">Campanhas</div>
+              <div className="text-2xl font-bold mt-1">{liveData.estrutura.campanhas}</div>
+            </Card>
+            <Card className="!p-4 text-center">
+              <div className="text-[11px] text-muted-foreground uppercase tracking-wide">Conjuntos</div>
+              <div className="text-2xl font-bold mt-1">{liveData.estrutura.conjuntos}</div>
+            </Card>
+            <Card className="!p-4 text-center">
+              <div className="text-[11px] text-muted-foreground uppercase tracking-wide">Anúncios</div>
+              <div className="text-2xl font-bold mt-1">{liveData.estrutura.anuncios}</div>
+            </Card>
+          </div>
+          {liveData.itensCriticos.length > 0 && (
+            <Card>
+              <h3 className="font-semibold mb-3 text-destructive">Itens Críticos</h3>
+              <ul className="space-y-2">
+                {liveData.itensCriticos.map((item, i) => (
+                  <li key={i} className="flex items-start gap-2 text-[13px]">
+                    <AlertTriangle size={14} className="text-[color:var(--warning)] mt-0.5 shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          )}
+          {liveData.copys.length > 0 && (
+            <Card className="!p-0 overflow-hidden">
+              <div className="p-4 border-b border-border">
+                <h3 className="font-semibold">Auditoria de Copys</h3>
+              </div>
+              <div className="divide-y divide-border">
+                {liveData.copys.map((c, i) => (
+                  <div key={i} className="p-4">
+                    <div className="font-medium text-[13px]">{c.anuncio}</div>
+                    <div className="text-[12px] text-destructive mt-1">{c.problema}</div>
+                    <div className="text-[12px] text-[color:var(--success)] mt-0.5">{c.sugestao}</div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          )}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <Card className="lg:col-span-2 !p-0 overflow-hidden">
