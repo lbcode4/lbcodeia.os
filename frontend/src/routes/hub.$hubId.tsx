@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { PageHeader, Card } from "@/components/app-shell";
 import { findHub, hubs } from "@/lib/skills";
@@ -9,7 +9,6 @@ export const Route = createFileRoute("/hub/$hubId")({
 
 function HubPage() {
   const { hubId } = Route.useParams();
-  const navigate = useNavigate();
   const hub = findHub(hubId);
 
   if (!hub) {
@@ -102,19 +101,9 @@ function HubPage() {
             );
           }
           return (
-            <button
-              key={skill.id}
-              type="button"
-              className="text-left"
-              onClick={() =>
-                navigate({
-                  to: "/assistente",
-                  search: { skill: skill.id, hub: hub.id } as never,
-                })
-              }
-            >
+            <Link key={skill.id} to="/skill/$skillId" params={{ skillId: skill.id }} className="block text-left">
               {content}
-            </button>
+            </Link>
           );
         })}
       </div>
