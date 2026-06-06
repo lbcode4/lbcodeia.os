@@ -253,7 +253,7 @@ function SiteEditor() {
                 srcDoc={html}
                 title="Preview"
                 className="w-full h-full border-0"
-                sandbox="allow-same-origin allow-scripts"
+                sandbox="allow-scripts allow-popups allow-forms"
               />
             )}
           </div>
