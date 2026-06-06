@@ -27,12 +27,11 @@ describe("todas as skills registradas", () => {
     }
   });
 
-  it("skills data têm outputContract", () => {
-    const dataSkills = ["lb-meta-dashboard", "lb-meta-diagnostico", "lb-meta-auditoria", "lb-meta-analise-reels", "lb-ads-negativas", "lb-google-dashboard"];
+  it("toda skill data tem outputContract definido", () => {
+    const dataSkills = getAllSkillIds().filter((id) => resolveSkill(id).mode === "data");
+    expect(dataSkills.length).toBeGreaterThanOrEqual(6); // pelo menos as 6 telas data-driven
     for (const id of dataSkills) {
-      const spec = resolveSkill(id);
-      expect(spec.mode).toBe("data");
-      expect(spec.outputContract).toBeDefined();
+      expect(resolveSkill(id).outputContract).toBeDefined();
     }
   });
 });
