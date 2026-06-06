@@ -6,6 +6,7 @@ import { listContas } from "./contas.js";
 import { isAllowedSkill } from "./skills-map.js";
 import { runSkill } from "./runner.js";
 import { listCampaigns, readCampaignFile } from "./prospeccao.js";
+import { listSites, readSiteHtml, writeSiteHtml } from "./sites.js";
 import { listCarrosseis, readSlide } from "./carrosseis.js";
 import { getBiblioteca, readBibliotecaFile } from "./biblioteca.js";
 import { getDashboardData } from "./dashboard.js";
@@ -94,6 +95,40 @@ app.get("/api/carrosseis/slide", async (c) => {
 app.get("/api/dashboard/data", async (c) => {
   try {
     return c.json(await getDashboardData());
+  } catch (e) {
+    return c.json({ error: (e as Error).message }, 500);
+  }
+});
+
+app.get("/api/sites", async (c) => {
+  try {
+    return c.json(await listSites());
+  } catch {
+    return c.json({ error: "Falha ao listar sites" }, 500);
+  }
+});
+
+app.get("/api/sites/html", async (c) => {
+  const id = c.req.query("id");
+  if (!id) return c.json({ error: "id obrigatório" }, 400);
+  try {
+    const html = await readSiteHtml(id);
+    return new Response(html, { headers: { "Content-Type": "text/html; charset=utf-8" } });
+  } catch (e) {
+    const code = (e as NodeJS.ErrnoException).code;
+    if (code === "ENOENT" || (e as Error).message === "Caminho inválido")
+      return c.json({ error: "Site não encontrado" }, 404);
+    return c.json({ error: "Erro ao ler site" }, 500);
+  }
+});
+
+app.put("/api/sites/html", async (c) => {
+  const id = c.req.query("id");
+  if (!id) return c.json({ error: "id obrigatório" }, 400);
+  try {
+    const { html } = await c.req.json<{ html: string }>();
+    await writeSiteHtml(id, html);
+    return c.json({ ok: true });
   } catch (e) {
     return c.json({ error: (e as Error).message }, 500);
   }

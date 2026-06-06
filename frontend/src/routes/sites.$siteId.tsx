@@ -1,18 +1,14 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import {
   ArrowLeft, Send, Sparkles, User, Loader2, Globe, Monitor, Smartphone,
   Rocket, CheckCircle2, RotateCcw,
 } from "lucide-react";
 import { Card, Button, Badge } from "@/components/app-shell";
-import { sites } from "@/lib/mock";
+
+const BACKEND = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8787";
 
 export const Route = createFileRoute("/sites/$siteId")({
-  loader: ({ params }) => {
-    const site = sites.find((s) => s.id === params.siteId);
-    if (!site) throw notFound();
-    return { site };
-  },
   component: SiteEditor,
 });
 
@@ -26,22 +22,42 @@ const SUGGESTIONS = [
 ];
 
 function SiteEditor() {
-  const { site } = Route.useLoaderData();
-  const [html, setHtml] = useState(site.html);
-  const [history, setHistory] = useState<string[]>([site.html]);
+  const { siteId } = Route.useParams();
+  const [html, setHtml] = useState("");
+  const [history, setHistory] = useState<string[]>([]);
+  const [loadingHtml, setLoadingHtml] = useState(true);
+  const [loadErro, setLoadErro] = useState("");
   const [messages, setMessages] = useState<Msg[]>([
     {
       role: "assistant",
-      content: `Olá! Estou editando **${site.name}**. Me diga o que você quer mudar — posso alterar textos, cores, seções, layout, e mais.`,
+      content: `Olá! Carregando o site… Me diga o que você quer mudar — posso alterar textos, cores, seções, layout, e mais.`,
     },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [device, setDevice] = useState<"desktop" | "mobile">("desktop");
   const [publishing, setPublishing] = useState(false);
-  const [published, setPublished] = useState(site.status === "publicado");
+  const [published, setPublished] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setLoadingHtml(true);
+    fetch(`${BACKEND}/api/sites/html?id=${encodeURIComponent(siteId)}`)
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.text();
+      })
+      .then((h) => {
+        setHtml(h);
+        setHistory([h]);
+        setLoadingHtml(false);
+      })
+      .catch((e) => {
+        setLoadErro(e.message);
+        setLoadingHtml(false);
+      });
+  }, [siteId]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -101,8 +117,9 @@ function SiteEditor() {
           </Link>
           <Globe size={16} className="text-muted-foreground shrink-0" />
           <div className="min-w-0">
-            <div className="font-semibold text-[14px] truncate">{site.name}</div>
-            <div className="text-[11px] text-muted-foreground font-mono truncate">{site.domain}</div>
+            <div className="font-semibold text-[14px] truncate capitalize">
+              {siteId.replace(/-\d{4}-\d{2}-\d{2}$/, "").replace(/-/g, " ")}
+            </div>
           </div>
           {published && <Badge tone="success"><CheckCircle2 size={11} className="mr-1" />Publicado</Badge>}
         </div>
@@ -222,13 +239,23 @@ function SiteEditor() {
               minHeight: 600,
             }}
           >
-            <iframe
-              key={html.length}
-              srcDoc={html}
-              title="Preview"
-              className="w-full h-full border-0"
-              sandbox="allow-same-origin"
-            />
+            {loadingHtml ? (
+              <div className="w-full h-full flex items-center justify-center text-muted-foreground gap-2">
+                <Loader2 className="animate-spin" size={18} /> Carregando site…
+              </div>
+            ) : loadErro ? (
+              <div className="w-full h-full flex items-center justify-center text-red-500 text-[13px]">
+                Erro ao carregar: {loadErro}
+              </div>
+            ) : (
+              <iframe
+                key={html.length}
+                srcDoc={html}
+                title="Preview"
+                className="w-full h-full border-0"
+                sandbox="allow-same-origin allow-scripts"
+              />
+            )}
           </div>
         </div>
       </div>
