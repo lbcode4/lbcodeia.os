@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
 import { Card, Badge } from "@/components/app-shell";
 import { fmtBRL, fmtInt } from "@/lib/mock";
-import { Moon, Instagram, Heart, MessageCircle, Share2, Bookmark, Eye } from "lucide-react";
+import { Moon, Instagram, Heart, MessageCircle, Share2, Bookmark, Eye, Loader2 } from "lucide-react";
+import { fetchContas, runSkill, type Conta } from "@/lib/skill-client";
 
 export const Route = createFileRoute("/dashboard-meta")({
   head: () => ({
@@ -268,6 +270,39 @@ function Legend({ items }: { items: { label: string; color: string }[] }) {
 
 // ---------- Página ----------
 function DashboardMeta() {
+  const [contas, setContas] = useState<Conta[]>([]);
+  const [cliente, setCliente] = useState("");
+  const [liveData, setLiveData] = useState<null | {
+    periodo: string;
+    gastos: number;
+    impressoes: number;
+    cliques: number;
+    ctr: number;
+    cpm: number;
+    topCreativos: Array<{ id: string; nome: string; ctr: number; gastos: number }>;
+  }>(null);
+  const [running, setRunning] = useState(false);
+  const [statusMsg, setStatusMsg] = useState("");
+
+  useEffect(() => {
+    fetchContas().then((cs) => { setContas(cs); if (cs[0]) setCliente(cs[0].cliente); }).catch(() => {});
+  }, []);
+
+  const executarAnalise = async () => {
+    setRunning(true);
+    setStatusMsg("Analisando conta…");
+    try {
+      await runSkill({ skill: "lb-meta-dashboard", cliente, input: "" }, (ev) => {
+        if (ev.type === "status") setStatusMsg(ev.text);
+        else if (ev.type === "data") setLiveData(ev.payload as typeof liveData);
+        else if (ev.type === "done") setStatusMsg("");
+        else if (ev.type === "error") { setStatusMsg(""); console.error(ev.text); }
+      });
+    } finally {
+      setRunning(false);
+    }
+  };
+
   return (
     <>
       {/* Header gradiente */}
@@ -285,6 +320,26 @@ function DashboardMeta() {
         </div>
       </div>
 
+      {/* Control panel */}
+      <div className="flex items-center gap-3 mb-6 p-4 bg-muted/30 rounded-lg border border-border flex-wrap">
+        <select
+          value={cliente}
+          onChange={(e) => setCliente(e.target.value)}
+          className="h-9 px-3 rounded-md border border-border bg-card text-[13px]"
+        >
+          {contas.map((c) => <option key={c.cliente} value={c.cliente}>{c.cliente}</option>)}
+        </select>
+        <button
+          onClick={executarAnalise}
+          disabled={running || !cliente}
+          className="h-9 px-4 rounded-md bg-primary text-primary-foreground text-[13px] font-medium disabled:opacity-50 inline-flex items-center gap-2"
+        >
+          {running && <Loader2 size={13} className="animate-spin" />}
+          {running ? statusMsg || "Analisando…" : "Executar análise real"}
+        </button>
+        {liveData && <span className="text-[12px] text-muted-foreground ml-auto">Dados ao vivo</span>}
+      </div>
+
       {/* Resumo Executivo */}
       <SectionTitle>Resumo Executivo</SectionTitle>
       <Card className="!p-5">
@@ -299,7 +354,13 @@ function DashboardMeta() {
 
       {/* KPI grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 mt-5">
-        {kpis.map((k) => <KpiCard key={k.label} {...k} />)}
+        {(liveData ? [
+          { label: "Investimento", value: `R$ ${liveData.gastos.toFixed(2)}`, foot: "" },
+          { label: "Impressões", value: fmtInt(liveData.impressoes), foot: "" },
+          { label: "Cliques", value: fmtInt(liveData.cliques), foot: "" },
+          { label: "CTR", value: `${liveData.ctr.toFixed(2)}%`, foot: "" },
+          { label: "CPM", value: `R$ ${liveData.cpm.toFixed(2)}`, foot: "" },
+        ] : kpis).map((k) => <KpiCard key={k.label} {...k} />)}
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 mt-3">
         <Card className="!p-4 text-center">
