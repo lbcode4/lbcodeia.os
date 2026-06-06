@@ -267,7 +267,9 @@ nav {
 #hero {
   min-height: 100vh;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
   padding-top: var(--nav-h);
   position: relative;
   overflow: hidden;
@@ -968,7 +970,35 @@ footer {
   .hero-stat:last-child { border-bottom: none; }
 }
 </style>
-</head>
+<script>
+(function(){
+  document.addEventListener('click', function(e){
+    var t = e.target;
+    while(t && t.tagName !== 'A') t = t.parentElement;
+    if(!t) return;
+    var h = t.getAttribute('href') || '';
+    if(!h || h.startsWith('#') || h.startsWith('javascript:')) return;
+    e.preventDefault();
+    e.stopPropagation();
+    if(h.startsWith('http://') || h.startsWith('https://')) window.open(h, '_blank', 'noopener');
+  }, true);
+  try { var n = function(){}; history.pushState = n; history.replaceState = n; } catch(e){}
+})();
+</script><script>
+(function(){
+  document.addEventListener('click', function(e){
+    var t = e.target;
+    while(t && t.tagName !== 'A') t = t.parentElement;
+    if(!t) return;
+    var h = t.getAttribute('href') || '';
+    if(!h || h.startsWith('#') || h.startsWith('javascript:')) return;
+    e.preventDefault();
+    e.stopPropagation();
+    if(h.startsWith('http://') || h.startsWith('https://')) window.open(h, '_blank', 'noopener');
+  }, true);
+  try { var n = function(){}; history.pushState = n; history.replaceState = n; } catch(e){}
+})();
+</script></head>
 <body>
 
 <!-- ═══════════════════════════════════════

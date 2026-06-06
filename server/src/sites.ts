@@ -72,11 +72,17 @@ export async function writeSiteHtml(id: string, html: string): Promise<void> {
   await writeFile(safe, html, "utf-8");
 }
 
-export async function editSiteHtml(
+export type SiteChatEvent =
+  | { type: "chunk"; text: string }
+  | { type: "html"; html: string }
+  | { type: "done" }
+  | { type: "error"; text: string };
+
+export async function* streamSiteChat(
   html: string,
   instruction: string,
   images: { mediaType: string; data: string }[],
-): Promise<string> {
+): AsyncGenerator<SiteChatEvent> {
   const tmpDir = await mkdtemp(join(tmpdir(), "lbsite-"));
   const htmlPath = join(tmpDir, "site.html");
 
@@ -92,20 +98,20 @@ export async function editSiteHtml(
   }
 
   const imageContext = imagePaths.length
-    ? `\nImagens de referência salvas em:\n${imagePaths.map((p) => `- ${p}`).join("\n")}\nUse a ferramenta Read para visualizá-las antes de editar.`
+    ? `\nImagens de referência salvas em:\n${imagePaths.map((p) => `- ${p}`).join("\n")}\nUse a ferramenta Read para visualizá-las.`
     : "";
 
-  const prompt = `Você é um editor de HTML especialista em landing pages.
+  const prompt = `Você é um assistente especialista em landing pages HTML. Seja conversacional e direto.
 
-O arquivo HTML está em: ${htmlPath}${imageContext}
+O arquivo HTML do site está em: ${htmlPath}${imageContext}
 
-INSTRUÇÃO: ${instruction}
+MENSAGEM DO USUÁRIO: ${instruction}
 
-1. Leia o arquivo HTML em ${htmlPath}
-${imagePaths.length ? "2. Leia as imagens de referência para entender o estilo/conteúdo desejado\n3. " : "2. "}Aplique a instrução modificando apenas o necessário — preservando o restante do HTML
-${imagePaths.length ? "4. " : "3. "}Salve o HTML modificado de volta em ${htmlPath}
-
-Salve apenas HTML válido e completo. Nenhum texto fora do HTML.`;
+Regras:
+- Se for pergunta, dúvida ou pedido de esclarecimento → responda conversacionalmente. NÃO modifique o arquivo.
+- Se for instrução de mudança concreta → leia o arquivo, aplique apenas o necessário, salve em ${htmlPath}. Confirme brevemente o que fez.
+- Pode ler imagens de referência com a ferramenta Read para analisá-las.
+- Respostas curtas e diretas. Sem listas longas quando um parágrafo basta.`;
 
   const MODEL = process.env.LBCODE_MODEL ?? "claude-sonnet-4-6";
 
@@ -124,11 +130,26 @@ Salve apenas HTML válido e completo. Nenhum texto fora do HTML.`;
     });
 
     for await (const msg of messages) {
-      if (msg.type === "result") break;
+      if (msg.type === "assistant") {
+        for (const block of msg.message.content) {
+          if (block.type === "text") {
+            const text = (block as { type: "text"; text: string }).text;
+            if (text) yield { type: "chunk", text };
+          }
+        }
+      } else if (msg.type === "result") {
+        // Verifica se o HTML foi modificado
+        try {
+          const modified = await readFile(htmlPath, "utf-8");
+          if (modified !== html) yield { type: "html", html: modified };
+        } catch { /* arquivo pode não existir se algo falhou */ }
+        break;
+      }
     }
 
-    const modified = await readFile(htmlPath, "utf-8");
-    return modified;
+    yield { type: "done" };
+  } catch (e) {
+    yield { type: "error", text: e instanceof Error ? e.message : "Erro desconhecido" };
   } finally {
     const toDelete = [htmlPath, ...imagePaths];
     await Promise.all(toDelete.map((p) => unlink(p).catch(() => {})));

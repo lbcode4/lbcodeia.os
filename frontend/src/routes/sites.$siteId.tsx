@@ -152,38 +152,98 @@ function SiteEditor() {
     setMessages((m) => [
       ...m,
       { role: "user", content: t, images: sentImages.length ? sentImages : undefined },
+      { role: "assistant", content: "" },
     ]);
     setInput("");
     setImages([]);
     setLoading(true);
+
     try {
-      const resp = await fetch(`${BACKEND}/api/sites/edit`, {
+      const resp = await fetch(`${BACKEND}/api/sites/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          siteId,
           html,
           instruction: t,
           images: sentImages.map((img) => ({ mediaType: img.mediaType, data: img.data })),
         }),
       });
-      const data = (await resp.json()) as { html?: string; error?: string };
-      if (!resp.ok) throw new Error(data.error ?? "Falha ao editar");
-      const newHtml = injectGuard(data.html!);
-      setHtml(newHtml);
-      setHistory((h) => [...h, newHtml]);
-      setBlobUrl((old) => {
-        if (old) URL.revokeObjectURL(old);
-        return makeBlobUrl(newHtml);
-      });
-      setMessages((m) => [
-        ...m,
-        { role: "assistant", content: "Pronto! Alteração aplicada. Veja o preview ao lado." },
-      ]);
+
+      if (!resp.ok || !resp.body) throw new Error(`HTTP ${resp.status}`);
+
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      const appendChunk = (text: string) =>
+        setMessages((m) => {
+          const copy = [...m];
+          const last = copy[copy.length - 1];
+          copy[copy.length - 1] = { ...last, content: last.content + text };
+          return copy;
+        });
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+
+        const parts = buffer.split("\n\n");
+        buffer = parts.pop() ?? "";
+        for (const part of parts) {
+          const dataLine = part.split("\n").find((l) => l.startsWith("data:"));
+          if (!dataLine) continue;
+          try {
+            const ev = JSON.parse(dataLine.slice(5).trim()) as {
+              type: string;
+              text?: string;
+              html?: string;
+            };
+            if (ev.type === "chunk" && ev.text) {
+              appendChunk(ev.text);
+            } else if (ev.type === "html" && ev.html) {
+              const newHtml = injectGuard(ev.html);
+              setHtml(newHtml);
+              setHistory((h) => [...h, newHtml]);
+              setBlobUrl((old) => {
+                if (old) URL.revokeObjectURL(old);
+                return makeBlobUrl(newHtml);
+              });
+            } else if (ev.type === "error" && ev.text) {
+              setError(ev.text);
+              appendChunk(`\n\n⚠️ ${ev.text}`);
+            }
+          } catch {
+            /* ignora frame malformado */
+          }
+        }
+      }
+
+      // processa buffer final sem \n\n
+      buffer += decoder.decode();
+      if (buffer.trim()) {
+        const dataLine = buffer.split("\n").find((l) => l.startsWith("data:"));
+        if (dataLine) {
+          try {
+            const ev = JSON.parse(dataLine.slice(5).trim()) as {
+              type: string;
+              text?: string;
+              html?: string;
+            };
+            if (ev.type === "chunk" && ev.text) appendChunk(ev.text);
+          } catch {
+            /* ignora */
+          }
+        }
+      }
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Erro desconhecido";
       setError(msg);
-      setMessages((m) => [...m, { role: "assistant", content: `Não consegui aplicar: ${msg}` }]);
+      setMessages((m) => {
+        const copy = [...m];
+        copy[copy.length - 1] = { ...copy[copy.length - 1], content: `Erro: ${msg}` };
+        return copy;
+      });
     } finally {
       setLoading(false);
     }

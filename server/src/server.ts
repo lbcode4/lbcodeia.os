@@ -6,7 +6,7 @@ import { listContas } from "./contas.js";
 import { isAllowedSkill } from "./skills-map.js";
 import { runSkill } from "./runner.js";
 import { listCampaigns, readCampaignFile } from "./prospeccao.js";
-import { listSites, readSiteHtml, writeSiteHtml, editSiteHtml } from "./sites.js";
+import { listSites, readSiteHtml, writeSiteHtml, streamSiteChat } from "./sites.js";
 import { listCarrosseis, readSlide } from "./carrosseis.js";
 import { getBiblioteca, readBibliotecaFile } from "./biblioteca.js";
 import { getDashboardData } from "./dashboard.js";
@@ -134,8 +134,8 @@ app.put("/api/sites/html", async (c) => {
   }
 });
 
-app.post("/api/sites/edit", async (c) => {
-  let body: { siteId: string; html: string; instruction: string; images?: { mediaType: string; data: string }[] };
+app.post("/api/sites/chat", async (c) => {
+  let body: { html: string; instruction: string; images?: { mediaType: string; data: string }[] };
   try {
     body = await c.req.json();
   } catch {
@@ -143,12 +143,13 @@ app.post("/api/sites/edit", async (c) => {
   }
   const { html, instruction, images = [] } = body;
   if (!html || !instruction) return c.json({ error: "html e instruction obrigatórios" }, 400);
-  try {
-    const modified = await editSiteHtml(html, instruction, images);
-    return c.json({ html: modified });
-  } catch (e) {
-    return c.json({ error: e instanceof Error ? e.message : "Erro ao editar" }, 500);
-  }
+
+  return streamSSE(c, async (stream) => {
+    for await (const ev of streamSiteChat(html, instruction, images)) {
+      await stream.writeSSE({ event: ev.type, data: JSON.stringify(ev) });
+      if (ev.type === "done" || ev.type === "error") break;
+    }
+  });
 });
 
 app.get("/api/biblioteca", async (c) => {
