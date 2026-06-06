@@ -20,4 +20,13 @@ describe("POST /api/skills/run validação", () => {
     });
     expect(res.status).toBe(400);
   });
+
+  it("rejeita corpo malformado com 400", async () => {
+    const res = await app.request("/api/skills/run", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "isto não é json",
+    });
+    expect(res.status).toBe(400);
+  });
 });

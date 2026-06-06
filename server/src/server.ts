@@ -11,18 +11,24 @@ export const app = new Hono();
 app.use("/api/*", cors()); // dev: front em :3000 chama backend em :8787
 
 app.get("/api/contas", async (c) => {
-  const contas = await listContas();
-  return c.json(contas);
+  try {
+    const contas = await listContas();
+    return c.json(contas);
+  } catch {
+    return c.json({ error: "Falha ao carregar contas" }, 500);
+  }
 });
 
 app.post("/api/skills/run", async (c) => {
-  const { skill, cliente, input } = await c.req.json<{
-    skill: string;
-    cliente: string;
-    input: string;
-  }>();
+  let body: { skill: string; cliente: string; input: string };
+  try {
+    body = await c.req.json();
+  } catch {
+    return c.json({ error: "Corpo inválido: JSON esperado" }, 400);
+  }
+  const { skill, cliente, input } = body;
 
-  if (!isAllowedSkill(skill)) {
+  if (!skill || !isAllowedSkill(skill)) {
     return c.json({ error: `Skill não permitida: ${skill}` }, 400);
   }
 
@@ -35,7 +41,7 @@ app.post("/api/skills/run", async (c) => {
 });
 
 // Só sobe o listener quando executado direto (não nos testes).
-if (process.argv[1] && process.argv[1].endsWith("server.ts")) {
+if (process.argv[1] && /server\.(ts|js)$/.test(process.argv[1])) {
   const port = Number(process.env.PORT || 8787);
   serve({ fetch: app.fetch, port });
   console.log(`lbcode-backend on http://localhost:${port}`);
