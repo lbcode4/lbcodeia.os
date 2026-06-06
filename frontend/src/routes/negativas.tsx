@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PageHeader, Card, Badge, Button } from "@/components/app-shell";
 import { searchTerms, negativeGroups, fmtBRL } from "@/lib/mock";
-import { ChevronDown, ChevronRight, Download, PiggyBank } from "lucide-react";
+import { ChevronDown, ChevronRight, Download, PiggyBank, Loader2 } from "lucide-react";
+import { fetchContas, runSkill, type Conta } from "@/lib/skill-client";
 
 export const Route = createFileRoute("/negativas")({
   head: () => ({ meta: [{ title: "Negativas — LBCode Ads" }, { name: "description", content: "Termos de busca e palavras-chave negativas sugeridas para Google Ads." }] }),
@@ -13,10 +14,102 @@ function Negativas() {
   const [open, setOpen] = useState<Record<string, boolean>>({ Irrelevante: true });
   const monthly = 412 + 318 + 215 + 142;
   const yearly = monthly * 12;
+  const [contas, setContas] = useState<Conta[]>([]);
+  const [cliente, setCliente] = useState("");
+  const [liveData, setLiveData] = useState<null | {
+    novasNegativas: Array<{ termo: string; motivo: string; campanha: string }>;
+    existentes: string[];
+    impactoEstimado: string;
+  }>(null);
+  const [running, setRunning] = useState(false);
+  const [statusMsg, setStatusMsg] = useState("");
+
+  useEffect(() => {
+    fetchContas().then((cs) => { setContas(cs); if (cs[0]) setCliente(cs[0].cliente); }).catch(() => {});
+  }, []);
+
+  const executarAnalise = async () => {
+    setRunning(true);
+    setStatusMsg("Analisando conta…");
+    try {
+      await runSkill({ skill: "lb-ads-negativas", cliente, input: "" }, (ev) => {
+        if (ev.type === "status") setStatusMsg(ev.text);
+        else if (ev.type === "data") setLiveData(ev.payload as typeof liveData);
+        else if (ev.type === "done") setStatusMsg("");
+        else if (ev.type === "error") { setStatusMsg(""); console.error(ev.text); }
+      });
+    } finally {
+      setRunning(false);
+    }
+  };
 
   return (
     <>
       <PageHeader title="Negativas (Google)" subtitle="Termos que estão drenando orçamento — e a lista negativa sugerida." />
+
+      <div className="flex items-center gap-3 mb-6 p-4 bg-muted/30 rounded-lg border border-border flex-wrap">
+        <select
+          value={cliente}
+          onChange={(e) => setCliente(e.target.value)}
+          className="h-9 px-3 rounded-md border border-border bg-card text-[13px]"
+        >
+          {contas.map((c) => <option key={c.cliente} value={c.cliente}>{c.cliente}</option>)}
+        </select>
+        <button
+          onClick={executarAnalise}
+          disabled={running || !cliente}
+          className="h-9 px-4 rounded-md bg-primary text-primary-foreground text-[13px] font-medium disabled:opacity-50 inline-flex items-center gap-2"
+        >
+          {running && <Loader2 size={13} className="animate-spin" />}
+          {running ? statusMsg || "Analisando…" : "Executar análise real"}
+        </button>
+        {liveData && <span className="text-[12px] text-muted-foreground ml-auto">Dados ao vivo</span>}
+      </div>
+
+      {liveData && (
+        <div className="space-y-4 mb-6">
+          {liveData.impactoEstimado && (
+            <Card className="!p-4">
+              <div className="text-[13px] text-muted-foreground">Impacto estimado: <span className="font-semibold text-foreground">{liveData.impactoEstimado}</span></div>
+            </Card>
+          )}
+          <Card className="!p-0 overflow-hidden">
+            <div className="p-4 border-b border-border">
+              <h3 className="font-semibold">Novas negativas sugeridas (ao vivo)</h3>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-[13px]">
+                <thead className="text-muted-foreground bg-muted/40">
+                  <tr>
+                    <th className="text-left font-medium py-2 px-3">Termo</th>
+                    <th className="text-left font-medium py-2 px-3">Motivo</th>
+                    <th className="text-left font-medium py-2 px-3">Campanha</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {liveData.novasNegativas.map((n, i) => (
+                    <tr key={i} className="border-b border-border last:border-0">
+                      <td className="py-2.5 px-3 font-medium">{n.termo}</td>
+                      <td className="py-2.5 px-3 text-muted-foreground">{n.motivo}</td>
+                      <td className="py-2.5 px-3">{n.campanha}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+          {liveData.existentes.length > 0 && (
+            <Card>
+              <h3 className="font-semibold mb-3">Negativas existentes</h3>
+              <div className="flex flex-wrap gap-2">
+                {liveData.existentes.map((t, i) => (
+                  <span key={i} className="inline-flex px-3 py-1.5 rounded border border-border bg-muted/40 text-[13px] font-medium">{t}</span>
+                ))}
+              </div>
+            </Card>
+          )}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <Card className="lg:col-span-2 !p-0 overflow-hidden">
