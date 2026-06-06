@@ -28,6 +28,14 @@ class TestCriativosMock(unittest.TestCase):
         self.assertGreater(len(data), 0)
         self.assertIn("ctr", data[0])
         self.assertIn("body", data[0])
+        for key in ("ad_id", "ad_name", "spend", "ctr", "clicks", "purchases", "body", "title"):
+            self.assertIn(key, data[0])
+
+    def test_mock_respeita_limit(self):
+        proc = self._run("--mock", "--limit", "2")
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        data = json.loads(proc.stdout)
+        self.assertEqual(len(data), 2)
 
     def test_sem_token_cai_no_fixture(self):
         # Sem --mock e sem token: ainda deve devolver o fixture, não estourar.

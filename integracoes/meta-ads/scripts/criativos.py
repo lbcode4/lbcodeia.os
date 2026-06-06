@@ -61,8 +61,12 @@ def _load_fixture():
     fixture = os.path.join(
         os.path.dirname(__file__), "..", "fixtures", "criativos-sample.json"
     )
-    with open(fixture, encoding="utf-8") as f:
-        return f.read()
+    try:
+        with open(fixture, encoding="utf-8") as f:
+            return f.read()
+    except FileNotFoundError:
+        print(f"Erro: fixture não encontrado em {fixture}", file=sys.stderr)
+        sys.exit(1)
 
 
 def main():
@@ -74,9 +78,10 @@ def main():
                         help="Usa fixture de exemplo, sem chamar a Graph API")
     args = parser.parse_args()
 
-    # Fallback: sem token (ou com --mock), devolve o fixture e encerra.
+    # Fallback: sem token (ou com --mock), devolve o fixture (respeitando --limit) e encerra.
     if args.mock or not os.getenv("META_ACCESS_TOKEN"):
-        print(_load_fixture())
+        data = json.loads(_load_fixture())
+        print(json.dumps(data[:args.limit], ensure_ascii=False, indent=2))
         return
 
     from meta_api import MetaAPIClient, MetaAPIError  # noqa: PLC0415
