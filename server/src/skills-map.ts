@@ -6,7 +6,7 @@ export type SkillSpec = {
 };
 
 const TEXT_TOOLS = ["Skill", "Read", "Glob", "Grep"];
-const SCRIPT_TOOLS = ["Skill", "Bash", "Read", "Glob", "Grep"];
+const SCRIPT_TOOLS = ["Skill", "Bash", "Read", "Write", "Edit", "Glob", "Grep"];
 
 const SKILLS: Record<string, SkillSpec> = {
   // ── Meta Ads ──────────────────────────────────────────────────────────
