@@ -9,6 +9,7 @@ import { listCampaigns, readCampaignFile } from "./prospeccao.js";
 import { listConteudo, readConteudoArquivo } from "./conteudo.js";
 import { listSites, readSiteHtml, writeSiteHtml, streamSiteChat } from "./sites.js";
 import { listCarrosseis, readSlide } from "./carrosseis.js";
+import { listIdentidade, readIdentidadeArquivo, listInspiracoes, saveInspiracao, readInspiracao } from "./identidade.js";
 import { getBiblioteca, readBibliotecaFile } from "./biblioteca.js";
 import { getDashboardData } from "./dashboard.js";
 
@@ -90,6 +91,84 @@ app.get("/api/carrosseis/slide", async (c) => {
     if (code === "ENOENT" || (e as Error).message === "Caminho inválido")
       return c.json({ error: "Slide não encontrado" }, 404);
     return c.json({ error: "Erro ao ler slide" }, 500);
+  }
+});
+
+app.get("/api/identidade", async (c) => {
+  try {
+    return c.json(await listIdentidade());
+  } catch {
+    return c.json({ error: "Falha ao carregar identidade" }, 500);
+  }
+});
+
+app.get("/api/identidade/arquivo", async (c) => {
+  const file = c.req.query("file");
+  if (!file) return c.json({ error: "file obrigatório" }, 400);
+  try {
+    const { buf, mime } = await readIdentidadeArquivo(file);
+    return new Response(buf.buffer as ArrayBuffer, {
+      headers: { "Content-Type": mime, "Cache-Control": "max-age=3600" },
+    });
+  } catch (e) {
+    const msg = (e as Error).message;
+    if (msg === "Caminho inválido" || msg === "Tipo inválido") return c.json({ error: "Arquivo não encontrado" }, 404);
+    const code = (e as NodeJS.ErrnoException).code;
+    if (code === "ENOENT") return c.json({ error: "Arquivo não encontrado" }, 404);
+    return c.json({ error: "Erro ao ler arquivo" }, 500);
+  }
+});
+
+app.get("/api/carrosseis/inspiracoes", async (c) => {
+  const id = c.req.query("id");
+  if (!id) return c.json({ error: "id obrigatório" }, 400);
+  try {
+    return c.json(await listInspiracoes(id));
+  } catch {
+    return c.json({ error: "Falha ao listar inspirações" }, 500);
+  }
+});
+
+app.post("/api/carrosseis/inspiracoes", async (c) => {
+  const id = c.req.query("id");
+  if (!id) return c.json({ error: "id obrigatório" }, 400);
+  let formData: FormData;
+  try {
+    formData = await c.req.formData();
+  } catch {
+    return c.json({ error: "Multipart inválido" }, 400);
+  }
+  const file = formData.get("file") as File | null;
+  if (!file) return c.json({ error: "Campo 'file' obrigatório" }, 400);
+  const ALLOWED = ["image/png", "image/jpeg", "image/webp"];
+  if (!ALLOWED.includes(file.type)) return c.json({ error: "Tipo inválido. Use PNG, JPG ou WebP." }, 400);
+  const ext = file.name.split(".").pop()?.toLowerCase() ?? "png";
+  const safeName = `${Date.now()}.${ext}`;
+  try {
+    await saveInspiracao(id, safeName, Buffer.from(await file.arrayBuffer()));
+    return c.json({ ok: true, filename: safeName });
+  } catch (e) {
+    if ((e as Error).message === "Caminho inválido") return c.json({ error: "id inválido" }, 400);
+    if ((e as Error).message === "Tipo inválido") return c.json({ error: "Tipo inválido. Use PNG, JPG ou WebP." }, 400);
+    return c.json({ error: "Erro ao salvar" }, 500);
+  }
+});
+
+app.get("/api/carrosseis/inspiracao", async (c) => {
+  const id = c.req.query("id");
+  const file = c.req.query("file");
+  if (!id || !file) return c.json({ error: "id e file obrigatórios" }, 400);
+  try {
+    const { buf, mime } = await readInspiracao(id, file);
+    return new Response(buf.buffer as ArrayBuffer, {
+      headers: { "Content-Type": mime, "Cache-Control": "max-age=3600" },
+    });
+  } catch (e) {
+    const msg = (e as Error).message;
+    if (msg === "Caminho inválido" || msg === "Tipo inválido") return c.json({ error: "Não encontrado" }, 404);
+    const code = (e as NodeJS.ErrnoException).code;
+    if (code === "ENOENT") return c.json({ error: "Não encontrado" }, 404);
+    return c.json({ error: "Erro ao ler arquivo" }, 500);
   }
 });
 

@@ -76,9 +76,10 @@ Ao terminar de renderizar os PNGs, gerar **automaticamente** a legenda e salvar 
 
 Se usuário não disser, perguntar: *"Que tipo RETINA esse post é?"* — sem isso, gera só T+A e mata a diversidade do feed.
 
-**Buscar referências (2 fontes):**
+**Buscar referências (3 fontes):**
 1. **Biblioteca de Anúncios Meta** — `facebook.com/ads/library` — filtrar por nicho. Topo + mais tempo no ar = vencedores
 2. **Instagram pelo termo** — buscar termo do nicho → posts mais vistos = referências orgânicas
+3. **Inspirações do carrossel** — verificar se existe `marketing/conteudo/carrossel/{id-do-tema}/inspiracoes/`. Se tiver imagens, carregar via `Read` e incluir no contexto: "O usuário quer imitar o layout/estilo das imagens de inspiração nessa pasta. Adapte a composição, hierarquia tipográfica e uso de espaço ao que você vê nelas, mantendo a paleta e identidade da marca."
 
 Salvar 2-3 referências em `marketing/conteudo/carrossel/<pasta>/referencias/`.
 

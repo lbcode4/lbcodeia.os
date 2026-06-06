@@ -10,6 +10,7 @@ export type CarrosselMeta = {
   slides: string[]; // filenames inside instagram/
   legenda: string;
   titulo: string;
+  inspiracoes: number;
 };
 
 function labelFromId(id: string): string {
@@ -46,7 +47,15 @@ export async function listCarrosseis(): Promise<CarrosselMeta[]> {
       legenda = await readFile(join(campDir, "legenda.md"), "utf-8");
     } catch { /* sem legenda */ }
 
-    result.push({ id: d.name, slides, legenda, titulo: labelFromId(d.name) });
+    let inspiracoes = 0;
+    try {
+      const inspiFiles = await readdir(join(campDir, "inspiracoes"));
+      inspiracoes = inspiFiles.filter((f) =>
+        [".png", ".jpg", ".jpeg", ".webp"].includes(extname(f).toLowerCase())
+      ).length;
+    } catch { /* sem pasta */ }
+
+    result.push({ id: d.name, slides, legenda, titulo: labelFromId(d.name), inspiracoes });
   }
   return result;
 }
