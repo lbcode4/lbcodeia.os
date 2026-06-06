@@ -27,4 +27,9 @@ describe("parseContas", () => {
     const contas = parseContas("texto solto\nsem tabela\n");
     expect(contas).toEqual([]);
   });
+
+  it("não emite linha separadora como conta", () => {
+    const contas = parseContas("| ------- | --- | --- | --- | --- | --- |\n");
+    expect(contas).toEqual([]);
+  });
 });

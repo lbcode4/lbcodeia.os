@@ -8,7 +8,7 @@ export type Conta = {
   ativo: boolean;
 };
 
-// Raiz do repo lbcodeia.os = um nível acima de server/.
+// import.meta.dirname = server/src/ ; raiz do repo = dois níveis acima.
 const REPO_ROOT = join(import.meta.dirname, "..", "..");
 const CONTAS_PATH = join(REPO_ROOT, "_memoria", "contas-ads.md");
 
@@ -22,7 +22,7 @@ export function parseContas(markdown: string): Conta[] {
     if (cells.length < 6) continue;
     if (cells[0] === "Cliente") continue;        // cabeçalho
     if (/^-+$/.test(cells[0].replace(/\s/g, "-"))) continue; // separador ---
-    if (cells[0] === "" || cells[0].startsWith("--")) continue;
+    if (cells[0] === "") continue;
     out.push({
       cliente: cells[0],
       metaAdAccount: cells[1],
@@ -33,8 +33,13 @@ export function parseContas(markdown: string): Conta[] {
   return out;
 }
 
-/** Lê o arquivo real do repo e retorna as contas. */
+/** Lê o arquivo real do repo e retorna as contas. Retorna [] se o arquivo não existir. */
 export async function listContas(): Promise<Conta[]> {
-  const md = await readFile(CONTAS_PATH, "utf-8");
-  return parseContas(md);
+  try {
+    const md = await readFile(CONTAS_PATH, "utf-8");
+    return parseContas(md);
+  } catch (e) {
+    if ((e as NodeJS.ErrnoException).code === "ENOENT") return [];
+    throw e;
+  }
 }
