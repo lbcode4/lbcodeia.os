@@ -48,6 +48,7 @@ const SUGGESTIONS = [
 function SiteEditor() {
   const { siteId } = Route.useParams();
   const [html, setHtml] = useState("");
+  const [blobUrl, setBlobUrl] = useState("");
   const [history, setHistory] = useState<string[]>([]);
   const [loadingHtml, setLoadingHtml] = useState(true);
   const [loadErro, setLoadErro] = useState("");
@@ -76,6 +77,8 @@ function SiteEditor() {
         const guarded = injectGuard(h);
         setHtml(guarded);
         setHistory([guarded]);
+        const blob = new Blob([guarded], { type: "text/html" });
+        setBlobUrl((old) => { if (old) URL.revokeObjectURL(old); return URL.createObjectURL(blob); });
         setLoadingHtml(false);
       })
       .catch((e) => {
@@ -274,11 +277,11 @@ function SiteEditor() {
               </div>
             ) : (
               <iframe
-                key={html.length}
-                srcDoc={html}
+                key={blobUrl}
+                src={blobUrl || undefined}
                 title="Preview"
                 className="w-full h-full border-0"
-                sandbox="allow-scripts allow-popups allow-forms"
+                sandbox="allow-scripts allow-popups allow-forms allow-same-origin"
               />
             )}
           </div>
