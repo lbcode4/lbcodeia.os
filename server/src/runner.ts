@@ -1,4 +1,5 @@
 import { query } from "@anthropic-ai/claude-agent-sdk";
+import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { resolveSkill } from "./skills-map.js";
 
@@ -28,26 +29,74 @@ export function extractJsonBlock(text: string): unknown | null {
   }
 }
 
+// Skills de marketing/ads/conteúdo que precisam do framework-trafego.md
+const MARKETING_PREFIXES = ["lb-meta-", "lb-google-", "lb-conteudo-", "lb-ads-", "lb-venda-"];
+
+async function loadContext(skill: string, cliente: string): Promise<string> {
+  const sections: string[] = [];
+
+  // Arquivos base — sempre carregados
+  const base = ["_memoria/empresa.md", "_memoria/preferencias.md", "_memoria/estrategia.md"];
+  for (const file of base) {
+    try {
+      const content = await readFile(join(REPO_ROOT, file), "utf-8");
+      sections.push(`### ${file}\n${content.trim()}`);
+    } catch { /* skip se não existir */ }
+  }
+
+  // Framework de tráfego — só para skills de marketing/ads/conteúdo/vendas
+  if (MARKETING_PREFIXES.some((p) => skill.startsWith(p))) {
+    try {
+      const content = await readFile(join(REPO_ROOT, "_memoria/framework-trafego.md"), "utf-8");
+      sections.push(`### _memoria/framework-trafego.md\n${content.trim()}`);
+    } catch { /* skip */ }
+  }
+
+  // Conta do cliente — resolve de contas-ads.md
+  try {
+    const contas = await readFile(join(REPO_ROOT, "_memoria/contas-ads.md"), "utf-8");
+    const row = contas.split("\n").find((l) =>
+      l.toLowerCase().includes(cliente.toLowerCase()) && l.includes("|"),
+    );
+    if (row) {
+      const [, , metaAcc, igUserId, handle, googleId] = row.split("|").map((s) => s.trim());
+      sections.push(
+        `### Conta de Anúncios — ${cliente}\nMeta Ad Account: ${metaAcc ?? "—"}\nIG User ID: ${igUserId ?? "—"}\nHandle IG: ${handle ?? "—"}\nGoogle Ads ID: ${googleId ?? "—"}`,
+      );
+    }
+  } catch { /* skip */ }
+
+  if (!sections.length) return "";
+  return `## Contexto do projeto e do cliente\n\n${sections.join("\n\n")}\n\n---`;
+}
+
 export function buildPrompt(
   skill: string,
   cliente: string,
   input: string,
   mode: "text" | "data",
   outputContract?: unknown,
+  context?: string,
 ): string {
-  const parts = [
-    `Use a skill ${skill}.`,
-    `Cliente: ${cliente}.`,
-  ];
+  const parts: string[] = [];
+
+  if (context) parts.push(context);
+
+  parts.push(`Use a skill ${skill}.`);
+  parts.push(`Cliente: ${cliente}.`);
+
   if (input.trim()) {
     parts.push(`Briefing / contexto do usuário: ${input}`);
   }
+
   parts.push("Siga a skill à risca e entregue o resultado final.");
+
   if (mode === "data" && outputContract) {
     parts.push(
       `\nAo final, emita OBRIGATORIAMENTE um bloco \`\`\`json com o resultado estruturado seguindo este contrato:\n${JSON.stringify(outputContract, null, 2)}\nNenhum texto após o bloco JSON.`,
     );
   }
+
   return parts.join("\n");
 }
 
@@ -67,7 +116,8 @@ export async function* runSkill(
   input: string,
 ): AsyncGenerator<SkillEvent> {
   const spec = resolveSkill(skill);
-  const prompt = buildPrompt(spec.skillName, cliente, input, spec.mode, spec.outputContract);
+  const context = await loadContext(spec.skillName, cliente);
+  const prompt = buildPrompt(spec.skillName, cliente, input, spec.mode, spec.outputContract, context);
 
   try {
     const messages = query({

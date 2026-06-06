@@ -84,9 +84,9 @@ const SKILLS: Record<string, SkillSpec> = {
   },
 
   // ── Conteúdo Orgânico ─────────────────────────────────────────────────
-  "lb-conteudo-reels": { skillName: "lb-conteudo-reels", allowedTools: TEXT_TOOLS, mode: "text" },
-  "lb-conteudo-stories": { skillName: "lb-conteudo-stories", allowedTools: TEXT_TOOLS, mode: "text" },
-  "lb-conteudo-carrossel": { skillName: "lb-conteudo-carrossel", allowedTools: TEXT_TOOLS, mode: "text" },
+  "lb-conteudo-reels": { skillName: "lb-conteudo-reels", allowedTools: SCRIPT_TOOLS, mode: "text" },
+  "lb-conteudo-stories": { skillName: "lb-conteudo-stories", allowedTools: SCRIPT_TOOLS, mode: "text" },
+  "lb-conteudo-carrossel": { skillName: "lb-conteudo-carrossel", allowedTools: SCRIPT_TOOLS, mode: "text" },
   "lb-conteudo-calendario": { skillName: "lb-conteudo-calendario", allowedTools: TEXT_TOOLS, mode: "text" },
   "lb-conteudo-publicar": { skillName: "lb-conteudo-publicar", allowedTools: TEXT_TOOLS, mode: "text" },
   "lb-conteudo-aprovar": { skillName: "lb-conteudo-aprovar", allowedTools: TEXT_TOOLS, mode: "text" },
