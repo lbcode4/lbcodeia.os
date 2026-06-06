@@ -5,6 +5,10 @@ import { streamSSE } from "hono/streaming";
 import { listContas } from "./contas.js";
 import { isAllowedSkill } from "./skills-map.js";
 import { runSkill } from "./runner.js";
+import { listCampaigns, readCampaignFile } from "./prospeccao.js";
+import { listCarrosseis, readSlide } from "./carrosseis.js";
+import { getBiblioteca, readBibliotecaFile } from "./biblioteca.js";
+import { getDashboardData } from "./dashboard.js";
 
 export const app = new Hono();
 
@@ -38,6 +42,95 @@ app.post("/api/skills/run", async (c) => {
       if (ev.type === "done" || ev.type === "error") break;
     }
   });
+});
+
+app.get("/api/prospeccao", async (c) => {
+  try {
+    return c.json(await listCampaigns());
+  } catch {
+    return c.json({ error: "Falha ao carregar prospecções" }, 500);
+  }
+});
+
+app.get("/api/prospeccao/arquivo", async (c) => {
+  const campaign = c.req.query("campaign");
+  const file = c.req.query("file");
+  if (!campaign || !file) return c.json({ error: "campaign e file obrigatórios" }, 400);
+  try {
+    return c.text(await readCampaignFile(campaign, file));
+  } catch (e) {
+    const code = (e as NodeJS.ErrnoException).code;
+    if (code === "ENOENT" || (e as Error).message === "Caminho inválido")
+      return c.json({ error: "Arquivo não encontrado" }, 404);
+    return c.json({ error: "Erro ao ler arquivo" }, 500);
+  }
+});
+
+app.get("/api/carrosseis", async (c) => {
+  try {
+    return c.json(await listCarrosseis());
+  } catch {
+    return c.json({ error: "Falha ao carregar carrosseis" }, 500);
+  }
+});
+
+app.get("/api/carrosseis/slide", async (c) => {
+  const carrosselId = c.req.query("id");
+  const filename = c.req.query("slide");
+  if (!carrosselId || !filename) return c.json({ error: "id e slide obrigatórios" }, 400);
+  try {
+    const buf = await readSlide(carrosselId, filename);
+    const ext = filename.split(".").pop()?.toLowerCase() ?? "png";
+    const mime = ext === "jpg" || ext === "jpeg" ? "image/jpeg" : ext === "webp" ? "image/webp" : "image/png";
+    return new Response(buf.buffer as ArrayBuffer, { headers: { "Content-Type": mime, "Cache-Control": "max-age=3600" } });
+  } catch (e) {
+    const code = (e as NodeJS.ErrnoException).code;
+    if (code === "ENOENT" || (e as Error).message === "Caminho inválido")
+      return c.json({ error: "Slide não encontrado" }, 404);
+    return c.json({ error: "Erro ao ler slide" }, 500);
+  }
+});
+
+app.get("/api/dashboard/data", async (c) => {
+  try {
+    return c.json(await getDashboardData());
+  } catch (e) {
+    return c.json({ error: (e as Error).message }, 500);
+  }
+});
+
+app.get("/api/biblioteca", async (c) => {
+  try {
+    return c.json(await getBiblioteca());
+  } catch {
+    return c.json({ error: "Falha ao carregar biblioteca" }, 500);
+  }
+});
+
+app.get("/api/biblioteca/arquivo", async (c) => {
+  const path = c.req.query("path");
+  if (!path) return c.json({ error: "path obrigatório" }, 400);
+  try {
+    const { content, ext } = await readBibliotecaFile(path);
+    const mimeMap: Record<string, string> = {
+      ".md": "text/plain; charset=utf-8",
+      ".html": "text/html; charset=utf-8",
+      ".png": "image/png",
+      ".jpg": "image/jpeg",
+      ".jpeg": "image/jpeg",
+      ".webp": "image/webp",
+    };
+    const mime = mimeMap[ext] ?? "application/octet-stream";
+    const isText = mime.startsWith("text/");
+    return new Response(isText ? content.toString("utf-8") : (content.buffer as ArrayBuffer), {
+      headers: { "Content-Type": mime, "Cache-Control": "max-age=3600" },
+    });
+  } catch (e) {
+    const code = (e as NodeJS.ErrnoException).code;
+    if (code === "ENOENT" || (e as Error).message === "Caminho inválido")
+      return c.json({ error: "Arquivo não encontrado" }, 404);
+    return c.json({ error: "Erro ao ler arquivo" }, 500);
+  }
 });
 
 // Só sobe o listener quando executado direto (não nos testes).

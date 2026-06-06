@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RelatorioUnificadoRouteImport } from './routes/relatorio-unificado'
 import { Route as ReelsRouteImport } from './routes/reels'
+import { Route as ProspeccaoRouteImport } from './routes/prospeccao'
 import { Route as OrganicoInstagramRouteImport } from './routes/organico-instagram'
 import { Route as NegativasRouteImport } from './routes/negativas'
 import { Route as GerenciarAnunciosRouteImport } from './routes/gerenciar-anuncios'
@@ -19,10 +20,13 @@ import { Route as DiagnosticoMetaRouteImport } from './routes/diagnostico-meta'
 import { Route as DashboardMetaRouteImport } from './routes/dashboard-meta'
 import { Route as DashboardGoogleRouteImport } from './routes/dashboard-google'
 import { Route as ConectarContasRouteImport } from './routes/conectar-contas'
+import { Route as CarrosseisRouteImport } from './routes/carrosseis'
+import { Route as BibliotecaRouteImport } from './routes/biblioteca'
 import { Route as AuditoriaMetaRouteImport } from './routes/auditoria-meta'
 import { Route as AssistenteRouteImport } from './routes/assistente'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SitesIndexRouteImport } from './routes/sites.index'
+import { Route as SkillSkillIdRouteImport } from './routes/skill.$skillId'
 import { Route as SitesSiteIdRouteImport } from './routes/sites.$siteId'
 import { Route as HubHubIdRouteImport } from './routes/hub.$hubId'
 import { Route as ApiPublicSiteEditRouteImport } from './routes/api/public/site-edit'
@@ -36,6 +40,11 @@ const RelatorioUnificadoRoute = RelatorioUnificadoRouteImport.update({
 const ReelsRoute = ReelsRouteImport.update({
   id: '/reels',
   path: '/reels',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProspeccaoRoute = ProspeccaoRouteImport.update({
+  id: '/prospeccao',
+  path: '/prospeccao',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OrganicoInstagramRoute = OrganicoInstagramRouteImport.update({
@@ -78,6 +87,16 @@ const ConectarContasRoute = ConectarContasRouteImport.update({
   path: '/conectar-contas',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CarrosseisRoute = CarrosseisRouteImport.update({
+  id: '/carrosseis',
+  path: '/carrosseis',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BibliotecaRoute = BibliotecaRouteImport.update({
+  id: '/biblioteca',
+  path: '/biblioteca',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuditoriaMetaRoute = AuditoriaMetaRouteImport.update({
   id: '/auditoria-meta',
   path: '/auditoria-meta',
@@ -96,6 +115,11 @@ const IndexRoute = IndexRouteImport.update({
 const SitesIndexRoute = SitesIndexRouteImport.update({
   id: '/sites/',
   path: '/sites/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SkillSkillIdRoute = SkillSkillIdRouteImport.update({
+  id: '/skill/$skillId',
+  path: '/skill/$skillId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitesSiteIdRoute = SitesSiteIdRouteImport.update({
@@ -123,6 +147,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/assistente': typeof AssistenteRoute
   '/auditoria-meta': typeof AuditoriaMetaRoute
+  '/biblioteca': typeof BibliotecaRoute
+  '/carrosseis': typeof CarrosseisRoute
   '/conectar-contas': typeof ConectarContasRoute
   '/dashboard-google': typeof DashboardGoogleRoute
   '/dashboard-meta': typeof DashboardMetaRoute
@@ -131,10 +157,12 @@ export interface FileRoutesByFullPath {
   '/gerenciar-anuncios': typeof GerenciarAnunciosRoute
   '/negativas': typeof NegativasRoute
   '/organico-instagram': typeof OrganicoInstagramRoute
+  '/prospeccao': typeof ProspeccaoRoute
   '/reels': typeof ReelsRoute
   '/relatorio-unificado': typeof RelatorioUnificadoRoute
   '/hub/$hubId': typeof HubHubIdRoute
   '/sites/$siteId': typeof SitesSiteIdRoute
+  '/skill/$skillId': typeof SkillSkillIdRoute
   '/sites/': typeof SitesIndexRoute
   '/api/public/chat': typeof ApiPublicChatRoute
   '/api/public/site-edit': typeof ApiPublicSiteEditRoute
@@ -143,6 +171,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/assistente': typeof AssistenteRoute
   '/auditoria-meta': typeof AuditoriaMetaRoute
+  '/biblioteca': typeof BibliotecaRoute
+  '/carrosseis': typeof CarrosseisRoute
   '/conectar-contas': typeof ConectarContasRoute
   '/dashboard-google': typeof DashboardGoogleRoute
   '/dashboard-meta': typeof DashboardMetaRoute
@@ -151,10 +181,12 @@ export interface FileRoutesByTo {
   '/gerenciar-anuncios': typeof GerenciarAnunciosRoute
   '/negativas': typeof NegativasRoute
   '/organico-instagram': typeof OrganicoInstagramRoute
+  '/prospeccao': typeof ProspeccaoRoute
   '/reels': typeof ReelsRoute
   '/relatorio-unificado': typeof RelatorioUnificadoRoute
   '/hub/$hubId': typeof HubHubIdRoute
   '/sites/$siteId': typeof SitesSiteIdRoute
+  '/skill/$skillId': typeof SkillSkillIdRoute
   '/sites': typeof SitesIndexRoute
   '/api/public/chat': typeof ApiPublicChatRoute
   '/api/public/site-edit': typeof ApiPublicSiteEditRoute
@@ -164,6 +196,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/assistente': typeof AssistenteRoute
   '/auditoria-meta': typeof AuditoriaMetaRoute
+  '/biblioteca': typeof BibliotecaRoute
+  '/carrosseis': typeof CarrosseisRoute
   '/conectar-contas': typeof ConectarContasRoute
   '/dashboard-google': typeof DashboardGoogleRoute
   '/dashboard-meta': typeof DashboardMetaRoute
@@ -172,10 +206,12 @@ export interface FileRoutesById {
   '/gerenciar-anuncios': typeof GerenciarAnunciosRoute
   '/negativas': typeof NegativasRoute
   '/organico-instagram': typeof OrganicoInstagramRoute
+  '/prospeccao': typeof ProspeccaoRoute
   '/reels': typeof ReelsRoute
   '/relatorio-unificado': typeof RelatorioUnificadoRoute
   '/hub/$hubId': typeof HubHubIdRoute
   '/sites/$siteId': typeof SitesSiteIdRoute
+  '/skill/$skillId': typeof SkillSkillIdRoute
   '/sites/': typeof SitesIndexRoute
   '/api/public/chat': typeof ApiPublicChatRoute
   '/api/public/site-edit': typeof ApiPublicSiteEditRoute
@@ -186,6 +222,8 @@ export interface FileRouteTypes {
     | '/'
     | '/assistente'
     | '/auditoria-meta'
+    | '/biblioteca'
+    | '/carrosseis'
     | '/conectar-contas'
     | '/dashboard-google'
     | '/dashboard-meta'
@@ -194,10 +232,12 @@ export interface FileRouteTypes {
     | '/gerenciar-anuncios'
     | '/negativas'
     | '/organico-instagram'
+    | '/prospeccao'
     | '/reels'
     | '/relatorio-unificado'
     | '/hub/$hubId'
     | '/sites/$siteId'
+    | '/skill/$skillId'
     | '/sites/'
     | '/api/public/chat'
     | '/api/public/site-edit'
@@ -206,6 +246,8 @@ export interface FileRouteTypes {
     | '/'
     | '/assistente'
     | '/auditoria-meta'
+    | '/biblioteca'
+    | '/carrosseis'
     | '/conectar-contas'
     | '/dashboard-google'
     | '/dashboard-meta'
@@ -214,10 +256,12 @@ export interface FileRouteTypes {
     | '/gerenciar-anuncios'
     | '/negativas'
     | '/organico-instagram'
+    | '/prospeccao'
     | '/reels'
     | '/relatorio-unificado'
     | '/hub/$hubId'
     | '/sites/$siteId'
+    | '/skill/$skillId'
     | '/sites'
     | '/api/public/chat'
     | '/api/public/site-edit'
@@ -226,6 +270,8 @@ export interface FileRouteTypes {
     | '/'
     | '/assistente'
     | '/auditoria-meta'
+    | '/biblioteca'
+    | '/carrosseis'
     | '/conectar-contas'
     | '/dashboard-google'
     | '/dashboard-meta'
@@ -234,10 +280,12 @@ export interface FileRouteTypes {
     | '/gerenciar-anuncios'
     | '/negativas'
     | '/organico-instagram'
+    | '/prospeccao'
     | '/reels'
     | '/relatorio-unificado'
     | '/hub/$hubId'
     | '/sites/$siteId'
+    | '/skill/$skillId'
     | '/sites/'
     | '/api/public/chat'
     | '/api/public/site-edit'
@@ -247,6 +295,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AssistenteRoute: typeof AssistenteRoute
   AuditoriaMetaRoute: typeof AuditoriaMetaRoute
+  BibliotecaRoute: typeof BibliotecaRoute
+  CarrosseisRoute: typeof CarrosseisRoute
   ConectarContasRoute: typeof ConectarContasRoute
   DashboardGoogleRoute: typeof DashboardGoogleRoute
   DashboardMetaRoute: typeof DashboardMetaRoute
@@ -255,10 +305,12 @@ export interface RootRouteChildren {
   GerenciarAnunciosRoute: typeof GerenciarAnunciosRoute
   NegativasRoute: typeof NegativasRoute
   OrganicoInstagramRoute: typeof OrganicoInstagramRoute
+  ProspeccaoRoute: typeof ProspeccaoRoute
   ReelsRoute: typeof ReelsRoute
   RelatorioUnificadoRoute: typeof RelatorioUnificadoRoute
   HubHubIdRoute: typeof HubHubIdRoute
   SitesSiteIdRoute: typeof SitesSiteIdRoute
+  SkillSkillIdRoute: typeof SkillSkillIdRoute
   SitesIndexRoute: typeof SitesIndexRoute
   ApiPublicChatRoute: typeof ApiPublicChatRoute
   ApiPublicSiteEditRoute: typeof ApiPublicSiteEditRoute
@@ -278,6 +330,13 @@ declare module '@tanstack/react-router' {
       path: '/reels'
       fullPath: '/reels'
       preLoaderRoute: typeof ReelsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/prospeccao': {
+      id: '/prospeccao'
+      path: '/prospeccao'
+      fullPath: '/prospeccao'
+      preLoaderRoute: typeof ProspeccaoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/organico-instagram': {
@@ -336,6 +395,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConectarContasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/carrosseis': {
+      id: '/carrosseis'
+      path: '/carrosseis'
+      fullPath: '/carrosseis'
+      preLoaderRoute: typeof CarrosseisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/biblioteca': {
+      id: '/biblioteca'
+      path: '/biblioteca'
+      fullPath: '/biblioteca'
+      preLoaderRoute: typeof BibliotecaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auditoria-meta': {
       id: '/auditoria-meta'
       path: '/auditoria-meta'
@@ -362,6 +435,13 @@ declare module '@tanstack/react-router' {
       path: '/sites'
       fullPath: '/sites/'
       preLoaderRoute: typeof SitesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/skill/$skillId': {
+      id: '/skill/$skillId'
+      path: '/skill/$skillId'
+      fullPath: '/skill/$skillId'
+      preLoaderRoute: typeof SkillSkillIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sites/$siteId': {
@@ -399,6 +479,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AssistenteRoute: AssistenteRoute,
   AuditoriaMetaRoute: AuditoriaMetaRoute,
+  BibliotecaRoute: BibliotecaRoute,
+  CarrosseisRoute: CarrosseisRoute,
   ConectarContasRoute: ConectarContasRoute,
   DashboardGoogleRoute: DashboardGoogleRoute,
   DashboardMetaRoute: DashboardMetaRoute,
@@ -407,10 +489,12 @@ const rootRouteChildren: RootRouteChildren = {
   GerenciarAnunciosRoute: GerenciarAnunciosRoute,
   NegativasRoute: NegativasRoute,
   OrganicoInstagramRoute: OrganicoInstagramRoute,
+  ProspeccaoRoute: ProspeccaoRoute,
   ReelsRoute: ReelsRoute,
   RelatorioUnificadoRoute: RelatorioUnificadoRoute,
   HubHubIdRoute: HubHubIdRoute,
   SitesSiteIdRoute: SitesSiteIdRoute,
+  SkillSkillIdRoute: SkillSkillIdRoute,
   SitesIndexRoute: SitesIndexRoute,
   ApiPublicChatRoute: ApiPublicChatRoute,
   ApiPublicSiteEditRoute: ApiPublicSiteEditRoute,
