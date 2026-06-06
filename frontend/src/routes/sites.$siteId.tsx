@@ -8,6 +8,30 @@ import { Card, Button, Badge } from "@/components/app-shell";
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8787";
 
+// Injected into preview iframe — intercepts link clicks to prevent navigation.
+// Anchor (#) links scroll normally; external http(s) links open in new tab.
+const PREVIEW_GUARD = `<script>
+(function(){
+  document.addEventListener('click', function(e){
+    var t = e.target;
+    while(t && t.tagName !== 'A') t = t.parentElement;
+    if(!t) return;
+    var h = t.getAttribute('href') || '';
+    if(!h || h.startsWith('#') || h.startsWith('javascript:')) return;
+    e.preventDefault();
+    e.stopPropagation();
+    if(h.startsWith('http://') || h.startsWith('https://')) window.open(h, '_blank', 'noopener');
+  }, true);
+  try { var n = function(){}; history.pushState = n; history.replaceState = n; } catch(e){}
+})();
+</script>`;
+
+function injectGuard(rawHtml: string): string {
+  const idx = rawHtml.indexOf("</head>");
+  if (idx !== -1) return rawHtml.slice(0, idx) + PREVIEW_GUARD + rawHtml.slice(idx);
+  return PREVIEW_GUARD + rawHtml;
+}
+
 export const Route = createFileRoute("/sites/$siteId")({
   component: SiteEditor,
 });
@@ -49,8 +73,9 @@ function SiteEditor() {
         return r.text();
       })
       .then((h) => {
-        setHtml(h);
-        setHistory([h]);
+        const guarded = injectGuard(h);
+        setHtml(guarded);
+        setHistory([guarded]);
         setLoadingHtml(false);
       })
       .catch((e) => {
