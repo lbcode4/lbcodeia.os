@@ -6,38 +6,39 @@ Tudo que as skills de marketing produzem cai aqui. Skills do LBCode.IA já sabem
 
 ```
 marketing/
-├── conteudo/                    saídas do /lb-conteudo-carrossel e /lb-conteudo-publicar
-│   └── <tipo>-<tema>-<YYYY-MM-DD>/
-│       ├── carrossel.html
-│       ├── render.js
-│       ├── instagram/slide-XX.png
-│       ├── legenda.md
-│       └── legenda-linkedin.md
+├── conteudo/                    saídas das skills de conteúdo
+│   ├── calendario/              /lb-conteudo-calendario
+│   ├── carrossel/               /lb-conteudo-carrossel (<tema>-<YYYY-MM-DD>/)
+│   ├── reels/                   /lb-conteudo-reels
+│   └── stories/                 /lb-conteudo-stories
 │
-├── seo/                         saídas do /lb-google-seo (8 passos)
-│   ├── 01-pesquisa-demanda.md
-│   ├── 02-analise-concorrencia.md
-│   ├── 03-google-meu-negocio.md
-│   ├── 04-otimizacao-on-page.md
-│   ├── 05-estrategia-conteudo.md
-│   ├── 06-google-ads.md
-│   ├── 07-checklist-monitoramento.md
-│   └── 08-geo-otimizacao-ia.md
+├── google-seo/                  saídas do /lb-google-seo (8 passos, arquivos 01–08)
 │
-├── campanhas/                   saídas do /lb-google-ads e /lb-meta-relatorio
-│   ├── google-ads-<YYYY-MM-DD>/  CSVs prontos pra importar
-│   └── relatorios/               relatórios semanais
+├── gbp/                         saídas do /lb-google-meu-negocio (<YYYY-MM-DD>/)
 │
-└── avaliacoes-google/           histórico do /lb-google-avaliacoes (opcional)
+├── campanhas/                   saídas das campanhas Meta, por objetivo
+│   ├── conversao/               ex: WhatsApp (/lb-meta-campanha-whatsapp)
+│   ├── engajamento/
+│   ├── reconhecimento/
+│   └── trafego/
+│
+├── sites/                       saídas do /lb-negocio-site (<tipo>-<nome>-<YYYY-MM-DD>/)
+│
+├── prospeccao/                  saídas do /lb-venda-prospectar (<nicho>-<YYYY-MM-DD>/)
+│
+├── auditoria-ig/                saídas do /lb-conteudo-auditoria-insta
+└── auditorias/                  auditorias Meta Ads (/lb-meta-auditoria)
 ```
 
 ## Como funciona
 
-- **`/lb-conteudo-carrossel` ou `/lb-conteudo-publicar`** → cria pasta em `conteudo/<tipo>-<tema>-<data>/`
-- **`/lb-google-seo`** → preenche os 8 arquivos numerados em `seo/`
-- **`/lb-google-ads`** → cria pasta em `campanhas/google-ads-<data>/` com CSVs
-- **`/lb-meta-relatorio`** → cria arquivo em `campanhas/relatorios/<data>-relatorio.md`
-- **`/lb-google-avaliacoes`** → opcionalmente salva histórico em `avaliacoes-google/`
+- **`/lb-conteudo-*`** → cria pasta em `conteudo/<formato>/<tema>-<data>/`
+- **`/lb-google-seo`** → preenche os 8 arquivos numerados em `google-seo/`
+- **`/lb-google-meu-negocio`** → cria pasta datada em `gbp/`
+- **`/lb-meta-campanha-*`** → cria pasta em `campanhas/<objetivo>/`
+- **`/lb-negocio-site`** → cria pasta em `sites/<tipo>-<nome>-<data>/`
+- **`/lb-venda-prospectar`** → cria pasta em `prospeccao/<nicho>-<data>/`
+- **CSVs do `/lb-google-ads`** e relatórios do `/lb-meta-relatorio` ficam em `integracoes/.../output/` ou na pasta da campanha correspondente
 
 ## Versionamento
 

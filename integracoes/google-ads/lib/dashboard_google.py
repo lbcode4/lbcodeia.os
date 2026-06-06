@@ -33,62 +33,10 @@ MESES_BR_LOWER = {1:"jan",2:"fev",3:"mar",4:"abr",5:"mai",6:"jun",
                    7:"jul",8:"ago",9:"set",10:"out",11:"nov",12:"dez"}
 
 # ═══════════════════════════════════════
-# CONFIG — leitura de CLAUDE.md
+# CONFIG — leitura de _memoria/contas-ads.md
 # ═══════════════════════════════════════
-VALORES_VAZIOS = ("—", "—  (não configurado)", "XXXXXXXXX", "(preencher)", "")
-
-def _limpar_valor(v):
-    v = v.strip().strip("`").strip()
-    return "" if v in VALORES_VAZIOS else v
-
-def _extrair_agencia(conteudo):
-    for linha in conteudo.split("\n"):
-        if linha.startswith("# ") and ("Workspace" in linha or "—" in linha):
-            return linha.replace("# ", "").split("—")[0].strip()
-    return "Workspace"
-
-def _parsear_tabela_multi(conteudo):
-    clientes = []
-    in_contas = False
-    headers = []
-    for linha in conteudo.split("\n"):
-        if "## Contas Conectadas" in linha:
-            in_contas = True
-            continue
-        if in_contas and linha.startswith("## "):
-            break
-        if not in_contas or "|" not in linha or "---" in linha:
-            continue
-        partes = [p.strip() for p in linha.split("|") if p.strip()]
-        if not partes:
-            continue
-        if not headers:
-            headers = [h.lower() for h in partes]
-            continue
-        if len(partes) >= 2:
-            row = {}
-            for i, h in enumerate(headers):
-                row[h] = _limpar_valor(partes[i]) if i < len(partes) else ""
-            clientes.append(row)
-    return headers, clientes
-
-def _parsear_tabela_legado(conteudo):
-    dados = {}
-    in_contas = False
-    for linha in conteudo.split("\n"):
-        if "## Contas Conectadas" in linha:
-            in_contas = True
-            continue
-        if in_contas and linha.startswith("## "):
-            break
-        if in_contas and "|" in linha and "---" not in linha and "Campo" not in linha:
-            partes = [p.strip() for p in linha.split("|") if p.strip()]
-            if len(partes) >= 2:
-                dados[partes[0]] = _limpar_valor(partes[1])
-    config = {}
-    config["google_ads_id"] = dados.get("Google Ads Customer ID", "") or dados.get("Google Ads ID", "")
-    config["nome"] = dados.get("cliente", _extrair_agencia(conteudo))
-    return [config] if config.get("google_ads_id") else []
+sys.path.insert(0, os.path.join(REPO_ROOT, "integracoes", "comum"))
+from contas_parser import extrair_agencia, parsear_tabela_multi, parsear_tabela_legado
 
 def carregar_config(cliente_filtro=None):
     path = os.path.join(REPO_ROOT, "_memoria", "contas-ads.md")
@@ -98,8 +46,8 @@ def carregar_config(cliente_filtro=None):
         sys.exit(1)
     with open(path, "r", encoding="utf-8") as f:
         conteudo = f.read()
-    agencia = _extrair_agencia(conteudo)
-    headers, clientes = _parsear_tabela_multi(conteudo)
+    agencia = extrair_agencia(conteudo)
+    headers, clientes = parsear_tabela_multi(conteudo)
     if headers and any("cliente" in h for h in headers):
         clientes_google = []
         for row in clientes:
@@ -114,9 +62,14 @@ def carregar_config(cliente_filtro=None):
                     "agencia": agencia,
                 })
     else:
-        clientes_google = _parsear_tabela_legado(conteudo)
-        for c in clientes_google:
-            c["agencia"] = agencia
+        dados = parsear_tabela_legado(conteudo)
+        google_id = dados.get("Google Ads Customer ID", "") or dados.get("Google Ads ID", "")
+        cfg = {
+            "google_ads_id": google_id,
+            "nome": dados.get("cliente", agencia),
+            "agencia": agencia,
+        }
+        clientes_google = [cfg] if google_id else []
     clientes_google = [c for c in clientes_google if c.get("google_ads_id")]
     if not clientes_google:
         print(f"ERRO: mapa de contas não encontrado em: {path}")

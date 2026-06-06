@@ -19,7 +19,7 @@ Pipeline orquestrado. Entrada: tema. Saída: blog + visual + legendas, tudo inte
 - **GEO (se aplicável):** `marketing/google-seo/08-geo-otimizacao-ia.md`
 - **Framework:** `_memoria/framework-trafego.md` (RETINA — posicionamento + diferenciação)
 - **Tom:** `_memoria/preferencias.md`
-- **Blog destino:** `site/astro-site/src/content/blog/` (ou confirmar se outro stack)
+- **Blog destino:** `site/astro-site/src/content/blog/` — **pode não existir.** Se a pasta não existir, NÃO quebrar: salvar o blog em `marketing/conteudo/blog/<slug>.md` e avisar que o pipeline Astro não está configurado (ver Passo 2). O carrossel + legendas seguem normalmente.
 - **Skill `/lb-conteudo-carrossel`:** pra gerar visual
 
 ## Fluxo
@@ -43,7 +43,11 @@ Ler sobre tema nas pesquisas:
 
 ### Passo 2 — Escrever blog (RETINA integrado)
 
-**Arquivo:** `site/astro-site/src/content/blog/<slug>.md`
+**Destino — checar antes de escrever:**
+- Se `site/astro-site/src/content/blog/` existir → salvar lá: `site/astro-site/src/content/blog/<slug>.md`.
+- Se NÃO existir → salvar em `marketing/conteudo/blog/<slug>.md` e avisar uma vez:
+  > "⚠️ Pipeline de blog (`site/astro-site/`) não configurado. Salvei o artigo em `marketing/conteudo/blog/` como markdown. Quando o site Astro existir, é só mover. Carrossel e legendas seguem normais."
+- Não interromper o fluxo por causa disso — o blog é uma das 3 saídas, as outras (carrossel, legendas) não dependem do site.
 
 **Slug:** kebab-case, sem stopwords. Ex: "conservar-carne-salgada"
 

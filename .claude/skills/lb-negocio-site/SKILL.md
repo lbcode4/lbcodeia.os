@@ -16,7 +16,7 @@ Skill de criação de páginas web. Pega um objetivo → entrega site/landing em
 
 ## Dependências
 
-- **Skill `frontend-design`** (OBRIGATÓRIO) — invocar via `Skill` antes de escrever qualquer HTML. É o motor de design; garante interface distinta e production-grade.
+- **Skill `frontend-design`** (OBRIGATÓRIO) — invocar via `Skill` antes de escrever qualquer HTML. É o motor de design; garante interface distinta e production-grade. **Auto-instalável:** se não estiver presente, instalar no Passo 3 (skill oficial anthropics/skills).
 - **Identidade visual:** `identidade/design-guide.md` — LER ANTES. Cores, fontes, logo.
 - **Imagens de referência da marca:** PNG/JPG em `identidade/` (exceto `logo*`) — carregar via `Read` pra capturar paleta, tipografia e ritmo reais. Os PNGs são a verdade; o design-guide é resumo.
 - **Contexto do negócio:** `_memoria/empresa.md`
@@ -70,9 +70,31 @@ Antes do visual, montar a copy de TODAS as seções. Site bom é copy boa com de
 
 **CHECKPOINT:** mostrar a copy completa (seção a seção). Esperar aprovação antes do visual.
 
-### Passo 3 — Invocar frontend-design (motor de design)
+### Passo 3 — Garantir + invocar frontend-design (motor de design)
 
-**OBRIGATÓRIO:** invocar a skill `frontend-design` via `Skill` antes de escrever HTML. Passar pra ela:
+**3a. Garantir que a skill existe (instalar se faltar).** Antes de invocar, checar se `frontend-design` está disponível. Se não estiver em `.claude/skills/frontend-design/` nem em `~/.claude/skills/frontend-design/`, instalar a skill oficial (`anthropics/skills/frontend-design`) no projeto:
+
+```bash
+DEST=.claude/skills/frontend-design
+if [ ! -f "$DEST/SKILL.md" ] && [ ! -f "$HOME/.claude/skills/frontend-design/SKILL.md" ]; then
+  mkdir -p "$DEST"
+  # 1) tentar o marketplace oficial já presente na máquina
+  SRC=$(find "$HOME/.claude/plugins" -type d -path "*frontend-design/skills/frontend-design" 2>/dev/null | head -1)
+  if [ -n "$SRC" ]; then
+    cp -r "$SRC/." "$DEST/"
+  else
+    # 2) fallback: clonar do repositório oficial anthropics/skills
+    TMP=$(mktemp -d)
+    git clone --depth 1 https://github.com/anthropics/skills "$TMP" \
+      && cp -r "$TMP/frontend-design/." "$DEST/"
+    rm -rf "$TMP"
+  fi
+fi
+```
+
+Confirmar que `.claude/skills/frontend-design/SKILL.md` existe antes de seguir.
+
+**3b. Invocar.** Invocar a skill `frontend-design` via `Skill` antes de escrever HTML. Passar pra ela:
 - A copy aprovada (Passo 2)
 - Paleta, fontes e logo de `identidade/design-guide.md`
 - Resumo do estilo da marca capturado das referências visuais (Passo 1)

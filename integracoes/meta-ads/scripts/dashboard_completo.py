@@ -48,69 +48,10 @@ MESES_BR_LOWER = {1:"jan",2:"fev",3:"mar",4:"abr",5:"mai",6:"jun",
                    7:"jul",8:"ago",9:"set",10:"out",11:"nov",12:"dez"}
 
 # ═══════════════════════════════════════
-# CONFIG — leitura de CLAUDE.md
+# CONFIG — leitura de _memoria/contas-ads.md
 # ═══════════════════════════════════════
-VALORES_VAZIOS = ("—", "—  (não configurado)", "XXXXXXXXX", "act_XXXXXXXXX", "(preencher)", "")
-
-def _limpar_valor(v):
-    v = v.strip().strip("`").strip()
-    return "" if v in VALORES_VAZIOS else v
-
-def _extrair_agencia(conteudo):
-    for linha in conteudo.split("\n"):
-        if linha.startswith("# ") and ("Workspace" in linha or "—" in linha):
-            return linha.replace("# ", "").split("—")[0].strip()
-    return "Workspace"
-
-def _parsear_tabela_multi(conteudo):
-    clientes = []
-    in_contas = False
-    headers = []
-    for linha in conteudo.split("\n"):
-        if "## Contas Conectadas" in linha:
-            in_contas = True
-            continue
-        if in_contas and linha.startswith("## "):
-            break
-        if not in_contas or "|" not in linha or "---" in linha:
-            continue
-        partes = [p.strip() for p in linha.split("|") if p.strip()]
-        if not partes:
-            continue
-        if not headers:
-            headers = [h.lower() for h in partes]
-            continue
-        if len(partes) >= 2:
-            row = {}
-            for i, h in enumerate(headers):
-                row[h] = _limpar_valor(partes[i]) if i < len(partes) else ""
-            clientes.append(row)
-    return headers, clientes
-
-def _parsear_tabela_legado(conteudo):
-    dados = {}
-    in_contas = False
-    for linha in conteudo.split("\n"):
-        if "## Contas Conectadas" in linha:
-            in_contas = True
-            continue
-        if in_contas and linha.startswith("## "):
-            break
-        if in_contas and "|" in linha and "---" not in linha and "Campo" not in linha:
-            partes = [p.strip() for p in linha.split("|") if p.strip()]
-            if len(partes) >= 2:
-                dados[partes[0]] = _limpar_valor(partes[1])
-    CAMPO_MAP = {
-        "ad_account_id": "Meta Ad Account ID",
-        "ig_user_id": "Instagram User ID",
-        "handle": "Handle Instagram",
-    }
-    config = {}
-    for key, campo_md in CAMPO_MAP.items():
-        config[key] = dados.get(campo_md, "")
-    config["nome"] = dados.get("cliente", _extrair_agencia(conteudo))
-    config["google_ads_id"] = dados.get("Google Ads Customer ID", "")
-    return [config] if any(config.get(k) for k in ["ad_account_id", "ig_user_id"]) else []
+sys.path.insert(0, os.path.join(REPO_ROOT, "integracoes", "comum"))
+from contas_parser import extrair_agencia, parsear_tabela_multi, parsear_tabela_legado
 
 def carregar_config(cliente_filtro=None):
     path = os.path.join(REPO_ROOT, "_memoria", "contas-ads.md")
@@ -120,8 +61,8 @@ def carregar_config(cliente_filtro=None):
         sys.exit(1)
     with open(path, "r", encoding="utf-8") as f:
         conteudo = f.read()
-    agencia = _extrair_agencia(conteudo)
-    headers, clientes = _parsear_tabela_multi(conteudo)
+    agencia = extrair_agencia(conteudo)
+    headers, clientes = parsear_tabela_multi(conteudo)
     if headers and any("cliente" in h for h in headers):
         clientes_meta = []
         for row in clientes:
@@ -138,9 +79,16 @@ def carregar_config(cliente_filtro=None):
                     "agencia": agencia,
                 })
     else:
-        clientes_meta = _parsear_tabela_legado(conteudo)
-        for c in clientes_meta:
-            c["agencia"] = agencia
+        dados = parsear_tabela_legado(conteudo)
+        cfg = {
+            "ad_account_id": dados.get("Meta Ad Account ID", ""),
+            "ig_user_id": dados.get("Instagram User ID", ""),
+            "handle": dados.get("Handle Instagram", ""),
+            "nome": dados.get("cliente", agencia),
+            "google_ads_id": dados.get("Google Ads Customer ID", ""),
+            "agencia": agencia,
+        }
+        clientes_meta = [cfg] if (cfg["ad_account_id"] or cfg["ig_user_id"]) else []
     clientes_meta = [c for c in clientes_meta if c.get("ad_account_id") and c.get("ig_user_id")]
     if not clientes_meta:
         print("ERRO: Nenhum cliente com Meta Ads (act_id + IG User ID) em _memoria/contas-ads.md.")

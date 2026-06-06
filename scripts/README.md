@@ -2,16 +2,16 @@
 
 Scripts Node.js e Python que as skills chamam quando precisam fazer coisas fora do alcance da IA pura (gerar imagem, postar em rede social, renderizar HTML em PNG).
 
-A pasta vem **vazia** — cada skill que precisa de script tem instrução de como criar (e geralmente é um único setup por integração que você vai ativar).
+Scripts já presentes na pasta (cada skill chama o que precisa). Novos scripts pontuais (ex: `render.js` por conteúdo) são gerados pelas próprias skills sob demanda.
 
-## Scripts comuns
+## Scripts disponíveis
 
-Conforme você for ativando skills, isso aqui vai sendo populado. Lista do que cada skill espera encontrar:
-
-| Skill | Script esperado | O que faz |
+| Skill | Script | O que faz |
 |---|---|---|
-| `/lb-conteudo-carrossel` (com foto IA) | `gerar-imagem.js` | Gera foto realista via OpenAI API (DALL-E 3) |
-| `/lb-conteudo-carrossel` (render PNG) | `render.js` (gerado por carrossel, fica na pasta do conteúdo) | Playwright tira screenshot 1080x1350 de cada slide |
+| `/lb-conteudo-carrossel` / `/lb-negocio-site` (foto IA) | `gerar-imagem-gemini.js` | Gera imagem via Gemini nano-banana (**default**) |
+| idem (fallback) | `gerar-imagem.js` | Gera imagem via OpenAI gpt-image-1 |
+| idem (alternativa) | `gerar-imagem-imagen4.js` | Gera imagem via Google Imagen 4 |
+| `/lb-conteudo-carrossel` (render PNG) | `render.js` (gerado por conteúdo, fica na pasta do conteúdo) | Playwright tira screenshot 1080x1350 de cada slide |
 | `/lb-conteudo-aprovar` | `postar-instagram.js` | Publica carrossel no Instagram via Meta Graph API |
 | `/lb-conteudo-aprovar` | `postar-facebook.js` | Publica carrossel no Facebook via Meta Graph API |
 | `/lb-google-ads` | (nenhum — gera CSV direto) | — |

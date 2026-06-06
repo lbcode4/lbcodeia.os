@@ -13,17 +13,26 @@ from utils import get_client, fmt_cost
 PERIODOS = {7: "LAST_7_DAYS", 14: "LAST_14_DAYS", 30: "LAST_30_DAYS"}
 
 
-def build_query(days=30):
+DEFAULT_LIMIT = 500
+
+
+def build_query(days=30, limit=DEFAULT_LIMIT):
     """GAQL para search_term_view com métricas de custo/clique/conversão.
-    Google Ads não tem preset LAST_90_DAYS — usamos só 7/14/30 dias."""
+    Google Ads não tem preset LAST_90_DAYS — usamos só 7/14/30 dias.
+    `limit` corta o nº de linhas (ordenado por custo DESC → os que mais gastam
+    vêm primeiro). Evita puxar dezenas de milhares de linhas em contas grandes.
+    limit<=0 = sem LIMIT (puxa tudo)."""
     periodo = PERIODOS.get(days, "LAST_30_DAYS")
-    return (
+    query = (
         "SELECT search_term_view.search_term, metrics.clicks, "
         "metrics.cost_micros, metrics.conversions, metrics.impressions "
         "FROM search_term_view "
         f"WHERE segments.date DURING {periodo} "
         "ORDER BY metrics.cost_micros DESC"
     )
+    if limit and limit > 0:
+        query += f" LIMIT {int(limit)}"
+    return query
 
 
 def parse_search_terms(batches):
@@ -40,11 +49,11 @@ def parse_search_terms(batches):
     return termos
 
 
-def fetch_search_terms(customer_id, days=30):
+def fetch_search_terms(customer_id, days=30, limit=DEFAULT_LIMIT):
     """Roda a query live contra a API (requer credencial)."""
     client = get_client()
     ga_service = client.get_service("GoogleAdsService")
-    stream = ga_service.search_stream(customer_id=customer_id, query=build_query(days))
+    stream = ga_service.search_stream(customer_id=customer_id, query=build_query(days, limit))
     return parse_search_terms(stream)
 
 
@@ -53,8 +62,10 @@ def main():
     parser = argparse.ArgumentParser(description="Puxa search_term_view Google Ads")
     parser.add_argument("--customer-id", required=True)
     parser.add_argument("--days", type=int, default=30, choices=[7, 14, 30])
+    parser.add_argument("--limit", type=int, default=DEFAULT_LIMIT,
+                        help="Máx de termos (ordenado por custo). 0 = sem limite.")
     args = parser.parse_args()
-    termos = fetch_search_terms(args.customer_id, args.days)
+    termos = fetch_search_terms(args.customer_id, args.days, args.limit)
     print(json.dumps({"termos": termos}, ensure_ascii=False, indent=2))
 
 

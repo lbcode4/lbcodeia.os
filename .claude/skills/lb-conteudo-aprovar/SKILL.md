@@ -38,7 +38,10 @@ Falta algo? Parar e avisar — criar `marketing/setup-automacao-meta.md` se prec
    - Carrossel PNG existe em `marketing/conteudo/carrossel/<slug>-2026-06-01/`?
    - Legendas existem em `marketing/conteudo/carrossel/<slug>-2026-06-01/legendas.md`?
 
-2. **Publicar site**
+2. **Publicar site** *(só se houver site configurado)*
+   - **Checar primeiro:** existe `site/astro-site/` (ou outro stack de site)?
+     - **Não existe** → pular esta etapa. Avisar uma vez: "⚠️ Sem site configurado — pulei a publicação do blog. Carrossel + redes seguem." Ainda assim commitar o markdown do blog (`git add`/`commit`/`push`) pra versionar. Ir pro Passo 3.
+     - **Existe** → seguir abaixo.
    - Mudar status do blog: `draft: true` → `draft: false`
    - Copiar PNGs pro `public/` (ou assets do site)
    - `git add .` → `git commit -m "Publica [tema]"` → `git push`
