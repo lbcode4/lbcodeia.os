@@ -9,19 +9,48 @@ export type SkillEvent =
   | { type: "status"; text: string }
   | { type: "chunk"; text: string }
   | { type: "done" }
-  | { type: "error"; text: string };
+  | { type: "error"; text: string }
+  | { type: "data"; payload: unknown };
 
-/** Monta a instrução que dispara a skill dentro do Claude. */
-export function buildPrompt(skill: string, cliente: string, input: string): string {
-  return [
-    `Use a skill ${skill}.`,
-    `Cliente: ${cliente}.`,
-    `Briefing do usuário: ${input}`,
-    `Siga a skill à risca e entregue a copy final (título, texto principal, CTA).`,
-  ].join("\n");
+/** Extrai o último bloco ```json...``` de um texto. Retorna o objeto parseado ou null. */
+export function extractJsonBlock(text: string): unknown | null {
+  const regex = /```json\s*([\s\S]*?)```/g;
+  let last: string | null = null;
+  let match: RegExpExecArray | null;
+  while ((match = regex.exec(text)) !== null) {
+    last = match[1].trim();
+  }
+  if (!last) return null;
+  try {
+    return JSON.parse(last);
+  } catch {
+    return null;
+  }
 }
 
-/** Deriva um texto de status amigável a partir de um bloco tool_use. */
+export function buildPrompt(
+  skill: string,
+  cliente: string,
+  input: string,
+  mode: "text" | "data",
+  outputContract?: unknown,
+): string {
+  const parts = [
+    `Use a skill ${skill}.`,
+    `Cliente: ${cliente}.`,
+  ];
+  if (input.trim()) {
+    parts.push(`Briefing / contexto do usuário: ${input}`);
+  }
+  parts.push("Siga a skill à risca e entregue o resultado final.");
+  if (mode === "data" && outputContract) {
+    parts.push(
+      `\nAo final, emita OBRIGATORIAMENTE um bloco \`\`\`json com o resultado estruturado seguindo este contrato:\n${JSON.stringify(outputContract, null, 2)}\nNenhum texto após o bloco JSON.`,
+    );
+  }
+  return parts.join("\n");
+}
+
 function statusForTool(name: string, toolInput: unknown): string | null {
   if (name === "Bash") {
     const cmd = (toolInput as { command?: string })?.command ?? "";
@@ -32,14 +61,13 @@ function statusForTool(name: string, toolInput: unknown): string | null {
   return null;
 }
 
-/** Executa a skill e emite eventos de stream. */
 export async function* runSkill(
   skill: string,
   cliente: string,
   input: string,
 ): AsyncGenerator<SkillEvent> {
-  const spec = resolveSkill(skill); // lança se não permitida
-  const prompt = buildPrompt(spec.skillName, cliente, input);
+  const spec = resolveSkill(skill);
+  const prompt = buildPrompt(spec.skillName, cliente, input, spec.mode, spec.outputContract);
 
   try {
     const messages = query({
@@ -55,13 +83,16 @@ export async function* runSkill(
       },
     });
 
+    let accumulated = "";
+
     for await (const message of messages) {
       if (message.type === "assistant") {
         for (const block of message.message.content) {
           if (block.type === "text") {
             const text = (block as { type: "text"; text: string }).text;
             if (text.trim()) {
-              yield { type: "chunk", text };
+              accumulated += text;
+              if (spec.mode === "text") yield { type: "chunk", text };
             }
           } else if (block.type === "tool_use") {
             const b = block as { type: "tool_use"; name: string; input: unknown };
@@ -70,6 +101,14 @@ export async function* runSkill(
           }
         }
       } else if (message.type === "result") {
+        if (spec.mode === "data") {
+          const payload = extractJsonBlock(accumulated);
+          if (payload !== null) {
+            yield { type: "data", payload };
+          } else {
+            yield { type: "error", text: "Resposta sem bloco JSON estruturado" };
+          }
+        }
         yield { type: "done" };
         return;
       }
