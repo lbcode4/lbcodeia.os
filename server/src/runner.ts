@@ -116,7 +116,9 @@ export async function* runSkill(
   input: string,
 ): AsyncGenerator<SkillEvent> {
   const spec = resolveSkill(skill);
-  const context = await loadContext(spec.skillName, cliente);
+  // Auto-detect follow-up: history marker present → context already in input, skip reload
+  const isFollowUp = input.includes("[Assistente]:");
+  const context = isFollowUp ? "" : await loadContext(spec.skillName, cliente);
   const prompt = buildPrompt(spec.skillName, cliente, input, spec.mode, spec.outputContract, context);
 
   try {
