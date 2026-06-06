@@ -6,6 +6,7 @@ import { listContas } from "./contas.js";
 import { isAllowedSkill } from "./skills-map.js";
 import { runSkill } from "./runner.js";
 import { listCampaigns, readCampaignFile } from "./prospeccao.js";
+import { listConteudo, readConteudoArquivo } from "./conteudo.js";
 import { listSites, readSiteHtml, writeSiteHtml, streamSiteChat } from "./sites.js";
 import { listCarrosseis, readSlide } from "./carrosseis.js";
 import { getBiblioteca, readBibliotecaFile } from "./biblioteca.js";
@@ -150,6 +151,29 @@ app.post("/api/sites/chat", async (c) => {
       if (ev.type === "done" || ev.type === "error") break;
     }
   });
+});
+
+app.get("/api/conteudo", async (c) => {
+  try {
+    return c.json(await listConteudo());
+  } catch {
+    return c.json({ error: "Falha ao carregar conteúdo" }, 500);
+  }
+});
+
+app.get("/api/conteudo/arquivo", async (c) => {
+  const tipo = c.req.query("tipo");
+  const id = c.req.query("id");
+  const arquivo = c.req.query("arquivo");
+  if (!tipo || !id || !arquivo) return c.json({ error: "tipo, id e arquivo obrigatórios" }, 400);
+  try {
+    return c.text(await readConteudoArquivo(tipo, id, arquivo));
+  } catch (e) {
+    const code = (e as NodeJS.ErrnoException).code;
+    if (code === "ENOENT" || (e as Error).message === "Caminho inválido" || (e as Error).message === "Tipo inválido")
+      return c.json({ error: "Arquivo não encontrado" }, 404);
+    return c.json({ error: "Erro ao ler arquivo" }, 500);
+  }
 });
 
 app.get("/api/biblioteca", async (c) => {

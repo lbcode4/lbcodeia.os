@@ -19,6 +19,7 @@ import { Route as GeradorCopyRouteImport } from './routes/gerador-copy'
 import { Route as DiagnosticoMetaRouteImport } from './routes/diagnostico-meta'
 import { Route as DashboardMetaRouteImport } from './routes/dashboard-meta'
 import { Route as DashboardGoogleRouteImport } from './routes/dashboard-google'
+import { Route as ConteudoRouteImport } from './routes/conteudo'
 import { Route as ConectarContasRouteImport } from './routes/conectar-contas'
 import { Route as CarrosseisRouteImport } from './routes/carrosseis'
 import { Route as BibliotecaRouteImport } from './routes/biblioteca'
@@ -80,6 +81,11 @@ const DashboardMetaRoute = DashboardMetaRouteImport.update({
 const DashboardGoogleRoute = DashboardGoogleRouteImport.update({
   id: '/dashboard-google',
   path: '/dashboard-google',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConteudoRoute = ConteudoRouteImport.update({
+  id: '/conteudo',
+  path: '/conteudo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ConectarContasRoute = ConectarContasRouteImport.update({
@@ -150,6 +156,7 @@ export interface FileRoutesByFullPath {
   '/biblioteca': typeof BibliotecaRoute
   '/carrosseis': typeof CarrosseisRoute
   '/conectar-contas': typeof ConectarContasRoute
+  '/conteudo': typeof ConteudoRoute
   '/dashboard-google': typeof DashboardGoogleRoute
   '/dashboard-meta': typeof DashboardMetaRoute
   '/diagnostico-meta': typeof DiagnosticoMetaRoute
@@ -174,6 +181,7 @@ export interface FileRoutesByTo {
   '/biblioteca': typeof BibliotecaRoute
   '/carrosseis': typeof CarrosseisRoute
   '/conectar-contas': typeof ConectarContasRoute
+  '/conteudo': typeof ConteudoRoute
   '/dashboard-google': typeof DashboardGoogleRoute
   '/dashboard-meta': typeof DashboardMetaRoute
   '/diagnostico-meta': typeof DiagnosticoMetaRoute
@@ -199,6 +207,7 @@ export interface FileRoutesById {
   '/biblioteca': typeof BibliotecaRoute
   '/carrosseis': typeof CarrosseisRoute
   '/conectar-contas': typeof ConectarContasRoute
+  '/conteudo': typeof ConteudoRoute
   '/dashboard-google': typeof DashboardGoogleRoute
   '/dashboard-meta': typeof DashboardMetaRoute
   '/diagnostico-meta': typeof DiagnosticoMetaRoute
@@ -225,6 +234,7 @@ export interface FileRouteTypes {
     | '/biblioteca'
     | '/carrosseis'
     | '/conectar-contas'
+    | '/conteudo'
     | '/dashboard-google'
     | '/dashboard-meta'
     | '/diagnostico-meta'
@@ -249,6 +259,7 @@ export interface FileRouteTypes {
     | '/biblioteca'
     | '/carrosseis'
     | '/conectar-contas'
+    | '/conteudo'
     | '/dashboard-google'
     | '/dashboard-meta'
     | '/diagnostico-meta'
@@ -273,6 +284,7 @@ export interface FileRouteTypes {
     | '/biblioteca'
     | '/carrosseis'
     | '/conectar-contas'
+    | '/conteudo'
     | '/dashboard-google'
     | '/dashboard-meta'
     | '/diagnostico-meta'
@@ -298,6 +310,7 @@ export interface RootRouteChildren {
   BibliotecaRoute: typeof BibliotecaRoute
   CarrosseisRoute: typeof CarrosseisRoute
   ConectarContasRoute: typeof ConectarContasRoute
+  ConteudoRoute: typeof ConteudoRoute
   DashboardGoogleRoute: typeof DashboardGoogleRoute
   DashboardMetaRoute: typeof DashboardMetaRoute
   DiagnosticoMetaRoute: typeof DiagnosticoMetaRoute
@@ -386,6 +399,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard-google'
       fullPath: '/dashboard-google'
       preLoaderRoute: typeof DashboardGoogleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/conteudo': {
+      id: '/conteudo'
+      path: '/conteudo'
+      fullPath: '/conteudo'
+      preLoaderRoute: typeof ConteudoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/conectar-contas': {
@@ -482,6 +502,7 @@ const rootRouteChildren: RootRouteChildren = {
   BibliotecaRoute: BibliotecaRoute,
   CarrosseisRoute: CarrosseisRoute,
   ConectarContasRoute: ConectarContasRoute,
+  ConteudoRoute: ConteudoRoute,
   DashboardGoogleRoute: DashboardGoogleRoute,
   DashboardMetaRoute: DashboardMetaRoute,
   DiagnosticoMetaRoute: DiagnosticoMetaRoute,

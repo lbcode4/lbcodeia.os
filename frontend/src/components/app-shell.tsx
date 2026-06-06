@@ -1,7 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
 import {
-  LayoutDashboard, Menu, X, Moon, Sun, ChevronDown, User, Bot, Globe, FileBarChart, Target, LayoutTemplate, Library,
+  LayoutDashboard, Menu, X, Moon, Sun, ChevronDown, User, Bot, Globe, FileBarChart, Target, Library, Newspaper,
 } from "lucide-react";
 import { useTheme } from "@/lib/theme";
 import { clients, periods } from "@/lib/mock";
@@ -11,7 +11,7 @@ const topNav = [
   { to: "/", label: "Visão Geral", icon: LayoutDashboard },
   { to: "/assistente", label: "Assistente IA", icon: Bot },
   { to: "/prospeccao", label: "Prospecção", icon: Target },
-  { to: "/carrosseis", label: "Carrosseis", icon: LayoutTemplate },
+  { to: "/conteudo", label: "Conteúdo", icon: Newspaper },
   { to: "/biblioteca", label: "Biblioteca", icon: Library },
   { to: "/sites", label: "Sites", icon: Globe },
 ];
