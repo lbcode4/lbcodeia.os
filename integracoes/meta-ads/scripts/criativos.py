@@ -5,7 +5,6 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
-from meta_api import MetaAPIClient, MetaAPIError
 
 DATE_PRESETS = {7: "last_7d", 14: "last_14d", 30: "last_30d", 90: "last_90d"}
 CREATIVE_FIELDS = "id,name,status,creative{body,title,object_story_spec}"
@@ -58,13 +57,29 @@ def fetch_top_creatives(client, limit, days):
     return results[:limit]
 
 
+def _load_fixture():
+    fixture = os.path.join(
+        os.path.dirname(__file__), "..", "fixtures", "criativos-sample.json"
+    )
+    with open(fixture, encoding="utf-8") as f:
+        return f.read()
+
+
 def main():
     parser = argparse.ArgumentParser(description="Busca top criativos Meta Ads")
     parser.add_argument("--limit", type=int, default=10)
     parser.add_argument("--days", type=int, default=30, choices=[7, 14, 30, 90])
     parser.add_argument("--cliente", default=None)
+    parser.add_argument("--mock", action="store_true",
+                        help="Usa fixture de exemplo, sem chamar a Graph API")
     args = parser.parse_args()
 
+    # Fallback: sem token (ou com --mock), devolve o fixture e encerra.
+    if args.mock or not os.getenv("META_ACCESS_TOKEN"):
+        print(_load_fixture())
+        return
+
+    from meta_api import MetaAPIClient, MetaAPIError  # noqa: PLC0415
     try:
         client = MetaAPIClient()
         if args.cliente or not client.account_id:

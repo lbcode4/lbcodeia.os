@@ -1,0 +1,32 @@
+[
+  {
+    "ad_id": "1001",
+    "ad_name": "Vídeo — Depoimento Cliente",
+    "spend": 720.40,
+    "ctr": 2.41,
+    "clicks": 540,
+    "purchases": 38,
+    "body": "Mais de 12.000 clientes já compraram. Garantia de 30 dias e entrega expressa. Veja por que esse é o queridinho do mês.",
+    "title": "O tênis que todo mundo está comprando"
+  },
+  {
+    "ad_id": "1002",
+    "ad_name": "Carrossel — 4 produtos",
+    "spend": 520.40,
+    "ctr": 1.91,
+    "clicks": 410,
+    "purchases": 22,
+    "body": "Conforto que dura o dia todo. Modelos mais pedidos com 4,9 estrelas. Frete grátis acima de R$ 199.",
+    "title": "Coleção nova com até 40% OFF"
+  },
+  {
+    "ad_id": "1003",
+    "ad_name": "Imagem — Promo Frete Grátis",
+    "spend": 410.80,
+    "ctr": 1.78,
+    "clicks": 300,
+    "purchases": 15,
+    "body": "Frete grátis acabando. Troca fácil em qualquer loja parceira. Garanta o seu antes que o estoque acabe.",
+    "title": "Frete grátis nas próximas 48h"
+  }
+]

@@ -1,7 +1,40 @@
 # tests/test_criativos.py
+import json
+import subprocess
+import sys
 import unittest
 from unittest.mock import MagicMock
 import os
+
+SCRIPT = os.path.join(
+    os.path.dirname(__file__), "..", "scripts", "criativos.py"
+)
+
+
+class TestCriativosMock(unittest.TestCase):
+    def _run(self, *args):
+        # Roda sem META_ACCESS_TOKEN no ambiente para forçar o fallback.
+        env = {k: v for k, v in os.environ.items() if k != "META_ACCESS_TOKEN"}
+        return subprocess.run(
+            [sys.executable, SCRIPT, *args],
+            capture_output=True, text=True, env=env,
+        )
+
+    def test_flag_mock_retorna_json_valido(self):
+        proc = self._run("--mock")
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        data = json.loads(proc.stdout)
+        self.assertIsInstance(data, list)
+        self.assertGreater(len(data), 0)
+        self.assertIn("ctr", data[0])
+        self.assertIn("body", data[0])
+
+    def test_sem_token_cai_no_fixture(self):
+        # Sem --mock e sem token: ainda deve devolver o fixture, não estourar.
+        proc = self._run("--cliente", "Dordrian")
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        data = json.loads(proc.stdout)
+        self.assertGreater(len(data), 0)
 
 
 class TestFetchTopCreatives(unittest.TestCase):
