@@ -94,9 +94,9 @@ const SKILLS: Record<string, SkillSpec> = {
   "lb-conteudo-analise-reels-organico": { skillName: "lb-conteudo-analise-reels-organico", allowedTools: SCRIPT_TOOLS, mode: "text" },
 
   // ── Vendas & CRM ──────────────────────────────────────────────────────
-  "lb-venda-prospectar": { skillName: "lb-venda-prospectar", allowedTools: TEXT_TOOLS, mode: "text" },
+  "lb-venda-prospectar": { skillName: "lb-venda-prospectar", allowedTools: SCRIPT_TOOLS, mode: "text" },
   "lb-venda-diagnostico": { skillName: "lb-venda-diagnostico", allowedTools: TEXT_TOOLS, mode: "text" },
-  "lb-venda-dossie": { skillName: "lb-venda-dossie", allowedTools: TEXT_TOOLS, mode: "text" },
+  "lb-venda-dossie": { skillName: "lb-venda-dossie", allowedTools: SCRIPT_TOOLS, mode: "text" },
   "lb-venda-proposta": { skillName: "lb-venda-proposta", allowedTools: TEXT_TOOLS, mode: "text" },
   "lb-venda-precificar": { skillName: "lb-venda-precificar", allowedTools: TEXT_TOOLS, mode: "text" },
   "lb-venda-objecoes": { skillName: "lb-venda-objecoes", allowedTools: TEXT_TOOLS, mode: "text" },
