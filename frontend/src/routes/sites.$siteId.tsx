@@ -1,15 +1,24 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import {
-  ArrowLeft, Send, Sparkles, User, Loader2, Globe, Monitor, Smartphone,
-  Rocket, CheckCircle2, RotateCcw,
+  ArrowLeft,
+  Send,
+  Sparkles,
+  User,
+  Loader2,
+  Globe,
+  Monitor,
+  Smartphone,
+  Rocket,
+  CheckCircle2,
+  RotateCcw,
+  ImagePlus,
+  X as XIcon,
 } from "lucide-react";
 import { Card, Button, Badge } from "@/components/app-shell";
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8787";
 
-// Injected into preview iframe — intercepts link clicks to prevent navigation.
-// Anchor (#) links scroll normally; external http(s) links open in new tab.
 const PREVIEW_GUARD = `<script>
 (function(){
   document.addEventListener('click', function(e){
@@ -32,11 +41,17 @@ function injectGuard(rawHtml: string): string {
   return PREVIEW_GUARD + rawHtml;
 }
 
+function makeBlobUrl(html: string): string {
+  const blob = new Blob([html], { type: "text/html" });
+  return URL.createObjectURL(blob);
+}
+
 export const Route = createFileRoute("/sites/$siteId")({
   component: SiteEditor,
 });
 
-type Msg = { role: "user" | "assistant"; content: string };
+type SiteImage = { dataUrl: string; mediaType: string; data: string };
+type Msg = { role: "user" | "assistant"; content: string; images?: SiteImage[] };
 
 const SUGGESTIONS = [
   "Mude a cor principal para azul marinho",
@@ -44,6 +59,19 @@ const SUGGESTIONS = [
   "Troque o título da página por algo mais impactante",
   "Adicione um formulário de contato no final",
 ];
+
+async function fileToSiteImage(file: File): Promise<SiteImage | null> {
+  if (!file.type.startsWith("image/")) return null;
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const dataUrl = e.target?.result as string;
+      const data = dataUrl.split(",")[1];
+      resolve({ dataUrl, mediaType: file.type, data });
+    };
+    reader.readAsDataURL(file);
+  });
+}
 
 function SiteEditor() {
   const { siteId } = Route.useParams();
@@ -55,16 +83,19 @@ function SiteEditor() {
   const [messages, setMessages] = useState<Msg[]>([
     {
       role: "assistant",
-      content: `Olá! Carregando o site… Me diga o que você quer mudar — posso alterar textos, cores, seções, layout, e mais.`,
+      content:
+        "Olá! Estou editando o site. Me diga o que quer mudar — textos, cores, seções, layout. Pode colar ou anexar imagens de referência.",
     },
   ]);
   const [input, setInput] = useState("");
+  const [images, setImages] = useState<SiteImage[]>([]);
   const [loading, setLoading] = useState(false);
   const [device, setDevice] = useState<"desktop" | "mobile">("desktop");
   const [publishing, setPublishing] = useState(false);
   const [published, setPublished] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setLoadingHtml(true);
@@ -77,8 +108,10 @@ function SiteEditor() {
         const guarded = injectGuard(h);
         setHtml(guarded);
         setHistory([guarded]);
-        const blob = new Blob([guarded], { type: "text/html" });
-        setBlobUrl((old) => { if (old) URL.revokeObjectURL(old); return URL.createObjectURL(blob); });
+        setBlobUrl((old) => {
+          if (old) URL.revokeObjectURL(old);
+          return makeBlobUrl(guarded);
+        });
         setLoadingHtml(false);
       })
       .catch((e) => {
@@ -91,31 +124,66 @@ function SiteEditor() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, loading]);
 
-  async function send(text: string) {
-    const t = text.trim();
-    if (!t || loading) return;
+  async function handlePaste(e: React.ClipboardEvent) {
+    const items = Array.from(e.clipboardData.items);
+    const imageItems = items.filter((i) => i.type.startsWith("image/"));
+    if (!imageItems.length) return;
+    e.preventDefault();
+    const results = await Promise.all(
+      imageItems.map((item) => {
+        const file = item.getAsFile();
+        return file ? fileToSiteImage(file) : Promise.resolve(null);
+      }),
+    );
+    setImages((prev) => [...prev, ...results.filter((r): r is SiteImage => r !== null)]);
+  }
+
+  async function handleFiles(files: FileList | null) {
+    if (!files) return;
+    const results = await Promise.all(Array.from(files).map(fileToSiteImage));
+    setImages((prev) => [...prev, ...results.filter((r): r is SiteImage => r !== null)]);
+  }
+
+  async function send() {
+    const t = input.trim();
+    if ((!t && !images.length) || loading) return;
     setError(null);
-    setMessages((m) => [...m, { role: "user", content: t }]);
+    const sentImages = [...images];
+    setMessages((m) => [
+      ...m,
+      { role: "user", content: t, images: sentImages.length ? sentImages : undefined },
+    ]);
     setInput("");
+    setImages([]);
     setLoading(true);
     try {
-      const resp = await fetch("/api/public/site-edit", {
+      const resp = await fetch(`${BACKEND}/api/sites/edit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ html, instruction: t }),
+        body: JSON.stringify({
+          siteId,
+          html,
+          instruction: t,
+          images: sentImages.map((img) => ({ mediaType: img.mediaType, data: img.data })),
+        }),
       });
-      const data = await resp.json();
-      if (!resp.ok) throw new Error(data.error || "Falha ao editar");
-      setHistory((h) => [...h, data.html]);
-      setHtml(data.html);
+      const data = (await resp.json()) as { html?: string; error?: string };
+      if (!resp.ok) throw new Error(data.error ?? "Falha ao editar");
+      const newHtml = injectGuard(data.html!);
+      setHtml(newHtml);
+      setHistory((h) => [...h, newHtml]);
+      setBlobUrl((old) => {
+        if (old) URL.revokeObjectURL(old);
+        return makeBlobUrl(newHtml);
+      });
       setMessages((m) => [
         ...m,
-        { role: "assistant", content: `Pronto! Apliquei a alteração. Olhe o preview ao lado — se quiser ajustar, é só pedir.` },
+        { role: "assistant", content: "Pronto! Alteração aplicada. Veja o preview ao lado." },
       ]);
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Erro desconhecido";
       setError(msg);
-      setMessages((m) => [...m, { role: "assistant", content: `Não consegui aplicar a mudança: ${msg}` }]);
+      setMessages((m) => [...m, { role: "assistant", content: `Não consegui aplicar: ${msg}` }]);
     } finally {
       setLoading(false);
     }
@@ -125,14 +193,27 @@ function SiteEditor() {
     if (history.length <= 1) return;
     const next = history.slice(0, -1);
     setHistory(next);
-    setHtml(next[next.length - 1]);
+    const prev = next[next.length - 1];
+    setHtml(prev);
+    setBlobUrl((old) => {
+      if (old) URL.revokeObjectURL(old);
+      return makeBlobUrl(prev);
+    });
   }
 
   async function publish() {
     setPublishing(true);
-    await new Promise((r) => setTimeout(r, 1200));
+    try {
+      await fetch(`${BACKEND}/api/sites/html?id=${encodeURIComponent(siteId)}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ html }),
+      });
+      setPublished(true);
+    } catch (_) {
+      // ignore save errors silently
+    }
     setPublishing(false);
-    setPublished(true);
   }
 
   return (
@@ -144,12 +225,15 @@ function SiteEditor() {
             <ArrowLeft size={18} />
           </Link>
           <Globe size={16} className="text-muted-foreground shrink-0" />
-          <div className="min-w-0">
-            <div className="font-semibold text-[14px] truncate capitalize">
-              {siteId.replace(/-\d{4}-\d{2}-\d{2}$/, "").replace(/-/g, " ")}
-            </div>
+          <div className="font-semibold text-[14px] truncate capitalize">
+            {siteId.replace(/-\d{4}-\d{2}-\d{2}$/, "").replace(/-/g, " ")}
           </div>
-          {published && <Badge tone="success"><CheckCircle2 size={11} className="mr-1" />Publicado</Badge>}
+          {published && (
+            <Badge tone="success">
+              <CheckCircle2 size={11} className="mr-1" />
+              Salvo
+            </Badge>
+          )}
         </div>
 
         <div className="flex items-center gap-2">
@@ -178,7 +262,7 @@ function SiteEditor() {
           </button>
           <Button onClick={publish} disabled={publishing} className="!px-4 !py-2">
             {publishing ? <Loader2 className="animate-spin" size={16} /> : <Rocket size={16} />}
-            <span className="hidden sm:inline">{published ? "Republicar" : "Publicar"}</span>
+            <span className="hidden sm:inline">{published ? "Salvo" : "Salvar"}</span>
           </Button>
         </div>
       </div>
@@ -190,15 +274,33 @@ function SiteEditor() {
           <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4">
             {messages.map((m, i) => (
               <div key={i} className={`flex gap-2 ${m.role === "user" ? "flex-row-reverse" : ""}`}>
-                <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${
-                  m.role === "user" ? "bg-accent" : "bg-primary text-primary-foreground"
-                }`}>
+                <div
+                  className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${
+                    m.role === "user" ? "bg-accent" : "bg-primary text-primary-foreground"
+                  }`}
+                >
                   {m.role === "user" ? <User size={13} /> : <Sparkles size={13} />}
                 </div>
-                <div className={`max-w-[85%] rounded-lg px-3 py-2 text-[13px] leading-relaxed whitespace-pre-wrap ${
-                  m.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"
-                }`}>
-                  {m.content}
+                <div className="max-w-[85%] space-y-1.5">
+                  {m.images?.map((img, j) => (
+                    <img
+                      key={j}
+                      src={img.dataUrl}
+                      alt="referência"
+                      className="rounded-md max-h-40 object-contain border border-border"
+                    />
+                  ))}
+                  {m.content && (
+                    <div
+                      className={`rounded-lg px-3 py-2 text-[13px] leading-relaxed whitespace-pre-wrap ${
+                        m.role === "user"
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted text-foreground"
+                      }`}
+                    >
+                      {m.content}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -208,7 +310,7 @@ function SiteEditor() {
                   <Sparkles size={13} />
                 </div>
                 <div className="bg-muted rounded-lg px-3 py-2 text-[13px] flex items-center gap-2">
-                  <Loader2 className="animate-spin" size={13} /> Aplicando mudança no site...
+                  <Loader2 className="animate-spin" size={13} /> Aplicando mudança…
                 </div>
               </div>
             )}
@@ -225,7 +327,9 @@ function SiteEditor() {
                 {SUGGESTIONS.map((s) => (
                   <button
                     key={s}
-                    onClick={() => send(s)}
+                    onClick={() => {
+                      setInput(s);
+                    }}
                     className="block w-full text-left text-[12px] p-2.5 rounded-md border border-border hover:bg-accent transition-colors"
                   >
                     {s}
@@ -235,25 +339,72 @@ function SiteEditor() {
             )}
           </div>
 
-          <form
-            onSubmit={(e) => { e.preventDefault(); send(input); }}
-            className="border-t border-border p-3 flex gap-2"
-          >
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(input); }
-              }}
-              rows={1}
-              placeholder="Peça uma alteração no site..."
-              disabled={loading}
-              className="flex-1 resize-none rounded-md border border-border bg-background px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-primary/30 max-h-32"
-            />
-            <Button type="submit" disabled={loading || !input.trim()} className="!px-3 !py-2">
-              {loading ? <Loader2 className="animate-spin" size={15} /> : <Send size={15} />}
-            </Button>
-          </form>
+          {/* Input area */}
+          <div className="border-t border-border p-3 space-y-2">
+            {/* Image previews */}
+            {images.length > 0 && (
+              <div className="flex gap-2 flex-wrap">
+                {images.map((img, i) => (
+                  <div key={i} className="relative group">
+                    <img
+                      src={img.dataUrl}
+                      alt="anexo"
+                      className="h-16 w-16 object-cover rounded-md border border-border"
+                    />
+                    <button
+                      onClick={() => setImages((prev) => prev.filter((_, j) => j !== i))}
+                      className="absolute -top-1 -right-1 w-4 h-4 bg-destructive text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <XIcon size={9} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="flex gap-2">
+              {/* Hidden file input */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={(e) => handleFiles(e.target.files)}
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="h-9 w-9 shrink-0 rounded-md border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                title="Anexar imagem"
+              >
+                <ImagePlus size={15} />
+              </button>
+              <textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    send();
+                  }
+                }}
+                onPaste={handlePaste}
+                rows={1}
+                placeholder="Peça uma alteração… ou cole uma imagem de referência"
+                disabled={loading}
+                className="flex-1 resize-none rounded-md border border-border bg-background px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-primary/30 max-h-32"
+              />
+              <Button
+                type="button"
+                onClick={send}
+                disabled={loading || (!input.trim() && !images.length)}
+                className="!px-3 !py-2 shrink-0"
+              >
+                {loading ? <Loader2 className="animate-spin" size={15} /> : <Send size={15} />}
+              </Button>
+            </div>
+          </div>
         </div>
 
         {/* Preview */}

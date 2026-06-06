@@ -1,5 +1,7 @@
-import { readdir, readFile, stat } from "node:fs/promises";
+import { readdir, readFile, stat, writeFile, unlink, mkdtemp, rmdir } from "node:fs/promises";
 import { join, resolve } from "node:path";
+import { tmpdir } from "node:os";
+import { query } from "@anthropic-ai/claude-agent-sdk";
 
 const REPO_ROOT = join(import.meta.dirname, "..", "..");
 const SITES_ROOT = join(REPO_ROOT, "marketing", "sites");
@@ -67,6 +69,69 @@ export async function readSiteHtml(id: string): Promise<string> {
 export async function writeSiteHtml(id: string, html: string): Promise<void> {
   const safe = resolve(join(SITES_ROOT, id, "index.html"));
   if (!safe.startsWith(resolve(SITES_ROOT))) throw new Error("Caminho inválido");
-  const { writeFile } = await import("node:fs/promises");
   await writeFile(safe, html, "utf-8");
+}
+
+export async function editSiteHtml(
+  html: string,
+  instruction: string,
+  images: { mediaType: string; data: string }[],
+): Promise<string> {
+  const tmpDir = await mkdtemp(join(tmpdir(), "lbsite-"));
+  const htmlPath = join(tmpDir, "site.html");
+
+  await writeFile(htmlPath, html, "utf-8");
+
+  const imagePaths: string[] = [];
+  for (let i = 0; i < images.length; i++) {
+    const img = images[i];
+    const ext = img.mediaType.split("/")[1] ?? "png";
+    const imgPath = join(tmpDir, `ref-${i}.${ext}`);
+    await writeFile(imgPath, Buffer.from(img.data, "base64"));
+    imagePaths.push(imgPath);
+  }
+
+  const imageContext = imagePaths.length
+    ? `\nImagens de referência salvas em:\n${imagePaths.map((p) => `- ${p}`).join("\n")}\nUse a ferramenta Read para visualizá-las antes de editar.`
+    : "";
+
+  const prompt = `Você é um editor de HTML especialista em landing pages.
+
+O arquivo HTML está em: ${htmlPath}${imageContext}
+
+INSTRUÇÃO: ${instruction}
+
+1. Leia o arquivo HTML em ${htmlPath}
+${imagePaths.length ? "2. Leia as imagens de referência para entender o estilo/conteúdo desejado\n3. " : "2. "}Aplique a instrução modificando apenas o necessário — preservando o restante do HTML
+${imagePaths.length ? "4. " : "3. "}Salve o HTML modificado de volta em ${htmlPath}
+
+Salve apenas HTML válido e completo. Nenhum texto fora do HTML.`;
+
+  const MODEL = process.env.LBCODE_MODEL ?? "claude-sonnet-4-6";
+
+  try {
+    const messages = query({
+      prompt,
+      options: {
+        cwd: REPO_ROOT,
+        model: MODEL,
+        permissionMode: "bypassPermissions",
+        allowDangerouslySkipPermissions: true,
+        allowedTools: ["Read", "Write", "Edit"],
+        settingSources: ["project"],
+        systemPrompt: { type: "preset", preset: "claude_code" },
+      },
+    });
+
+    for await (const msg of messages) {
+      if (msg.type === "result") break;
+    }
+
+    const modified = await readFile(htmlPath, "utf-8");
+    return modified;
+  } finally {
+    const toDelete = [htmlPath, ...imagePaths];
+    await Promise.all(toDelete.map((p) => unlink(p).catch(() => {})));
+    await rmdir(tmpDir).catch(() => {});
+  }
 }

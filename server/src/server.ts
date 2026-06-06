@@ -6,7 +6,7 @@ import { listContas } from "./contas.js";
 import { isAllowedSkill } from "./skills-map.js";
 import { runSkill } from "./runner.js";
 import { listCampaigns, readCampaignFile } from "./prospeccao.js";
-import { listSites, readSiteHtml, writeSiteHtml } from "./sites.js";
+import { listSites, readSiteHtml, writeSiteHtml, editSiteHtml } from "./sites.js";
 import { listCarrosseis, readSlide } from "./carrosseis.js";
 import { getBiblioteca, readBibliotecaFile } from "./biblioteca.js";
 import { getDashboardData } from "./dashboard.js";
@@ -131,6 +131,23 @@ app.put("/api/sites/html", async (c) => {
     return c.json({ ok: true });
   } catch (e) {
     return c.json({ error: (e as Error).message }, 500);
+  }
+});
+
+app.post("/api/sites/edit", async (c) => {
+  let body: { siteId: string; html: string; instruction: string; images?: { mediaType: string; data: string }[] };
+  try {
+    body = await c.req.json();
+  } catch {
+    return c.json({ error: "JSON inválido" }, 400);
+  }
+  const { html, instruction, images = [] } = body;
+  if (!html || !instruction) return c.json({ error: "html e instruction obrigatórios" }, 400);
+  try {
+    const modified = await editSiteHtml(html, instruction, images);
+    return c.json({ html: modified });
+  } catch (e) {
+    return c.json({ error: e instanceof Error ? e.message : "Erro ao editar" }, 500);
   }
 });
 
