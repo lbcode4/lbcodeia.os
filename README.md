@@ -36,9 +36,9 @@ Seu negócio documentado, lido antes de cada ação:
 - `_memoria/skills-catalogo.md` — qual skill pra qual modelo
 
 ### 3. EXECUÇÃO (skills)
-42 workflows prontos, cada um framework-first:
+43 workflows prontos, cada um framework-first:
 - **Conteúdo:** `/lb-conteudo-carrossel`, `/lb-google-seo`, `/lb-conteudo-publicar`, `/lb-conteudo-reels`
-- **Trafego pago:** `/lb-google-ads`, `/campanha-meta-*`, `/lb-meta-relatorio`
+- **Trafego pago:** `/lb-google-ads`, `/lb-meta-campanha-whatsapp`, `/lb-meta-campanha-seguidores`, `/lb-meta-dashboard`, `/lb-meta-relatorio`
 - **Prospecção:** `/lb-venda-prospectar`, `/lb-venda-dossie`, `/lb-venda-proposta`, `/lb-venda-follow-up`
 - **Operação:** `/lb-negocio-analisar-dados`, `/lb-venda-precificar`, `/lb-venda-diagnostico`
 - **Planejamento:** `/lb-negocio-plano-mensal`, `/lb-conteudo-calendario`, `/lb-negocio-mapear-rotinas`
@@ -96,7 +96,7 @@ Tudo com framework. Pronto pra repetir.
 ```
 _memoria/           → cérebro (empresa, preferências, estratégia, framework)
 identidade/         → visual (cores, fontes, logo)
-.claude/skills/     → 42 workflows prontos
+.claude/skills/     → 43 workflows prontos
 marketing/          → saídas conteúdo + campanhas
 dados/              → CSVs, JSONs, insumos
 saidas/             → resultados finais
