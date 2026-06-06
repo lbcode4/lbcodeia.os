@@ -1,0 +1,21 @@
+{
+  "name": "lbcode-backend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "tsx src/server.ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.1.77",
+    "@hono/node-server": "^1.13.0",
+    "hono": "^4.6.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.3",
+    "vitest": "^2.1.0",
+    "@types/node": "^22.16.5"
+  }
+}
