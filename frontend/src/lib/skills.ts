@@ -129,3 +129,11 @@ export const hubs: Hub[] = [
 export function findHub(id: string) {
   return hubs.find((h) => h.id === id);
 }
+
+export function findSkillById(id: string): Skill | undefined {
+  for (const hub of hubs) {
+    const s = hub.skills.find((sk) => sk.id === id);
+    if (s) return s;
+  }
+  return undefined;
+}
