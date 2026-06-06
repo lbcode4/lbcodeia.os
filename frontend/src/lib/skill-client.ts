@@ -2,7 +2,8 @@ export type SkillEvent =
   | { type: "status"; text: string }
   | { type: "chunk"; text: string }
   | { type: "done" }
-  | { type: "error"; text: string };
+  | { type: "error"; text: string }
+  | { type: "data"; payload: unknown };
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8787";
 
