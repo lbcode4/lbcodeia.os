@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import { PageHeader, Card, Button } from "@/components/app-shell";
 import { CheckCircle2, Circle, FileText, X, ChevronLeft, Loader2, Sparkles, Users } from "lucide-react";
 import { runSkill } from "@/lib/skill-client";
+import { MarkdownViewer } from "@/components/ui/markdown-viewer";
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8787";
 
@@ -317,9 +318,9 @@ function ProspeccaoPage() {
                 loadingFile ? (
                   <p className="text-[13px] text-muted-foreground">Carregando arquivo…</p>
                 ) : (
-                  <pre className="text-[12.5px] leading-relaxed whitespace-pre-wrap overflow-auto flex-1 max-h-[70vh]">
-                    {painel?.conteudo}
-                  </pre>
+                  <div className="flex-1 overflow-auto max-h-[70vh] p-2">
+                    <MarkdownViewer content={painel?.conteudo || ""} />
+                  </div>
                 )
               )}
 
@@ -333,9 +334,9 @@ function ProspeccaoPage() {
                   )}
                   {genErro && <p className="text-[12px] text-red-500 mb-2">{genErro}</p>}
                   {genOutput ? (
-                    <pre className="text-[12.5px] leading-relaxed whitespace-pre-wrap overflow-auto flex-1 max-h-[70vh]">
-                      {genOutput}
-                    </pre>
+                    <div className="flex-1 overflow-auto max-h-[70vh] p-2">
+                      <MarkdownViewer content={genOutput} />
+                    </div>
                   ) : (
                     !genStatus && !genErro && (
                       <p className="text-[13px] text-muted-foreground">Aguardando resposta da IA…</p>

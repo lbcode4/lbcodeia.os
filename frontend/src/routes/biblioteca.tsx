@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { PageHeader, Card } from "@/components/app-shell";
 import { Copy, Check, ChevronRight, X, FileText, FileCode, Image } from "lucide-react";
+import { MarkdownViewer } from "@/components/ui/markdown-viewer";
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8787";
 
@@ -180,9 +181,9 @@ function BibliotecaPagina() {
               {!loading && content && (
                 <>
                   {selected.type === "md" && (
-                    <pre className="text-[12.5px] leading-relaxed whitespace-pre-wrap overflow-auto flex-1 max-h-[68vh]">
-                      {content}
-                    </pre>
+                    <div className="flex-1 overflow-auto max-h-[68vh] p-2">
+                      <MarkdownViewer content={content} />
+                    </div>
                   )}
                   {selected.type === "html" && (
                     <iframe

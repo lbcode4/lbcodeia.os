@@ -5,6 +5,7 @@ import {
   Calendar, LayoutTemplate, Video, Images, Palette,
   ChevronLeft, ChevronRight, Copy, Check, X, Upload,
 } from "lucide-react";
+import { MarkdownViewer } from "@/components/ui/markdown-viewer";
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8787";
 
@@ -136,9 +137,9 @@ function TabCalendario() {
           {loading ? (
             <p className="text-[13px] text-muted-foreground">Carregando…</p>
           ) : (
-            <pre className="text-[12.5px] leading-relaxed whitespace-pre-wrap max-h-[70vh] overflow-y-auto">
-              {conteudo}
-            </pre>
+            <div className="overflow-auto max-h-[70vh] p-2">
+              <MarkdownViewer content={conteudo} />
+            </div>
           )}
         </Card>
       </div>
@@ -282,9 +283,9 @@ function TabCarrossel() {
                     {copiado ? "Copiado" : "Copiar"}
                   </button>
                 </div>
-                <pre className="text-[12.5px] leading-relaxed whitespace-pre-wrap text-muted-foreground max-h-[60vh] overflow-y-auto">
-                  {aberto.legenda}
-                </pre>
+                <div className="overflow-auto max-h-[60vh] p-2">
+                  <MarkdownViewer content={aberto.legenda} />
+                </div>
               </Card>
             </div>
           )}
@@ -399,9 +400,9 @@ function TabMarkdown({
           {loading ? (
             <p className="text-[13px] text-muted-foreground">Carregando…</p>
           ) : (
-            <pre className="text-[12.5px] leading-relaxed whitespace-pre-wrap max-h-[70vh] overflow-y-auto">
-              {conteudo}
-            </pre>
+            <div className="overflow-auto max-h-[70vh] p-2">
+              <MarkdownViewer content={conteudo} />
+            </div>
           )}
         </Card>
       </div>
