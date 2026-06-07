@@ -6,7 +6,7 @@ import { listContas } from "./contas.js";
 import { isAllowedSkill } from "./skills-map.js";
 import { runSkill } from "./runner.js";
 import { listCampaigns, readCampaignFile } from "./prospeccao.js";
-import { listConteudo, readConteudoArquivo } from "./conteudo.js";
+import { listConteudo, readConteudoArquivo, updateConteudoStatus } from "./conteudo.js";
 import { listSites, readSiteHtml, writeSiteHtml, streamSiteChat } from "./sites.js";
 import { listCarrosseis, readSlide } from "./carrosseis.js";
 import { listIdentidade, readIdentidadeArquivo, listInspiracoes, saveInspiracao, readInspiracao } from "./identidade.js";
@@ -252,6 +252,23 @@ app.get("/api/conteudo/arquivo", async (c) => {
     if (code === "ENOENT" || (e as Error).message === "Caminho inválido" || (e as Error).message === "Tipo inválido")
       return c.json({ error: "Arquivo não encontrado" }, 404);
     return c.json({ error: "Erro ao ler arquivo" }, 500);
+  }
+});
+
+app.put("/api/conteudo/status", async (c) => {
+  let body: { tipo: string; id: string; arquivo: string; status: string };
+  try {
+    body = await c.req.json();
+  } catch {
+    return c.json({ error: "JSON inválido" }, 400);
+  }
+  const { tipo, id, arquivo, status } = body;
+  if (!tipo || !id || !arquivo || !status) return c.json({ error: "tipo, id, arquivo e status obrigatórios" }, 400);
+  try {
+    await updateConteudoStatus(tipo, id, arquivo, status);
+    return c.json({ ok: true });
+  } catch (e) {
+    return c.json({ error: (e as Error).message }, 500);
   }
 });
 

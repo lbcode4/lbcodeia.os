@@ -19,6 +19,7 @@ import { Route as GeradorCopyRouteImport } from './routes/gerador-copy'
 import { Route as DiagnosticoMetaRouteImport } from './routes/diagnostico-meta'
 import { Route as DashboardMetaRouteImport } from './routes/dashboard-meta'
 import { Route as DashboardGoogleRouteImport } from './routes/dashboard-google'
+import { Route as DashboardConteudoRouteImport } from './routes/dashboard-conteudo'
 import { Route as ConteudoRouteImport } from './routes/conteudo'
 import { Route as ConectarContasRouteImport } from './routes/conectar-contas'
 import { Route as CarrosseisRouteImport } from './routes/carrosseis'
@@ -81,6 +82,11 @@ const DashboardMetaRoute = DashboardMetaRouteImport.update({
 const DashboardGoogleRoute = DashboardGoogleRouteImport.update({
   id: '/dashboard-google',
   path: '/dashboard-google',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardConteudoRoute = DashboardConteudoRouteImport.update({
+  id: '/dashboard-conteudo',
+  path: '/dashboard-conteudo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ConteudoRoute = ConteudoRouteImport.update({
@@ -157,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/carrosseis': typeof CarrosseisRoute
   '/conectar-contas': typeof ConectarContasRoute
   '/conteudo': typeof ConteudoRoute
+  '/dashboard-conteudo': typeof DashboardConteudoRoute
   '/dashboard-google': typeof DashboardGoogleRoute
   '/dashboard-meta': typeof DashboardMetaRoute
   '/diagnostico-meta': typeof DiagnosticoMetaRoute
@@ -182,6 +189,7 @@ export interface FileRoutesByTo {
   '/carrosseis': typeof CarrosseisRoute
   '/conectar-contas': typeof ConectarContasRoute
   '/conteudo': typeof ConteudoRoute
+  '/dashboard-conteudo': typeof DashboardConteudoRoute
   '/dashboard-google': typeof DashboardGoogleRoute
   '/dashboard-meta': typeof DashboardMetaRoute
   '/diagnostico-meta': typeof DiagnosticoMetaRoute
@@ -208,6 +216,7 @@ export interface FileRoutesById {
   '/carrosseis': typeof CarrosseisRoute
   '/conectar-contas': typeof ConectarContasRoute
   '/conteudo': typeof ConteudoRoute
+  '/dashboard-conteudo': typeof DashboardConteudoRoute
   '/dashboard-google': typeof DashboardGoogleRoute
   '/dashboard-meta': typeof DashboardMetaRoute
   '/diagnostico-meta': typeof DiagnosticoMetaRoute
@@ -235,6 +244,7 @@ export interface FileRouteTypes {
     | '/carrosseis'
     | '/conectar-contas'
     | '/conteudo'
+    | '/dashboard-conteudo'
     | '/dashboard-google'
     | '/dashboard-meta'
     | '/diagnostico-meta'
@@ -260,6 +270,7 @@ export interface FileRouteTypes {
     | '/carrosseis'
     | '/conectar-contas'
     | '/conteudo'
+    | '/dashboard-conteudo'
     | '/dashboard-google'
     | '/dashboard-meta'
     | '/diagnostico-meta'
@@ -285,6 +296,7 @@ export interface FileRouteTypes {
     | '/carrosseis'
     | '/conectar-contas'
     | '/conteudo'
+    | '/dashboard-conteudo'
     | '/dashboard-google'
     | '/dashboard-meta'
     | '/diagnostico-meta'
@@ -311,6 +323,7 @@ export interface RootRouteChildren {
   CarrosseisRoute: typeof CarrosseisRoute
   ConectarContasRoute: typeof ConectarContasRoute
   ConteudoRoute: typeof ConteudoRoute
+  DashboardConteudoRoute: typeof DashboardConteudoRoute
   DashboardGoogleRoute: typeof DashboardGoogleRoute
   DashboardMetaRoute: typeof DashboardMetaRoute
   DiagnosticoMetaRoute: typeof DiagnosticoMetaRoute
@@ -399,6 +412,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard-google'
       fullPath: '/dashboard-google'
       preLoaderRoute: typeof DashboardGoogleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard-conteudo': {
+      id: '/dashboard-conteudo'
+      path: '/dashboard-conteudo'
+      fullPath: '/dashboard-conteudo'
+      preLoaderRoute: typeof DashboardConteudoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/conteudo': {
@@ -503,6 +523,7 @@ const rootRouteChildren: RootRouteChildren = {
   CarrosseisRoute: CarrosseisRoute,
   ConectarContasRoute: ConectarContasRoute,
   ConteudoRoute: ConteudoRoute,
+  DashboardConteudoRoute: DashboardConteudoRoute,
   DashboardGoogleRoute: DashboardGoogleRoute,
   DashboardMetaRoute: DashboardMetaRoute,
   DiagnosticoMetaRoute: DiagnosticoMetaRoute,

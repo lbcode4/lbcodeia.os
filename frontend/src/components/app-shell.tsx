@@ -11,6 +11,7 @@ const topNav = [
   { to: "/", label: "Visão Geral", icon: LayoutDashboard },
   { to: "/assistente", label: "Assistente IA", icon: Bot },
   { to: "/prospeccao", label: "Prospecção", icon: Target },
+  { to: "/dashboard-conteudo", label: "Dashboard de Posts", icon: LayoutDashboard },
   { to: "/conteudo", label: "Conteúdo", icon: Newspaper },
   { to: "/biblioteca", label: "Biblioteca", icon: Library },
   { to: "/sites", label: "Sites", icon: Globe },
