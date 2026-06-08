@@ -2,12 +2,16 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Send, Sparkles, User, Loader2, Trash2 } from "lucide-react";
 import { PageHeader, Card, Button } from "@/components/app-shell";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 export const Route = createFileRoute("/assistente")({
   component: AssistentePage,
 });
 
 type Msg = { role: "user" | "assistant"; content: string };
+
+const BACKEND = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8787";
 
 const SUGGESTIONS = [
   "Analise minhas campanhas de Meta Ads e sugira o que pausar.",
@@ -34,11 +38,12 @@ function AssistentePage() {
     const userMsg: Msg = { role: "user", content: trimmed };
     const next = [...messages, userMsg];
     setMessages(next);
+    setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
     setInput("");
     setIsLoading(true);
 
     try {
-      const resp = await fetch("/api/public/chat", {
+      const resp = await fetch(`${BACKEND}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: next }),
@@ -52,43 +57,43 @@ function AssistentePage() {
       const reader = resp.body.getReader();
       const decoder = new TextDecoder();
       let buffer = "";
-      let assistant = "";
-      setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
 
-      let done = false;
-      while (!done) {
-        const { value, done: rDone } = await reader.read();
-        if (rDone) break;
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
         buffer += decoder.decode(value, { stream: true });
-        let nl: number;
-        while ((nl = buffer.indexOf("\n")) !== -1) {
-          let line = buffer.slice(0, nl);
-          buffer = buffer.slice(nl + 1);
-          if (line.endsWith("\r")) line = line.slice(0, -1);
-          if (!line || line.startsWith(":")) continue;
-          if (!line.startsWith("data: ")) continue;
-          const json = line.slice(6).trim();
-          if (json === "[DONE]") { done = true; break; }
+
+        const parts = buffer.split("\n\n");
+        buffer = parts.pop() ?? "";
+
+        for (const part of parts) {
+          const dataLine = part.split("\n").find((l) => l.startsWith("data:"));
+          if (!dataLine) continue;
           try {
-            const parsed = JSON.parse(json);
-            const delta = parsed.choices?.[0]?.delta?.content as string | undefined;
-            if (delta) {
-              assistant += delta;
+            const ev = JSON.parse(dataLine.slice(5).trim()) as { type: string; text?: string };
+            if (ev.type === "chunk" && ev.text) {
               setMessages((prev) => {
                 const copy = [...prev];
-                copy[copy.length - 1] = { role: "assistant", content: assistant };
+                copy[copy.length - 1] = {
+                  role: "assistant",
+                  content: copy[copy.length - 1].content + ev.text!,
+                };
                 return copy;
               });
+            } else if (ev.type === "error") {
+              throw new Error(ev.text ?? "Erro do servidor");
             }
-          } catch {
-            buffer = line + "\n" + buffer;
-            break;
+          } catch (parseErr) {
+            if (parseErr instanceof SyntaxError) continue;
+            throw parseErr;
           }
         }
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erro desconhecido");
-      setMessages((prev) => prev.filter((m, i) => !(i === prev.length - 1 && m.role === "assistant" && m.content === "")));
+      setMessages((prev) =>
+        prev.filter((m, i) => !(i === prev.length - 1 && m.role === "assistant" && m.content === "")),
+      );
     } finally {
       setIsLoading(false);
     }
@@ -140,12 +145,20 @@ function AssistentePage() {
               }`}>
                 {m.role === "user" ? <User size={16} /> : <Sparkles size={16} />}
               </div>
-              <div className={`max-w-[80%] rounded-lg px-4 py-3 text-[14px] leading-relaxed whitespace-pre-wrap ${
-                m.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"
+              <div className={`max-w-[80%] rounded-lg px-4 py-3 text-[14px] leading-relaxed ${
+                m.role === "user" ? "bg-primary text-primary-foreground whitespace-pre-wrap" : "bg-muted text-foreground"
               }`}>
-                {m.content || (isLoading && i === messages.length - 1 ? (
-                  <Loader2 className="animate-spin" size={16} />
-                ) : null)}
+                {m.role === "assistant" ? (
+                  m.content ? (
+                    <div className="prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-headings:mt-3 prose-headings:mb-1 prose-ul:my-1 prose-li:my-0 prose-table:text-[13px]">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
+                    </div>
+                  ) : isLoading && i === messages.length - 1 ? (
+                    <Loader2 className="animate-spin" size={16} />
+                  ) : null
+                ) : (
+                  m.content
+                )}
               </div>
             </div>
           ))}

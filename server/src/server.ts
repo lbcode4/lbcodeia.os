@@ -12,6 +12,7 @@ import { listCarrosseis, readSlide } from "./carrosseis.js";
 import { listIdentidade, readIdentidadeArquivo, listInspiracoes, saveInspiracao, readInspiracao } from "./identidade.js";
 import { getBiblioteca, readBibliotecaFile } from "./biblioteca.js";
 import { getDashboardData } from "./dashboard.js";
+import { runChat } from "./chat.js";
 
 export const app = new Hono();
 
@@ -41,6 +42,22 @@ app.post("/api/skills/run", async (c) => {
 
   return streamSSE(c, async (stream) => {
     for await (const ev of runSkill(skill, cliente, input)) {
+      await stream.writeSSE({ event: ev.type, data: JSON.stringify(ev) });
+      if (ev.type === "done" || ev.type === "error") break;
+    }
+  });
+});
+
+app.post("/api/chat", async (c) => {
+  let body: { messages: { role: "user" | "assistant"; content: string }[]; cliente?: string };
+  try {
+    body = await c.req.json();
+  } catch {
+    return c.json({ error: "Corpo inválido: JSON esperado" }, 400);
+  }
+
+  return streamSSE(c, async (stream) => {
+    for await (const ev of runChat(body.messages, body.cliente)) {
       await stream.writeSSE({ event: ev.type, data: JSON.stringify(ev) });
       if (ev.type === "done" || ev.type === "error") break;
     }
