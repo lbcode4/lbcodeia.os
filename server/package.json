@@ -9,13 +9,14 @@
   },
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.1.77",
+    "@anthropic-ai/sdk": "^0.103.0",
     "@hono/node-server": "^1.13.0",
     "hono": "^4.6.0"
   },
   "devDependencies": {
+    "@types/node": "^22.16.5",
     "tsx": "^4.19.0",
     "typescript": "^5.8.3",
-    "vitest": "^2.1.0",
-    "@types/node": "^22.16.5"
+    "vitest": "^2.1.0"
   }
 }

@@ -1,4 +1,4 @@
-import { query } from "@anthropic-ai/claude-agent-sdk";
+import Anthropic from "@anthropic-ai/sdk";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
@@ -10,13 +10,18 @@ export type ChatEvent =
   | { type: "done" }
   | { type: "error"; text: string };
 
-async function loadEmpresaContext(cliente?: string): Promise<string> {
+async function loadSystemPrompt(cliente?: string): Promise<string> {
   const files = [
     "_memoria/empresa.md",
     "_memoria/preferencias.md",
     "_memoria/estrategia.md",
   ];
-  const sections: string[] = [];
+  const sections: string[] = [
+    "Você é o assistente de IA do LBCode Ads — cockpit de gestão de tráfego pago (Meta Ads + Google Ads).\n" +
+    "Responda em português do Brasil, de forma clara, objetiva e prática.\n" +
+    "Quando o usuário pedir análise de campanhas, sugira ações concretas (pausar, escalar, ajustar criativos, públicos, lances).\n" +
+    "Quando pedir copy/criativos, entregue variações prontas. Use markdown leve quando ajudar.",
+  ];
 
   for (const file of files) {
     try {
@@ -43,71 +48,33 @@ async function loadEmpresaContext(cliente?: string): Promise<string> {
   return sections.join("\n\n");
 }
 
-function buildChatPrompt(
-  history: { role: "user" | "assistant"; content: string }[],
-  context: string,
-): string {
-  const parts: string[] = [];
-
-  if (context) {
-    parts.push(`## Contexto do negócio e do cliente\n\n${context}\n\n---`);
-  }
-
-  parts.push(
-    "Você é o assistente de IA do LBCode Ads — cockpit de gestão de tráfego pago (Meta Ads + Google Ads).\n" +
-    "Responda em português do Brasil, de forma clara, objetiva e prática.\n\n" +
-    "## Estrutura de arquivos do projeto\n" +
-    "Use as ferramentas Read, Glob e Grep para buscar informações ANTES de responder:\n" +
-    "- `_memoria/` — contexto base (empresa, preferências, estratégia)\n" +
-    "- `marketing/prospeccao/` — campanhas de prospecção ativas (leads CSV, dossiês, roteiros, funil)\n" +
-    "- `marketing/conteudo/` — calendário editorial, reels, carrosseis, stories\n" +
-    "- `marketing/campanhas/` — campanhas de tráfego pago\n" +
-    "- `marketing/auditorias/` — auditorias de Meta Ads\n\n" +
-    "Quando o usuário perguntar sobre prospecções, leads, conteúdo, campanhas ou qualquer dado do negócio: " +
-    "USE Glob para descobrir os arquivos relevantes, depois Read para ler o conteúdo. " +
-    "Nunca diga que não tem acesso aos dados — os arquivos estão no projeto.",
-  );
-
-  for (const msg of history) {
-    const label = msg.role === "user" ? "[Usuário]" : "[Assistente]";
-    parts.push(`${label}: ${msg.content}`);
-  }
-
-  return parts.join("\n\n");
-}
-
 export async function* runChat(
   history: { role: "user" | "assistant"; content: string }[],
   cliente?: string,
 ): AsyncGenerator<ChatEvent> {
   try {
-    const context = await loadEmpresaContext(cliente);
-    const prompt = buildChatPrompt(history, context);
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    if (!apiKey) {
+      yield { type: "error", text: "ANTHROPIC_API_KEY não configurada" };
+      return;
+    }
 
-    const messages = query({
-      prompt,
-      options: {
-        cwd: REPO_ROOT,
-        model: MODEL,
-        permissionMode: "bypassPermissions",
-        allowDangerouslySkipPermissions: true,
-        allowedTools: ["Read", "Glob", "Grep"],
-        settingSources: ["project"],
-        systemPrompt: { type: "preset", preset: "claude_code" },
-      },
+    const client = new Anthropic({ apiKey });
+    const systemPrompt = await loadSystemPrompt(cliente);
+
+    const stream = client.messages.stream({
+      model: MODEL,
+      max_tokens: 4096,
+      system: systemPrompt,
+      messages: history.map((m) => ({ role: m.role, content: m.content })),
     });
 
-    for await (const message of messages) {
-      if (message.type === "assistant") {
-        for (const block of message.message.content) {
-          if (block.type === "text") {
-            const text = (block as { type: "text"; text: string }).text;
-            if (text.trim()) yield { type: "chunk", text };
-          }
-        }
-      } else if (message.type === "result") {
-        yield { type: "done" };
-        return;
+    for await (const event of stream) {
+      if (
+        event.type === "content_block_delta" &&
+        event.delta.type === "text_delta"
+      ) {
+        yield { type: "chunk", text: event.delta.text };
       }
     }
 
