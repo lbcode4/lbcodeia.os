@@ -5,11 +5,15 @@
   "description": "Sistema operacional do negócio (LBCode.IA). Deps usadas pelas skills de conteúdo (geração de imagem IA + render de carrossel/site via Playwright).",
   "type": "commonjs",
   "scripts": {
+    "dev": "concurrently --names \"back,front\" --prefix-colors \"cyan,magenta\" \"npm run dev --prefix server\" \"npm run dev --prefix frontend\"",
     "postinstall": "playwright install chromium"
   },
   "dependencies": {
     "@google/genai": "^1.5.0",
     "openai": "^4.67.0",
     "playwright": "^1.48.0"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
   }
 }

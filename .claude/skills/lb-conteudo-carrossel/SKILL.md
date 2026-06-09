@@ -103,7 +103,14 @@ Aplicar **Gancho + Corpo + CTA**.
 - Carrossel (5-10 slides): capa = gancho (máx 8 palavras) · internos = corpo · final = CTA + logo
 - Post único: gancho em destaque + corpo curto + CTA sutil
 
-**CHECKPOINT:** mostrar o texto completo (gancho escolhido + corpo + CTA). Esperar aprovação antes do visual.
+**CHECKPOINT OBRIGATÓRIO — PARAR AQUI:**
+Mostrar o texto completo (gancho escolhido + corpo slide a slide + CTA). Terminar a resposta com:
+
+> "Texto pronto. **Aprova ou quer ajustar algo antes de eu criar as imagens?**"
+
+**NÃO avançar para Passo 3 ou 4 sem resposta explícita de aprovação do usuário.**
+NÃO escrever "vou seguir", "como o briefing está completo", "sem esperar" ou qualquer variação.
+A resposta do usuário com aprovação (ex: "aprovado", "pode criar", "ok") é o único gatilho para continuar.
 
 ### Passo 3 — Gerar fotos (só tipo 2)
 

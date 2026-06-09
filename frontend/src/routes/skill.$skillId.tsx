@@ -3,7 +3,48 @@ import { useEffect, useRef, useState } from "react";
 import { PageHeader, Card, Button } from "@/components/app-shell";
 import { runSkill, fetchContas, type Conta, type SkillEvent } from "@/lib/skill-client";
 import { findSkillById } from "@/lib/skills";
-import { Sparkles, Loader2, Copy, Check, RotateCcw, Send, User } from "lucide-react";
+import { Sparkles, Loader2, Copy, Check, RotateCcw, Send, User, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
+
+const BACKEND = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8787";
+
+type CarrosselMeta = { id: string; titulo: string; slides: string[]; legenda: string };
+
+function slideUrl(id: string, slide: string) {
+  return `${BACKEND}/api/carrosseis/slide?id=${encodeURIComponent(id)}&slide=${encodeURIComponent(slide)}`;
+}
+
+const RETINA_OPTIONS = [
+  { id: "R", label: "Relacionamento", desc: "Bastidores, propósito, conexão humana" },
+  { id: "E", label: "Engajamento", desc: "Meme, curiosidade, trend" },
+  { id: "T", label: "Transformação", desc: "Antes/depois, case de cliente" },
+  { id: "I", label: "Interação", desc: "Enquete, convida resposta" },
+  { id: "N", label: "Níveis de consciência", desc: "Venda direta, depoimento, prova social" },
+  { id: "A", label: "Autoridade", desc: "Dados, processo, prêmio, bastidores técnicos" },
+];
+
+const TIPO_OPTIONS = [
+  { id: "1", label: "Texto puro", desc: "Educacional, dicas, listas" },
+  { id: "2", label: "Com foto IA", desc: "Aspiracional, capa com personagem" },
+  { id: "3", label: "Post único", desc: "Frase de impacto, dado, depoimento" },
+];
+
+async function fetchCarrosseis(): Promise<CarrosselMeta[]> {
+  const r = await fetch(`${BACKEND}/api/carrosseis`);
+  if (!r.ok) throw new Error("Falha");
+  return r.json();
+}
+
+async function fetchNovoCarrossel(existingIds: Set<string>): Promise<CarrosselMeta | null> {
+  for (let attempt = 0; attempt < 4; attempt++) {
+    if (attempt > 0) await new Promise((res) => setTimeout(res, 2000));
+    try {
+      const list = await fetchCarrosseis();
+      const novo = list.find((c) => !existingIds.has(c.id)) ?? list[list.length - 1];
+      if (novo && novo.slides.length > 0) return novo;
+    } catch { /* retry */ }
+  }
+  return null;
+}
 
 export const Route = createFileRoute("/skill/$skillId")({
   component: SkillPanel,
@@ -14,16 +55,21 @@ type Turn = { role: "user" | "assistant"; text: string };
 function SkillPanel() {
   const { skillId } = Route.useParams();
   const meta = findSkillById(skillId);
+  const isCarrossel = skillId === "lb-conteudo-carrossel";
 
   const [contas, setContas] = useState<Conta[]>([]);
   const [cliente, setCliente] = useState("");
   const [briefing, setBriefing] = useState("");
+  const [retinaType, setRetinaType] = useState("");
+  const [tipoConteudo, setTipoConteudo] = useState("");
   const [followUp, setFollowUp] = useState("");
   const [status, setStatus] = useState("");
   const [turns, setTurns] = useState<Turn[]>([]);
   const [running, setRunning] = useState(false);
   const [erro, setErro] = useState("");
   const [copied, setCopied] = useState(false);
+  const [carrosselResult, setCarrosselResult] = useState<CarrosselMeta | null>(null);
+  const [carrosselSlideIdx, setCarrosselSlideIdx] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -50,6 +96,17 @@ function SkillPanel() {
     setRunning(true);
     setStatus("Iniciando…");
     setErro("");
+    setCarrosselResult(null);
+    setCarrosselSlideIdx(0);
+
+    let existingIds = new Set<string>();
+    if (isCarrossel) {
+      try {
+        const list = await fetchCarrosseis();
+        existingIds = new Set(list.map((c) => c.id));
+      } catch { /* ignore */ }
+    }
+
     setTurns((t) => [...t, { role: "user", text: inputText }]);
     setTurns((t) => [...t, { role: "assistant", text: "" }]);
 
@@ -67,6 +124,13 @@ function SkillPanel() {
         else if (ev.type === "error") setErro(ev.text);
         else if (ev.type === "done") setStatus("");
       });
+
+      if (isCarrossel) {
+        setStatus("Carregando imagens…");
+        const novo = await fetchNovoCarrossel(existingIds);
+        setStatus("");
+        if (novo) setCarrosselResult(novo);
+      }
     } catch (e) {
       setErro(e instanceof Error ? e.message : "Falha ao executar");
       setStatus("");
@@ -77,7 +141,17 @@ function SkillPanel() {
 
   const iniciar = () => {
     if (!cliente || running) return;
-    executar(briefing || "(sem briefing)");
+    const parts: string[] = [];
+    if (isCarrossel && retinaType) {
+      const opt = RETINA_OPTIONS.find((o) => o.id === retinaType);
+      parts.push(`Tipo RETINA: ${retinaType} — ${opt?.label}`);
+    }
+    if (isCarrossel && tipoConteudo) {
+      const opt = TIPO_OPTIONS.find((o) => o.id === tipoConteudo);
+      parts.push(`Tipo de conteúdo: ${tipoConteudo} — ${opt?.label}`);
+    }
+    if (briefing.trim()) parts.push(briefing.trim());
+    executar(parts.join("\n") || "(sem briefing)");
   };
 
   const continuar = () => {
@@ -93,6 +167,8 @@ function SkillPanel() {
     setFollowUp("");
     setStatus("");
     setErro("");
+    setCarrosselResult(null);
+    setCarrosselSlideIdx(0);
   };
 
   const copiarTudo = () => {
@@ -132,14 +208,78 @@ function SkillPanel() {
 
           {!hasTurns ? (
             <>
+              {/* Seletores RETINA — só para lb-conteudo-carrossel */}
+              {isCarrossel && (
+                <>
+                  <div>
+                    <label className="text-[12px] uppercase tracking-wide text-muted-foreground">
+                      Tipo RETINA
+                    </label>
+                    <div className="mt-2 grid grid-cols-3 gap-1.5">
+                      {RETINA_OPTIONS.map((opt) => (
+                        <button
+                          key={opt.id}
+                          onClick={() => setRetinaType((v) => (v === opt.id ? "" : opt.id))}
+                          title={opt.desc}
+                          className={`flex flex-col items-start px-2 py-1.5 rounded-md border text-left transition-colors ${
+                            retinaType === opt.id
+                              ? "border-primary bg-primary/10 text-primary"
+                              : "border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                          }`}
+                        >
+                          <span className="font-bold text-[13px]">{opt.id}</span>
+                          <span className="text-[10px] leading-tight mt-0.5 truncate w-full">{opt.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                    {retinaType && (
+                      <p className="text-[11px] text-muted-foreground mt-1">
+                        {RETINA_OPTIONS.find((o) => o.id === retinaType)?.desc}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="text-[12px] uppercase tracking-wide text-muted-foreground">
+                      Tipo de conteúdo
+                    </label>
+                    <div className="mt-2 flex flex-col gap-1.5">
+                      {TIPO_OPTIONS.map((opt) => (
+                        <button
+                          key={opt.id}
+                          onClick={() => setTipoConteudo((v) => (v === opt.id ? "" : opt.id))}
+                          className={`flex items-center gap-2 px-3 py-2 rounded-md border text-left transition-colors ${
+                            tipoConteudo === opt.id
+                              ? "border-primary bg-primary/10 text-primary"
+                              : "border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                          }`}
+                        >
+                          <span className="font-bold text-[12px] w-4">{opt.id}</span>
+                          <div>
+                            <p className="text-[12px] font-medium leading-tight">{opt.label}</p>
+                            <p className="text-[10px] text-muted-foreground leading-tight">{opt.desc}</p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+
               <div>
-                <label className="text-[12px] uppercase tracking-wide text-muted-foreground">Briefing (opcional)</label>
+                <label className="text-[12px] uppercase tracking-wide text-muted-foreground">
+                  {isCarrossel ? "Tema / briefing" : "Briefing (opcional)"}
+                </label>
                 <textarea
                   value={briefing}
                   onChange={(e) => setBriefing(e.target.value)}
                   onKeyDown={(e) => { if (e.key === "Enter" && e.metaKey) iniciar(); }}
-                  rows={5}
-                  placeholder="Contexto adicional para a skill…"
+                  rows={isCarrossel ? 3 : 5}
+                  placeholder={
+                    isCarrossel
+                      ? "Ex: dicas de agendamento, antes/depois de cliente, benefícios do produto…"
+                      : "Contexto adicional para a skill…"
+                  }
                   className="mt-1 w-full bg-muted/40 border border-border rounded-md px-3 py-2 text-[14px] resize-none"
                 />
               </div>
@@ -249,6 +389,71 @@ function SkillPanel() {
           </div>
         </Card>
       </div>
+
+      {/* Preview do carrossel gerado */}
+      {carrosselResult && (
+        <Card className="mt-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-semibold text-[13px] capitalize">
+              Carrossel criado: {carrosselResult.titulo}
+            </h3>
+            <a
+              href="/conteudo"
+              className="flex items-center gap-1 text-[12px] text-primary hover:underline"
+            >
+              Ver todos <ExternalLink size={12} />
+            </a>
+          </div>
+
+          <div className="flex gap-4 flex-col sm:flex-row">
+            {/* Slide principal */}
+            <div className="relative w-full sm:w-64 aspect-square rounded-lg overflow-hidden bg-muted/20 border border-border shrink-0">
+              <img
+                src={slideUrl(carrosselResult.id, carrosselResult.slides[carrosselSlideIdx])}
+                alt={`Slide ${carrosselSlideIdx + 1}`}
+                className="w-full h-full object-contain"
+              />
+              {carrosselResult.slides.length > 1 && (
+                <>
+                  <button
+                    onClick={() => setCarrosselSlideIdx((i) => Math.max(0, i - 1))}
+                    disabled={carrosselSlideIdx === 0}
+                    className="absolute left-1 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-black/50 text-white flex items-center justify-center disabled:opacity-30"
+                  >
+                    <ChevronLeft size={13} />
+                  </button>
+                  <button
+                    onClick={() => setCarrosselSlideIdx((i) => Math.min(carrosselResult.slides.length - 1, i + 1))}
+                    disabled={carrosselSlideIdx === carrosselResult.slides.length - 1}
+                    className="absolute right-1 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-black/50 text-white flex items-center justify-center disabled:opacity-30"
+                  >
+                    <ChevronRight size={13} />
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* Miniaturas */}
+            <div className="flex sm:flex-col gap-2 overflow-x-auto sm:overflow-y-auto sm:max-h-64 pb-1">
+              {carrosselResult.slides.map((s, i) => (
+                <button
+                  key={s}
+                  onClick={() => setCarrosselSlideIdx(i)}
+                  className={`shrink-0 w-12 h-12 rounded-md overflow-hidden border-2 transition-colors ${
+                    i === carrosselSlideIdx ? "border-primary" : "border-transparent"
+                  }`}
+                >
+                  <img src={slideUrl(carrosselResult.id, s)} alt={`thumb ${i + 1}`} className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <p className="text-[11px] text-muted-foreground mt-2">
+            {carrosselSlideIdx + 1} / {carrosselResult.slides.length} slides
+          </p>
+        </Card>
+      )}
     </>
   );
 }
