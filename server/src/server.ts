@@ -13,6 +13,7 @@ import { listIdentidade, readIdentidadeArquivo, listInspiracoes, saveInspiracao,
 import { getBiblioteca, readBibliotecaFile } from "./biblioteca.js";
 import { getDashboardData } from "./dashboard.js";
 import { runChat } from "./chat.js";
+import { getOnboardingStatus, saveOnboarding, type Profile } from "./onboarding.js";
 
 export const app = new Hono();
 
@@ -321,6 +322,21 @@ app.get("/api/biblioteca/arquivo", async (c) => {
       return c.json({ error: "Arquivo não encontrado" }, 404);
     return c.json({ error: "Erro ao ler arquivo" }, 500);
   }
+});
+
+app.get("/api/onboarding/status", async (c) => {
+  return c.json(await getOnboardingStatus());
+});
+
+app.post("/api/onboarding/save", async (c) => {
+  let body: Profile;
+  try {
+    body = await c.req.json();
+  } catch {
+    return c.json({ error: "JSON inválido" }, 400);
+  }
+  await saveOnboarding(body);
+  return c.json({ ok: true });
 });
 
 // Só sobe o listener quando executado direto (não nos testes).

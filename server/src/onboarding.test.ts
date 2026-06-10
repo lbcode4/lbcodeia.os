@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { getOnboardingStatus, saveOnboarding, type Profile } from "./onboarding.js";
+import { app } from "./server.js";
 
 // Mock node:fs/promises so tests don't touch real files
 vi.mock("node:fs/promises", () => ({
@@ -79,5 +80,43 @@ describe("saveOnboarding", () => {
     mockWriteFile.mockResolvedValue(undefined);
     await saveOnboarding(profile);
     expect(mockWriteFile).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("GET /api/onboarding/status", () => {
+  it("returns 200 with complete boolean", async () => {
+    // readFile already mocked above — reset to return empty string
+    mockReadFile.mockResolvedValue("" as unknown as Buffer);
+    const res = await app.request("/api/onboarding/status");
+    expect(res.status).toBe(200);
+    const body = await res.json() as { complete: boolean };
+    expect(typeof body.complete).toBe("boolean");
+  });
+});
+
+describe("POST /api/onboarding/save", () => {
+  it("returns 200 { ok: true } with valid profile", async () => {
+    mockWriteFile.mockResolvedValue(undefined);
+    const profile: Profile = {
+      nome: "Teste", setor: "Tech", produto: "SaaS",
+      publico: "PMEs", diferencial: "Rápido", tom: "Direto", objetivo: "Leads",
+    };
+    const res = await app.request("/api/onboarding/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(profile),
+    });
+    expect(res.status).toBe(200);
+    const body = await res.json() as { ok: boolean };
+    expect(body.ok).toBe(true);
+  });
+
+  it("returns 400 when body is malformed", async () => {
+    const res = await app.request("/api/onboarding/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "não é json",
+    });
+    expect(res.status).toBe(400);
   });
 });
