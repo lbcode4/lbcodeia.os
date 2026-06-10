@@ -135,7 +135,7 @@ function RootComponent() {
         if (!data.complete) navigate({ to: "/onboarding" });
       })
       .catch(() => { /* network error — don't redirect */ });
-  }, []);
+  }, []); // intentional: check only once on mount
 
   return (
     <QueryClientProvider client={queryClient}>
