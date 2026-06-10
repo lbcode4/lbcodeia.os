@@ -6,6 +6,8 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  useNavigate,
+  useRouterState,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
@@ -121,6 +123,19 @@ import { AppShell } from "../components/app-shell";
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const navigate = useNavigate();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const BACKEND = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8787";
+
+  useEffect(() => {
+    if (pathname === "/onboarding") return;
+    fetch(`${BACKEND}/api/onboarding/status`)
+      .then((r) => r.json())
+      .then((data: { complete: boolean }) => {
+        if (!data.complete) navigate({ to: "/onboarding" });
+      })
+      .catch(() => { /* network error — don't redirect */ });
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
