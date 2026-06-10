@@ -13,6 +13,7 @@ import { Route as RelatorioUnificadoRouteImport } from './routes/relatorio-unifi
 import { Route as ReelsRouteImport } from './routes/reels'
 import { Route as ProspeccaoRouteImport } from './routes/prospeccao'
 import { Route as OrganicoInstagramRouteImport } from './routes/organico-instagram'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as NegativasRouteImport } from './routes/negativas'
 import { Route as GerenciarAnunciosRouteImport } from './routes/gerenciar-anuncios'
 import { Route as GeradorCopyRouteImport } from './routes/gerador-copy'
@@ -52,6 +53,11 @@ const ProspeccaoRoute = ProspeccaoRouteImport.update({
 const OrganicoInstagramRoute = OrganicoInstagramRouteImport.update({
   id: '/organico-instagram',
   path: '/organico-instagram',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NegativasRoute = NegativasRouteImport.update({
@@ -170,6 +176,7 @@ export interface FileRoutesByFullPath {
   '/gerador-copy': typeof GeradorCopyRoute
   '/gerenciar-anuncios': typeof GerenciarAnunciosRoute
   '/negativas': typeof NegativasRoute
+  '/onboarding': typeof OnboardingRoute
   '/organico-instagram': typeof OrganicoInstagramRoute
   '/prospeccao': typeof ProspeccaoRoute
   '/reels': typeof ReelsRoute
@@ -196,6 +203,7 @@ export interface FileRoutesByTo {
   '/gerador-copy': typeof GeradorCopyRoute
   '/gerenciar-anuncios': typeof GerenciarAnunciosRoute
   '/negativas': typeof NegativasRoute
+  '/onboarding': typeof OnboardingRoute
   '/organico-instagram': typeof OrganicoInstagramRoute
   '/prospeccao': typeof ProspeccaoRoute
   '/reels': typeof ReelsRoute
@@ -223,6 +231,7 @@ export interface FileRoutesById {
   '/gerador-copy': typeof GeradorCopyRoute
   '/gerenciar-anuncios': typeof GerenciarAnunciosRoute
   '/negativas': typeof NegativasRoute
+  '/onboarding': typeof OnboardingRoute
   '/organico-instagram': typeof OrganicoInstagramRoute
   '/prospeccao': typeof ProspeccaoRoute
   '/reels': typeof ReelsRoute
@@ -251,6 +260,7 @@ export interface FileRouteTypes {
     | '/gerador-copy'
     | '/gerenciar-anuncios'
     | '/negativas'
+    | '/onboarding'
     | '/organico-instagram'
     | '/prospeccao'
     | '/reels'
@@ -277,6 +287,7 @@ export interface FileRouteTypes {
     | '/gerador-copy'
     | '/gerenciar-anuncios'
     | '/negativas'
+    | '/onboarding'
     | '/organico-instagram'
     | '/prospeccao'
     | '/reels'
@@ -303,6 +314,7 @@ export interface FileRouteTypes {
     | '/gerador-copy'
     | '/gerenciar-anuncios'
     | '/negativas'
+    | '/onboarding'
     | '/organico-instagram'
     | '/prospeccao'
     | '/reels'
@@ -330,6 +342,7 @@ export interface RootRouteChildren {
   GeradorCopyRoute: typeof GeradorCopyRoute
   GerenciarAnunciosRoute: typeof GerenciarAnunciosRoute
   NegativasRoute: typeof NegativasRoute
+  OnboardingRoute: typeof OnboardingRoute
   OrganicoInstagramRoute: typeof OrganicoInstagramRoute
   ProspeccaoRoute: typeof ProspeccaoRoute
   ReelsRoute: typeof ReelsRoute
@@ -370,6 +383,13 @@ declare module '@tanstack/react-router' {
       path: '/organico-instagram'
       fullPath: '/organico-instagram'
       preLoaderRoute: typeof OrganicoInstagramRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/negativas': {
@@ -530,6 +550,7 @@ const rootRouteChildren: RootRouteChildren = {
   GeradorCopyRoute: GeradorCopyRoute,
   GerenciarAnunciosRoute: GerenciarAnunciosRoute,
   NegativasRoute: NegativasRoute,
+  OnboardingRoute: OnboardingRoute,
   OrganicoInstagramRoute: OrganicoInstagramRoute,
   ProspeccaoRoute: ProspeccaoRoute,
   ReelsRoute: ReelsRoute,
@@ -544,13 +565,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
