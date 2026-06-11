@@ -69,3 +69,23 @@ export async function saveConfiguracoes(data: Configuracoes): Promise<void> {
   await writeFile(join(REPO_ROOT, "_memoria/empresa.md"), data.empresa, "utf-8");
   await writeFile(join(REPO_ROOT, "_memoria/preferencias.md"), data.preferencias, "utf-8");
 }
+
+export type AiConfig = {
+  carrosselModel: string;
+};
+
+const AI_CONFIG_PATH = join(REPO_ROOT, "_memoria/ai-config.json");
+const DEFAULT_AI_CONFIG: AiConfig = { carrosselModel: "claude-sonnet-4-6" };
+
+export async function getAiConfig(): Promise<AiConfig> {
+  try {
+    const raw = await readFile(AI_CONFIG_PATH, "utf-8");
+    return { ...DEFAULT_AI_CONFIG, ...JSON.parse(raw) };
+  } catch {
+    return DEFAULT_AI_CONFIG;
+  }
+}
+
+export async function saveAiConfig(data: AiConfig): Promise<void> {
+  await writeFile(AI_CONFIG_PATH, JSON.stringify(data, null, 2), "utf-8");
+}

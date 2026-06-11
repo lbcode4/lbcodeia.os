@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { getOnboardingStatus, saveOnboarding, getConfiguracoes, saveConfiguracoes, type Profile } from "./onboarding.js";
+import { getOnboardingStatus, saveOnboarding, getConfiguracoes, saveConfiguracoes, getAiConfig, saveAiConfig, type Profile, type AiConfig } from "./onboarding.js";
 import { app } from "./server.js";
 
 // Mock node:fs/promises so tests don't touch real files
@@ -189,5 +189,41 @@ describe("PUT /api/configuracoes", () => {
       body: "não é json",
     });
     expect(res.status).toBe(400);
+  });
+});
+
+describe("getAiConfig", () => {
+  it("returns default model when file missing", async () => {
+    mockReadFile.mockRejectedValue(Object.assign(new Error("ENOENT"), { code: "ENOENT" }));
+    const result = await getAiConfig();
+    expect(result).toEqual({ carrosselModel: "claude-sonnet-4-6" });
+  });
+
+  it("returns saved model when file exists", async () => {
+    mockReadFile.mockResolvedValue(
+      JSON.stringify({ carrosselModel: "claude-opus-4-8" }) as unknown as Buffer,
+    );
+    const result = await getAiConfig();
+    expect(result).toEqual({ carrosselModel: "claude-opus-4-8" });
+  });
+});
+
+describe("saveAiConfig", () => {
+  it("writes ai-config.json with given model", async () => {
+    mockWriteFile.mockResolvedValue(undefined);
+    await saveAiConfig({ carrosselModel: "claude-haiku-4-5-20251001" });
+    const call = mockWriteFile.mock.calls.find((c) =>
+      (c[0] as string).endsWith("ai-config.json"),
+    );
+    expect(call).toBeDefined();
+    expect(JSON.parse(call![1] as string)).toEqual({
+      carrosselModel: "claude-haiku-4-5-20251001",
+    });
+  });
+
+  it("calls writeFile exactly once", async () => {
+    mockWriteFile.mockResolvedValue(undefined);
+    await saveAiConfig({ carrosselModel: "claude-sonnet-4-6" });
+    expect(mockWriteFile).toHaveBeenCalledTimes(1);
   });
 });
