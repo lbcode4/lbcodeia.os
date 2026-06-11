@@ -233,17 +233,23 @@ app.put("/api/sites/html", async (c) => {
 });
 
 app.post("/api/sites", async (c) => {
-  let body: { name: string };
+  let body: { name: unknown };
   try {
     body = await c.req.json();
   } catch {
     return c.json({ error: "JSON inválido" }, 400);
   }
-  if (!body.name || !body.name.trim()) {
+  if (typeof body.name !== "string" || !body.name.trim()) {
     return c.json({ error: "name obrigatório" }, 400);
   }
-  const id = await createSite(body.name.trim());
-  return c.json({ id });
+  try {
+    const id = await createSite(body.name.trim());
+    return c.json({ id });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    if (msg === "Caminho inválido") return c.json({ error: msg }, 400);
+    return c.json({ error: "Erro interno" }, 500);
+  }
 });
 
 app.post("/api/sites/chat", async (c) => {

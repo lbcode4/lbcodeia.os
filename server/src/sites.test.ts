@@ -84,4 +84,22 @@ describe("POST /api/sites", () => {
     });
     expect(res.status).toBe(400);
   });
+
+  it("returns 400 when name slugifies to empty (only special chars)", async () => {
+    const res = await app.request("/api/sites", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: "!!!" }),
+    });
+    expect(res.status).toBe(400);
+  });
+
+  it("returns 400 when name is non-string", async () => {
+    const res = await app.request("/api/sites", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: 123 }),
+    });
+    expect(res.status).toBe(400);
+  });
 });
