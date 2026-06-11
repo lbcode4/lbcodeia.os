@@ -7,7 +7,7 @@ import { isAllowedSkill } from "./skills-map.js";
 import { runSkill } from "./runner.js";
 import { listCampaigns, readCampaignFile } from "./prospeccao.js";
 import { listConteudo, readConteudoArquivo, updateConteudoStatus } from "./conteudo.js";
-import { createSite, listSites, readSiteHtml, writeSiteHtml, streamSiteChat } from "./sites.js";
+import { createSite, listSites, readSiteHtml, writeSiteHtml, streamSiteChat, type ChatMessage } from "./sites.js";
 import { listCarrosseis, readSlide } from "./carrosseis.js";
 import { listIdentidade, readIdentidadeArquivo, listInspiracoes, saveInspiracao, readInspiracao } from "./identidade.js";
 import { getBiblioteca, readBibliotecaFile } from "./biblioteca.js";
@@ -253,17 +253,17 @@ app.post("/api/sites", async (c) => {
 });
 
 app.post("/api/sites/chat", async (c) => {
-  let body: { html: string; instruction: string; images?: { mediaType: string; data: string }[] };
+  let body: { html: string; instruction: string; images?: { mediaType: string; data: string }[]; history?: ChatMessage[] };
   try {
     body = await c.req.json();
   } catch {
     return c.json({ error: "JSON inválido" }, 400);
   }
-  const { html, instruction, images = [] } = body;
+  const { html, instruction, images = [], history = [] } = body;
   if (!html || !instruction) return c.json({ error: "html e instruction obrigatórios" }, 400);
 
   return streamSSE(c, async (stream) => {
-    for await (const ev of streamSiteChat(html, instruction, images)) {
+    for await (const ev of streamSiteChat(html, instruction, images, history)) {
       await stream.writeSSE({ event: ev.type, data: JSON.stringify(ev) });
       if (ev.type === "done" || ev.type === "error") break;
     }

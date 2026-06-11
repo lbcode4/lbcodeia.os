@@ -78,10 +78,13 @@ export type SiteChatEvent =
   | { type: "done" }
   | { type: "error"; text: string };
 
+export type ChatMessage = { role: "user" | "assistant"; content: string };
+
 export async function* streamSiteChat(
   html: string,
   instruction: string,
   images: { mediaType: string; data: string }[],
+  history: ChatMessage[] = [],
 ): AsyncGenerator<SiteChatEvent> {
   const tmpDir = await mkdtemp(join(tmpdir(), "lbsite-"));
   const htmlPath = join(tmpDir, "site.html");
@@ -101,13 +104,18 @@ export async function* streamSiteChat(
     ? `\nImagens de referência salvas em:\n${imagePaths.map((p) => `- ${p}`).join("\n")}\nUse a ferramenta Read para visualizá-las.`
     : "";
 
+  const historyContext = history.length > 0
+    ? `\n\nHISTÓRICO DA CONVERSA:\n${history.map((m) => `${m.role === "user" ? "Usuário" : "Assistente"}: ${m.content}`).join("\n")}\n`
+    : "";
+
   const prompt = `Você é um assistente especialista em landing pages HTML. Seja conversacional e direto.
 
-O arquivo HTML do site está em: ${htmlPath}${imageContext}
+O arquivo HTML do site está em: ${htmlPath}${imageContext}${historyContext}
 
-MENSAGEM DO USUÁRIO: ${instruction}
+MENSAGEM ATUAL DO USUÁRIO: ${instruction}
 
 Regras:
+- Use o histórico da conversa para manter contexto entre mensagens.
 - Se for pergunta, dúvida ou pedido de esclarecimento → responda conversacionalmente. NÃO modifique o arquivo.
 - Se for instrução de mudança concreta → leia o arquivo, aplique apenas o necessário, salve em ${htmlPath}. Confirme brevemente o que fez.
 - Pode ler imagens de referência com a ferramenta Read para analisá-las.
