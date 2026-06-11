@@ -392,6 +392,14 @@ app.put("/api/ai-config", async (c) => {
   if (!body.carrosselModel || typeof body.carrosselModel !== "string") {
     return c.json({ error: "carrosselModel é obrigatório" }, 400);
   }
+  const ALLOWED_CARROSSEL_MODELS = [
+    "claude-haiku-4-5-20251001",
+    "claude-sonnet-4-6",
+    "claude-opus-4-8",
+  ];
+  if (!ALLOWED_CARROSSEL_MODELS.includes(body.carrosselModel)) {
+    return c.json({ error: "modelo não permitido" }, 400);
+  }
   await saveAiConfig(body);
   return c.json({ ok: true });
 });

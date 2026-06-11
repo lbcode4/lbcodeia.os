@@ -135,7 +135,7 @@ function SkillPanel() {
       });
 
     try {
-      await runSkill({ skill: skillId, cliente, input: buildInput(inputText), model: carrosselModel }, (ev: SkillEvent) => {
+      await runSkill({ skill: skillId, cliente, input: buildInput(inputText), ...(isCarrossel ? { model: carrosselModel } : {}) }, (ev: SkillEvent) => {
         if (ev.type === "status") setStatus(ev.text);
         else if (ev.type === "chunk") appendChunk(ev.text);
         else if (ev.type === "error") setErro(ev.text);
