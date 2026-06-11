@@ -1,4 +1,4 @@
-import { readdir, readFile, stat, writeFile, unlink, mkdtemp, rmdir } from "node:fs/promises";
+import { readdir, readFile, stat, writeFile, unlink, mkdtemp, rmdir, mkdir } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import { query } from "@anthropic-ai/claude-agent-sdk";
@@ -155,4 +155,40 @@ Regras:
     await Promise.all(toDelete.map((p) => unlink(p).catch(() => {})));
     await rmdir(tmpDir).catch(() => {});
   }
+}
+
+function slugify(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-");
+}
+
+export async function createSite(name: string): Promise<string> {
+  if (name.includes("/") || name.includes("\\") || name.includes("..")) throw new Error("Caminho inválido");
+  const slug = slugify(name);
+  if (!slug) throw new Error("Caminho inválido");
+  const date = new Date().toISOString().slice(0, 10);
+  const id = `${slug}-${date}`;
+  const siteDir = resolve(join(SITES_ROOT, id));
+  if (!siteDir.startsWith(resolve(SITES_ROOT))) throw new Error("Caminho inválido");
+  await mkdir(siteDir, { recursive: true });
+  const html = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${name}</title>
+  <style>body { font-family: sans-serif; margin: 0; padding: 40px; }</style>
+</head>
+<body>
+  <h1>${name}</h1>
+  <p>Use o assistente para personalizar este site.</p>
+</body>
+</html>`;
+  await writeFile(join(siteDir, "index.html"), html, "utf-8");
+  return id;
 }
