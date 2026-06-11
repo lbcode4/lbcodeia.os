@@ -22,6 +22,7 @@ import { Route as DashboardMetaRouteImport } from './routes/dashboard-meta'
 import { Route as DashboardGoogleRouteImport } from './routes/dashboard-google'
 import { Route as DashboardConteudoRouteImport } from './routes/dashboard-conteudo'
 import { Route as ConteudoRouteImport } from './routes/conteudo'
+import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
 import { Route as ConectarContasRouteImport } from './routes/conectar-contas'
 import { Route as CarrosseisRouteImport } from './routes/carrosseis'
 import { Route as BibliotecaRouteImport } from './routes/biblioteca'
@@ -100,6 +101,11 @@ const ConteudoRoute = ConteudoRouteImport.update({
   path: '/conteudo',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ConfiguracoesRoute = ConfiguracoesRouteImport.update({
+  id: '/configuracoes',
+  path: '/configuracoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ConectarContasRoute = ConectarContasRouteImport.update({
   id: '/conectar-contas',
   path: '/conectar-contas',
@@ -168,6 +174,7 @@ export interface FileRoutesByFullPath {
   '/biblioteca': typeof BibliotecaRoute
   '/carrosseis': typeof CarrosseisRoute
   '/conectar-contas': typeof ConectarContasRoute
+  '/configuracoes': typeof ConfiguracoesRoute
   '/conteudo': typeof ConteudoRoute
   '/dashboard-conteudo': typeof DashboardConteudoRoute
   '/dashboard-google': typeof DashboardGoogleRoute
@@ -195,6 +202,7 @@ export interface FileRoutesByTo {
   '/biblioteca': typeof BibliotecaRoute
   '/carrosseis': typeof CarrosseisRoute
   '/conectar-contas': typeof ConectarContasRoute
+  '/configuracoes': typeof ConfiguracoesRoute
   '/conteudo': typeof ConteudoRoute
   '/dashboard-conteudo': typeof DashboardConteudoRoute
   '/dashboard-google': typeof DashboardGoogleRoute
@@ -223,6 +231,7 @@ export interface FileRoutesById {
   '/biblioteca': typeof BibliotecaRoute
   '/carrosseis': typeof CarrosseisRoute
   '/conectar-contas': typeof ConectarContasRoute
+  '/configuracoes': typeof ConfiguracoesRoute
   '/conteudo': typeof ConteudoRoute
   '/dashboard-conteudo': typeof DashboardConteudoRoute
   '/dashboard-google': typeof DashboardGoogleRoute
@@ -252,6 +261,7 @@ export interface FileRouteTypes {
     | '/biblioteca'
     | '/carrosseis'
     | '/conectar-contas'
+    | '/configuracoes'
     | '/conteudo'
     | '/dashboard-conteudo'
     | '/dashboard-google'
@@ -279,6 +289,7 @@ export interface FileRouteTypes {
     | '/biblioteca'
     | '/carrosseis'
     | '/conectar-contas'
+    | '/configuracoes'
     | '/conteudo'
     | '/dashboard-conteudo'
     | '/dashboard-google'
@@ -306,6 +317,7 @@ export interface FileRouteTypes {
     | '/biblioteca'
     | '/carrosseis'
     | '/conectar-contas'
+    | '/configuracoes'
     | '/conteudo'
     | '/dashboard-conteudo'
     | '/dashboard-google'
@@ -334,6 +346,7 @@ export interface RootRouteChildren {
   BibliotecaRoute: typeof BibliotecaRoute
   CarrosseisRoute: typeof CarrosseisRoute
   ConectarContasRoute: typeof ConectarContasRoute
+  ConfiguracoesRoute: typeof ConfiguracoesRoute
   ConteudoRoute: typeof ConteudoRoute
   DashboardConteudoRoute: typeof DashboardConteudoRoute
   DashboardGoogleRoute: typeof DashboardGoogleRoute
@@ -448,6 +461,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConteudoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/configuracoes': {
+      id: '/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/configuracoes'
+      preLoaderRoute: typeof ConfiguracoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/conectar-contas': {
       id: '/conectar-contas'
       path: '/conectar-contas'
@@ -542,6 +562,7 @@ const rootRouteChildren: RootRouteChildren = {
   BibliotecaRoute: BibliotecaRoute,
   CarrosseisRoute: CarrosseisRoute,
   ConectarContasRoute: ConectarContasRoute,
+  ConfiguracoesRoute: ConfiguracoesRoute,
   ConteudoRoute: ConteudoRoute,
   DashboardConteudoRoute: DashboardConteudoRoute,
   DashboardGoogleRoute: DashboardGoogleRoute,

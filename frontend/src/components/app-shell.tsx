@@ -1,7 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
 import {
-  LayoutDashboard, Menu, X, Moon, Sun, ChevronDown, User, Bot, Globe, FileBarChart, Target, Library, Newspaper, TrendingUp,
+  LayoutDashboard, Menu, X, Moon, Sun, ChevronDown, User, Bot, Globe, FileBarChart, Target, Library, Newspaper, TrendingUp, Settings,
 } from "lucide-react";
 import { useTheme } from "@/lib/theme";
 import { clients, periods } from "@/lib/mock";
@@ -20,6 +20,7 @@ const topNav = [
 
 const bottomNav = [
   { to: "/relatorio-unificado", label: "Relatório Unificado", icon: FileBarChart },
+  { to: "/configuracoes", label: "Configurações", icon: Settings },
 ];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
