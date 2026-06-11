@@ -1,7 +1,24 @@
 import { readdir, readFile, stat, writeFile, unlink, mkdtemp, rmdir, mkdir } from "node:fs/promises";
 import { join, resolve } from "node:path";
-import { tmpdir } from "node:os";
+import { tmpdir, homedir } from "node:os";
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
 import { query } from "@anthropic-ai/claude-agent-sdk";
+
+const execFileAsync = promisify(execFile);
+const UIUX_SCRIPT = join(homedir(), ".claude/skills/ui-ux-pro-max/scripts/search.py");
+
+async function fetchDesignSystem(keywords: string): Promise<string> {
+  try {
+    const [ds, stack] = await Promise.all([
+      execFileAsync("python3", [UIUX_SCRIPT, keywords, "--design-system"], { timeout: 15000 }),
+      execFileAsync("python3", [UIUX_SCRIPT, "layout responsive landing", "--stack", "html-tailwind"], { timeout: 10000 }),
+    ]);
+    return `\n\nDESIGN SYSTEM (ui-ux-pro-max):\n${ds.stdout}\n\nSTACK GUIDELINES (html-tailwind):\n${stack.stdout}`;
+  } catch {
+    return "";
+  }
+}
 
 const REPO_ROOT = join(import.meta.dirname, "..", "..");
 const SITES_ROOT = join(REPO_ROOT, "marketing", "sites");
@@ -108,16 +125,21 @@ export async function* streamSiteChat(
     ? `\n\nHISTÓRICO DA CONVERSA:\n${history.map((m) => `${m.role === "user" ? "Usuário" : "Assistente"}: ${m.content}`).join("\n")}\n`
     : "";
 
+  // Fetch design system only on first message (initial build) — skip for iterative edits
+  const designSystemContext = history.length === 0
+    ? await fetchDesignSystem(instruction)
+    : "";
+
   const prompt = `Você é um assistente especialista em landing pages HTML. Seja conversacional e direto.
 
-O arquivo HTML do site está em: ${htmlPath}${imageContext}${historyContext}
+O arquivo HTML do site está em: ${htmlPath}${imageContext}${designSystemContext}${historyContext}
 
 MENSAGEM ATUAL DO USUÁRIO: ${instruction}
 
 Regras:
 - Use o histórico da conversa para manter contexto entre mensagens.
 - Se for pergunta, dúvida ou pedido de esclarecimento → responda conversacionalmente. NÃO modifique o arquivo.
-- Se for instrução de mudança concreta → leia o arquivo, aplique apenas o necessário, salve em ${htmlPath}. Confirme brevemente o que fez.
+- Se for instrução de mudança concreta → leia o arquivo, aplique o necessário seguindo o design system acima, salve em ${htmlPath}. Confirme brevemente o que fez.
 - Pode ler imagens de referência com a ferramenta Read para analisá-las.
 - Respostas curtas e diretas. Sem listas longas quando um parágrafo basta.`;
 
