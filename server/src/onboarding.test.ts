@@ -227,3 +227,37 @@ describe("saveAiConfig", () => {
     expect(mockWriteFile).toHaveBeenCalledTimes(1);
   });
 });
+
+describe("GET /api/ai-config", () => {
+  it("returns 200 with carrosselModel string", async () => {
+    mockReadFile.mockRejectedValue(Object.assign(new Error("ENOENT"), { code: "ENOENT" }));
+    const res = await app.request("/api/ai-config");
+    expect(res.status).toBe(200);
+    const body = await res.json() as AiConfig;
+    expect(typeof body.carrosselModel).toBe("string");
+    expect(body.carrosselModel).toBe("claude-sonnet-4-6");
+  });
+});
+
+describe("PUT /api/ai-config", () => {
+  it("returns 200 { ok: true } with valid body", async () => {
+    mockWriteFile.mockResolvedValue(undefined);
+    const res = await app.request("/api/ai-config", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ carrosselModel: "claude-opus-4-8" }),
+    });
+    expect(res.status).toBe(200);
+    const body = await res.json() as { ok: boolean };
+    expect(body.ok).toBe(true);
+  });
+
+  it("returns 400 on malformed body", async () => {
+    const res = await app.request("/api/ai-config", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: "não é json",
+    });
+    expect(res.status).toBe(400);
+  });
+});

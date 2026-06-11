@@ -13,7 +13,7 @@ import { listIdentidade, readIdentidadeArquivo, listInspiracoes, saveInspiracao,
 import { getBiblioteca, readBibliotecaFile } from "./biblioteca.js";
 import { getDashboardData } from "./dashboard.js";
 import { runChat } from "./chat.js";
-import { getOnboardingStatus, saveOnboarding, getConfiguracoes, saveConfiguracoes, type Profile, type Configuracoes } from "./onboarding.js";
+import { getOnboardingStatus, saveOnboarding, getConfiguracoes, saveConfiguracoes, getAiConfig, saveAiConfig, type Profile, type Configuracoes, type AiConfig } from "./onboarding.js";
 
 export const app = new Hono();
 
@@ -29,20 +29,20 @@ app.get("/api/contas", async (c) => {
 });
 
 app.post("/api/skills/run", async (c) => {
-  let body: { skill: string; cliente: string; input: string };
+  let body: { skill: string; cliente: string; input: string; model?: string };
   try {
     body = await c.req.json();
   } catch {
     return c.json({ error: "Corpo inválido: JSON esperado" }, 400);
   }
-  const { skill, cliente, input } = body;
+  const { skill, cliente, input, model } = body;
 
   if (!skill || !isAllowedSkill(skill)) {
     return c.json({ error: `Skill não permitida: ${skill}` }, 400);
   }
 
   return streamSSE(c, async (stream) => {
-    for await (const ev of runSkill(skill, cliente, input)) {
+    for await (const ev of runSkill(skill, cliente, input, model)) {
       await stream.writeSSE({ event: ev.type, data: JSON.stringify(ev) });
       if (ev.type === "done" || ev.type === "error") break;
     }
@@ -371,6 +371,28 @@ app.put("/api/configuracoes", async (c) => {
     return c.json({ error: "JSON inválido" }, 400);
   }
   await saveConfiguracoes(body);
+  return c.json({ ok: true });
+});
+
+app.get("/api/ai-config", async (c) => {
+  try {
+    return c.json(await getAiConfig());
+  } catch {
+    return c.json({ error: "Falha ao carregar ai-config" }, 500);
+  }
+});
+
+app.put("/api/ai-config", async (c) => {
+  let body: AiConfig;
+  try {
+    body = await c.req.json();
+  } catch {
+    return c.json({ error: "Corpo inválido: JSON esperado" }, 400);
+  }
+  if (!body.carrosselModel || typeof body.carrosselModel !== "string") {
+    return c.json({ error: "carrosselModel é obrigatório" }, 400);
+  }
+  await saveAiConfig(body);
   return c.json({ ok: true });
 });
 
