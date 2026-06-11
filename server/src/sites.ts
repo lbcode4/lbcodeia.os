@@ -157,6 +157,14 @@ Regras:
   }
 }
 
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 function slugify(name: string): string {
   return name
     .toLowerCase()
@@ -164,7 +172,9 @@ function slugify(name: string): string {
     .replace(/[̀-ͯ]/g, "")
     .replace(/[^a-z0-9\s-]/g, "")
     .trim()
-    .replace(/\s+/g, "-");
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
 }
 
 export async function createSite(name: string): Promise<string> {
@@ -176,16 +186,17 @@ export async function createSite(name: string): Promise<string> {
   const siteDir = resolve(join(SITES_ROOT, id));
   if (!siteDir.startsWith(resolve(SITES_ROOT))) throw new Error("Caminho inválido");
   await mkdir(siteDir, { recursive: true });
+  const escapedName = escapeHtml(name);
   const html = `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${name}</title>
+  <title>${escapedName}</title>
   <style>body { font-family: sans-serif; margin: 0; padding: 40px; }</style>
 </head>
 <body>
-  <h1>${name}</h1>
+  <h1>${escapedName}</h1>
   <p>Use o assistente para personalizar este site.</p>
 </body>
 </html>`;
