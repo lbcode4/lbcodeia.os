@@ -13,7 +13,7 @@ import { listIdentidade, readIdentidadeArquivo, listInspiracoes, saveInspiracao,
 import { getBiblioteca, readBibliotecaFile } from "./biblioteca.js";
 import { getDashboardData } from "./dashboard.js";
 import { runChat } from "./chat.js";
-import { getOnboardingStatus, saveOnboarding, type Profile } from "./onboarding.js";
+import { getOnboardingStatus, saveOnboarding, getConfiguracoes, saveConfiguracoes, type Profile, type Configuracoes } from "./onboarding.js";
 
 export const app = new Hono();
 
@@ -336,6 +336,21 @@ app.post("/api/onboarding/save", async (c) => {
     return c.json({ error: "JSON inválido" }, 400);
   }
   await saveOnboarding(body);
+  return c.json({ ok: true });
+});
+
+app.get("/api/configuracoes", async (c) => {
+  return c.json(await getConfiguracoes());
+});
+
+app.put("/api/configuracoes", async (c) => {
+  let body: Configuracoes;
+  try {
+    body = await c.req.json();
+  } catch {
+    return c.json({ error: "JSON inválido" }, 400);
+  }
+  await saveConfiguracoes(body);
   return c.json({ ok: true });
 });
 

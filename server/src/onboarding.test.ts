@@ -155,3 +155,39 @@ describe("saveConfiguracoes", () => {
     expect(mockWriteFile).toHaveBeenCalledTimes(2);
   });
 });
+
+describe("GET /api/configuracoes", () => {
+  it("returns 200 with empresa and preferencias strings", async () => {
+    mockReadFile
+      .mockResolvedValueOnce("# Empresa" as unknown as Buffer)
+      .mockResolvedValueOnce("# Preferências" as unknown as Buffer);
+    const res = await app.request("/api/configuracoes");
+    expect(res.status).toBe(200);
+    const body = await res.json() as { empresa: string; preferencias: string };
+    expect(typeof body.empresa).toBe("string");
+    expect(typeof body.preferencias).toBe("string");
+  });
+});
+
+describe("PUT /api/configuracoes", () => {
+  it("returns 200 { ok: true } with valid body", async () => {
+    mockWriteFile.mockResolvedValue(undefined);
+    const res = await app.request("/api/configuracoes", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ empresa: "# Empresa\ntest", preferencias: "# Prefs\ntest" }),
+    });
+    expect(res.status).toBe(200);
+    const body = await res.json() as { ok: boolean };
+    expect(body.ok).toBe(true);
+  });
+
+  it("returns 400 on malformed body", async () => {
+    const res = await app.request("/api/configuracoes", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: "não é json",
+    });
+    expect(res.status).toBe(400);
+  });
+});
