@@ -47,3 +47,41 @@ describe("createSite", () => {
     await expect(createSite("../../etc")).rejects.toThrow("Caminho inválido");
   });
 });
+
+import { app } from "./server.js";
+
+describe("POST /api/sites", () => {
+  it("returns 200 with id on valid name", async () => {
+    mockMkdir.mockResolvedValue(undefined);
+    mockWriteFile.mockResolvedValue(undefined);
+
+    const res = await app.request("/api/sites", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: "Meu Site" }),
+    });
+
+    expect(res.status).toBe(200);
+    const body = await res.json() as { id: string };
+    expect(typeof body.id).toBe("string");
+    expect(body.id).toMatch(/^meu-site-\d{4}-\d{2}-\d{2}$/);
+  });
+
+  it("returns 400 on malformed body", async () => {
+    const res = await app.request("/api/sites", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "não é json",
+    });
+    expect(res.status).toBe(400);
+  });
+
+  it("returns 400 when name is empty", async () => {
+    const res = await app.request("/api/sites", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: "" }),
+    });
+    expect(res.status).toBe(400);
+  });
+});

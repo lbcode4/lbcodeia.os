@@ -7,7 +7,7 @@ import { isAllowedSkill } from "./skills-map.js";
 import { runSkill } from "./runner.js";
 import { listCampaigns, readCampaignFile } from "./prospeccao.js";
 import { listConteudo, readConteudoArquivo, updateConteudoStatus } from "./conteudo.js";
-import { listSites, readSiteHtml, writeSiteHtml, streamSiteChat } from "./sites.js";
+import { createSite, listSites, readSiteHtml, writeSiteHtml, streamSiteChat } from "./sites.js";
 import { listCarrosseis, readSlide } from "./carrosseis.js";
 import { listIdentidade, readIdentidadeArquivo, listInspiracoes, saveInspiracao, readInspiracao } from "./identidade.js";
 import { getBiblioteca, readBibliotecaFile } from "./biblioteca.js";
@@ -230,6 +230,20 @@ app.put("/api/sites/html", async (c) => {
   } catch (e) {
     return c.json({ error: (e as Error).message }, 500);
   }
+});
+
+app.post("/api/sites", async (c) => {
+  let body: { name: string };
+  try {
+    body = await c.req.json();
+  } catch {
+    return c.json({ error: "JSON inválido" }, 400);
+  }
+  if (!body.name || !body.name.trim()) {
+    return c.json({ error: "name obrigatório" }, 400);
+  }
+  const id = await createSite(body.name.trim());
+  return c.json({ id });
 });
 
 app.post("/api/sites/chat", async (c) => {
