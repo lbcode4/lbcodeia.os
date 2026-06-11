@@ -453,10 +453,10 @@ function SiteEditor() {
                   }
                 }}
                 onPaste={handlePaste}
-                rows={1}
+                rows={4}
                 placeholder="Peça uma alteração… ou cole uma imagem de referência"
                 disabled={loading}
-                className="flex-1 resize-none rounded-md border border-border bg-background px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-primary/30 max-h-32"
+                className="flex-1 resize-none rounded-md border border-border bg-background px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-primary/30 max-h-48"
               />
               <Button
                 type="button"
@@ -471,15 +471,10 @@ function SiteEditor() {
         </div>
 
         {/* Preview */}
-        <div className="flex-1 bg-muted/40 p-4 md:p-6 flex items-start justify-center overflow-auto min-h-[400px]">
+        <div className="flex-1 flex items-start justify-center overflow-auto min-h-[400px] bg-muted/40">
           <div
-            className="bg-white rounded-lg shadow-lg overflow-hidden transition-all"
-            style={{
-              width: device === "mobile" ? 390 : "100%",
-              maxWidth: device === "desktop" ? 1200 : 390,
-              height: "100%",
-              minHeight: 600,
-            }}
+            className="bg-white overflow-hidden transition-all h-full w-full"
+            style={device === "mobile" ? { maxWidth: 390, minHeight: 600, boxShadow: "0 4px 24px rgba(0,0,0,0.12)", borderRadius: 12, margin: "24px auto" } : { minHeight: 600 }}
           >
             {loadingHtml ? (
               <div className="w-full h-full flex items-center justify-center text-muted-foreground gap-2">
