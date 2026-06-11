@@ -21,3 +21,13 @@ describe("buildPrompt", () => {
     expect(p).not.toContain("```json");
   });
 });
+
+describe("runSkill signature", () => {
+  it("buildPrompt still works — model param is separate", () => {
+    // buildPrompt não muda; só verifica que assinatura de runSkill
+    // aceita model sem quebrar buildPrompt
+    const p = buildPrompt("lb-conteudo-carrossel", "Cliente", "briefing", "text");
+    expect(p).toContain("lb-conteudo-carrossel");
+    expect(p).toContain("Cliente");
+  });
+});

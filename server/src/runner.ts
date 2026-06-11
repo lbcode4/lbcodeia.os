@@ -114,6 +114,7 @@ export async function* runSkill(
   skill: string,
   cliente: string,
   input: string,
+  model?: string,
 ): AsyncGenerator<SkillEvent> {
   const spec = resolveSkill(skill);
   // Auto-detect follow-up: history marker present → context already in input, skip reload
@@ -126,7 +127,7 @@ export async function* runSkill(
       prompt,
       options: {
         cwd: REPO_ROOT,
-        model: MODEL,
+        model: model ?? MODEL,
         permissionMode: "bypassPermissions",
         allowDangerouslySkipPermissions: true,
         allowedTools: spec.allowedTools,
