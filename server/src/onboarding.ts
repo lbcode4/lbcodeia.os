@@ -48,3 +48,24 @@ ${profile.objetivo}
   await writeFile(join(REPO_ROOT, "_memoria/empresa.md"), empresa, "utf-8");
   await writeFile(join(REPO_ROOT, "_memoria/preferencias.md"), preferencias, "utf-8");
 }
+
+export type Configuracoes = {
+  empresa: string;
+  preferencias: string;
+};
+
+export async function getConfiguracoes(): Promise<Configuracoes> {
+  const [empresa, preferencias] = await Promise.allSettled([
+    readFile(join(REPO_ROOT, "_memoria/empresa.md"), "utf-8"),
+    readFile(join(REPO_ROOT, "_memoria/preferencias.md"), "utf-8"),
+  ]);
+  return {
+    empresa: empresa.status === "fulfilled" ? empresa.value : "",
+    preferencias: preferencias.status === "fulfilled" ? preferencias.value : "",
+  };
+}
+
+export async function saveConfiguracoes(data: Configuracoes): Promise<void> {
+  await writeFile(join(REPO_ROOT, "_memoria/empresa.md"), data.empresa, "utf-8");
+  await writeFile(join(REPO_ROOT, "_memoria/preferencias.md"), data.preferencias, "utf-8");
+}

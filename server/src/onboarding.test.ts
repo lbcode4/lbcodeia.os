@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { getOnboardingStatus, saveOnboarding, type Profile } from "./onboarding.js";
+import { getOnboardingStatus, saveOnboarding, getConfiguracoes, saveConfiguracoes, type Profile } from "./onboarding.js";
 import { app } from "./server.js";
 
 // Mock node:fs/promises so tests don't touch real files
@@ -118,5 +118,40 @@ describe("POST /api/onboarding/save", () => {
       body: "não é json",
     });
     expect(res.status).toBe(400);
+  });
+});
+
+describe("getConfiguracoes", () => {
+  it("returns empresa and preferencias content", async () => {
+    mockReadFile
+      .mockResolvedValueOnce("# Empresa\nconteudo" as unknown as Buffer)
+      .mockResolvedValueOnce("# Preferências\nconteudo" as unknown as Buffer);
+    const result = await getConfiguracoes();
+    expect(result).toEqual({ empresa: "# Empresa\nconteudo", preferencias: "# Preferências\nconteudo" });
+  });
+
+  it("returns empty strings when files missing", async () => {
+    mockReadFile.mockRejectedValue(Object.assign(new Error("ENOENT"), { code: "ENOENT" }));
+    const result = await getConfiguracoes();
+    expect(result).toEqual({ empresa: "", preferencias: "" });
+  });
+});
+
+describe("saveConfiguracoes", () => {
+  it("writes empresa.md and preferencias.md with given content", async () => {
+    mockWriteFile.mockResolvedValue(undefined);
+    await saveConfiguracoes({ empresa: "# Empresa\nnovo", preferencias: "# Prefs\nnovo" });
+
+    const empresaCall = mockWriteFile.mock.calls.find((c) => (c[0] as string).endsWith("empresa.md"));
+    const prefCall = mockWriteFile.mock.calls.find((c) => (c[0] as string).endsWith("preferencias.md"));
+
+    expect(empresaCall![1]).toBe("# Empresa\nnovo");
+    expect(prefCall![1]).toBe("# Prefs\nnovo");
+  });
+
+  it("calls writeFile exactly twice", async () => {
+    mockWriteFile.mockResolvedValue(undefined);
+    await saveConfiguracoes({ empresa: "a", preferencias: "b" });
+    expect(mockWriteFile).toHaveBeenCalledTimes(2);
   });
 });
