@@ -13,6 +13,12 @@ function slideUrl(id: string, slide: string) {
   return `${BACKEND}/api/carrosseis/slide?id=${encodeURIComponent(id)}&slide=${encodeURIComponent(slide)}`;
 }
 
+const CARROSSEL_MODELS: { value: string; label: string }[] = [
+  { value: "claude-haiku-4-5-20251001", label: "Haiku 4.5 — Rápido" },
+  { value: "claude-sonnet-4-6", label: "Sonnet 4.6 — Padrão" },
+  { value: "claude-opus-4-8", label: "Opus 4.8 — Mais capaz" },
+];
+
 const RETINA_OPTIONS = [
   { id: "R", label: "Relacionamento", desc: "Bastidores, propósito, conexão humana" },
   { id: "E", label: "Engajamento", desc: "Meme, curiosidade, trend" },
@@ -70,11 +76,22 @@ function SkillPanel() {
   const [copied, setCopied] = useState(false);
   const [carrosselResult, setCarrosselResult] = useState<CarrosselMeta | null>(null);
   const [carrosselSlideIdx, setCarrosselSlideIdx] = useState(0);
+  const [carrosselModel, setCarrosselModel] = useState("claude-sonnet-4-6");
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetchContas()
-      .then((cs) => { setContas(cs); if (cs[0]) setCliente(cs[0].cliente); })
+    Promise.all([
+      fetchContas(),
+      isCarrossel ? fetch(`${BACKEND}/api/ai-config`).then((r) => r.json()) : Promise.resolve(null),
+    ])
+      .then(([cs, aiCfg]) => {
+        const contas = cs as Conta[];
+        setContas(contas);
+        if (contas[0]) setCliente(contas[0].cliente);
+        if (aiCfg && typeof (aiCfg as { carrosselModel?: string }).carrosselModel === "string") {
+          setCarrosselModel((aiCfg as { carrosselModel: string }).carrosselModel);
+        }
+      })
       .catch(() => setErro("Backend offline?"));
   }, []);
 
@@ -118,7 +135,7 @@ function SkillPanel() {
       });
 
     try {
-      await runSkill({ skill: skillId, cliente, input: buildInput(inputText) }, (ev: SkillEvent) => {
+      await runSkill({ skill: skillId, cliente, input: buildInput(inputText), model: carrosselModel }, (ev: SkillEvent) => {
         if (ev.type === "status") setStatus(ev.text);
         else if (ev.type === "chunk") appendChunk(ev.text);
         else if (ev.type === "error") setErro(ev.text);
@@ -169,6 +186,17 @@ function SkillPanel() {
     setErro("");
     setCarrosselResult(null);
     setCarrosselSlideIdx(0);
+  };
+
+  const handleModelChange = async (value: string) => {
+    setCarrosselModel(value);
+    try {
+      await fetch(`${BACKEND}/api/ai-config`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ carrosselModel: value }),
+      });
+    } catch { /* silencioso — estado local já atualizou */ }
   };
 
   const copiarTudo = () => {
@@ -283,6 +311,22 @@ function SkillPanel() {
                   className="mt-1 w-full bg-muted/40 border border-border rounded-md px-3 py-2 text-[14px] resize-none"
                 />
               </div>
+              {isCarrossel && (
+                <div>
+                  <label className="text-[12px] uppercase tracking-wide text-muted-foreground">
+                    Modelo IA
+                  </label>
+                  <select
+                    value={carrosselModel}
+                    onChange={(e) => handleModelChange(e.target.value)}
+                    className="mt-1 w-full bg-muted/40 border border-border rounded-md px-3 py-2 text-[14px]"
+                  >
+                    {CARROSSEL_MODELS.map((m) => (
+                      <option key={m.value} value={m.value}>{m.label}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
               <Button onClick={iniciar} disabled={running || !cliente}>
                 {running ? (
                   <><Loader2 size={14} className="animate-spin" /> Executando…</>

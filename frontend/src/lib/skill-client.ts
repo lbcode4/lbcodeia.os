@@ -22,7 +22,7 @@ export async function fetchContas(): Promise<Conta[]> {
 
 /** Abre o stream SSE e chama onEvent para cada evento da skill. */
 export async function runSkill(
-  body: { skill: string; cliente: string; input: string },
+  body: { skill: string; cliente: string; input: string; model?: string },
   onEvent: (ev: SkillEvent) => void,
 ): Promise<void> {
   const res = await fetch(`${BACKEND}/api/skills/run`, {
