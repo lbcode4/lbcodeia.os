@@ -19,7 +19,8 @@ export const Route = createFileRoute("/sites/")({
 function SitesIndex() {
   const navigate = useNavigate();
   const [sites, setSites] = useState<SiteInfo[]>([]);
-  const [erro, setErro] = useState("");
+  const [listErro, setListErro] = useState("");
+  const [createErro, setCreateErro] = useState("");
   const [creating, setCreating] = useState(false);
   const [newName, setNewName] = useState("");
   const [isCreating, setIsCreating] = useState(false);
@@ -29,7 +30,7 @@ function SitesIndex() {
     fetch(`${BACKEND}/api/sites`)
       .then((r) => r.json())
       .then(setSites)
-      .catch(() => setErro("Backend offline ou sem sites"));
+      .catch(() => setListErro("Backend offline ou sem sites"));
   }, []);
 
   useEffect(() => {
@@ -39,13 +40,13 @@ function SitesIndex() {
   function cancelCreate() {
     setCreating(false);
     setNewName("");
-    setErro("");
+    setCreateErro("");
   }
 
   async function handleCreate() {
     const name = newName.trim();
     if (!name) return;
-    setErro("");
+    setCreateErro("");
     setIsCreating(true);
     try {
       const res = await fetch(`${BACKEND}/api/sites`, {
@@ -55,10 +56,11 @@ function SitesIndex() {
       });
       if (!res.ok) throw new Error("Erro ao criar site");
       const { id } = await res.json() as { id: string };
+      setIsCreating(false);
       navigate({ to: "/sites/$siteId", params: { siteId: id } });
     } catch {
       setIsCreating(false);
-      setErro("Erro ao criar site. Tente novamente.");
+      setCreateErro("Erro ao criar site. Tente novamente.");
     }
   }
 
@@ -87,7 +89,7 @@ function SitesIndex() {
             onChange={(e) => setNewName(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") handleCreate();
-              if (e.key === "Escape") cancelCreate();
+              if (e.key === "Escape" && !isCreating) cancelCreate();
             }}
             disabled={isCreating}
           />
@@ -104,9 +106,11 @@ function SitesIndex() {
         </div>
       )}
 
-      {erro && <p className="text-[13px] text-red-500 mb-4">{erro}</p>}
+      {createErro && <p className="text-[13px] text-red-500 mb-4">{createErro}</p>}
 
-      {sites.length === 0 && !erro && (
+      {listErro && <p className="text-[13px] text-red-500 mb-4">{listErro}</p>}
+
+      {sites.length === 0 && !listErro && (
         <p className="text-[13px] text-muted-foreground">Nenhum site encontrado em marketing/sites/.</p>
       )}
 

@@ -247,7 +247,7 @@ app.post("/api/sites", async (c) => {
     return c.json({ id });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    if (msg === "Caminho inválido") return c.json({ error: msg }, 400);
+    if (msg === "Caminho inválido") return c.json({ error: "Nome de site inválido" }, 400);
     return c.json({ error: "Erro interno" }, 500);
   }
 });
