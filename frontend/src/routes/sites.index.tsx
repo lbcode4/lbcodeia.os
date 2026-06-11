@@ -39,11 +39,13 @@ function SitesIndex() {
   function cancelCreate() {
     setCreating(false);
     setNewName("");
+    setErro("");
   }
 
   async function handleCreate() {
     const name = newName.trim();
     if (!name) return;
+    setErro("");
     setIsCreating(true);
     try {
       const res = await fetch(`${BACKEND}/api/sites`, {
