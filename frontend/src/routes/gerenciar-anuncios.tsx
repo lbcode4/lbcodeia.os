@@ -187,6 +187,58 @@ function GerenciarCampanhas() {
   }
 
   const filtered = campanhas.filter((c) => c.name.toLowerCase().includes(q.toLowerCase()));
+  const isInsta = (name: string) => name.toLowerCase().includes("instagram") || name.toLowerCase().includes("insta");
+  const filteredInsta = filtered.filter((c) => isInsta(c.name));
+  const filteredOther = filtered.filter((c) => !isInsta(c.name));
+
+  function renderCampRow(camp: Campanha) {
+    const on = camp.status === "ACTIVE";
+    const expanded = expandedId === camp.id;
+    const campAdsets = adsets[camp.id] ?? [];
+    return (
+      <>
+        <tr key={camp.id} className="border-b border-border hover:bg-muted/20 cursor-pointer" onClick={() => expandCampanha(camp.id)}>
+          <td className="py-3 px-3 text-muted-foreground">
+            {expanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+          </td>
+          <td className="py-3 px-3 font-medium">{camp.name}</td>
+          <td className="py-3 px-3 text-muted-foreground hidden sm:table-cell text-[11px]">{camp.objective}</td>
+          <td className="py-3 px-3 text-right hidden sm:table-cell tabular-nums">{fmtBudget(camp)}</td>
+          <td className="py-3 px-3 text-center" onClick={(e) => e.stopPropagation()}>
+            <StatusToggle on={on} onClick={() => requestToggle(camp.id, "campanha", camp.status, camp.name)} />
+            <div className="text-[10px] text-muted-foreground mt-1">{camp.status}</div>
+          </td>
+        </tr>
+        {expanded && (
+          loadingAdsets === camp.id ? (
+            <tr key={`${camp.id}-loading`} className="border-b border-border bg-muted/10">
+              <td colSpan={5} className="py-3 px-10 text-muted-foreground text-[12px]">
+                <Loader2 size={12} className="animate-spin inline mr-1" /> Carregando conjuntos…
+              </td>
+            </tr>
+          ) : campAdsets.length === 0 ? (
+            <tr key={`${camp.id}-empty`} className="border-b border-border bg-muted/10">
+              <td colSpan={5} className="py-3 px-10 text-muted-foreground text-[12px]">Nenhum conjunto ativo ou pausado.</td>
+            </tr>
+          ) : campAdsets.map((adset) => {
+            const adOn = adset.status === "ACTIVE";
+            return (
+              <tr key={adset.id} className="border-b border-border last:border-0 bg-muted/10">
+                <td className="py-2 px-3"></td>
+                <td className="py-2 px-3 pl-8 text-muted-foreground">↳ {adset.name}</td>
+                <td className="py-2 px-3 hidden sm:table-cell"></td>
+                <td className="py-2 px-3 text-right hidden sm:table-cell tabular-nums text-[12px]">{fmtBudget(adset)}</td>
+                <td className="py-2 px-3 text-center">
+                  <StatusToggle on={adOn} onClick={() => requestToggle(adset.id, "adset", adset.status, adset.name)} />
+                  <div className="text-[10px] text-muted-foreground mt-1">{adset.status}</div>
+                </td>
+              </tr>
+            );
+          })
+        )}
+      </>
+    );
+  }
 
   return (
     <>
@@ -244,54 +296,22 @@ function GerenciarCampanhas() {
                     </tr>
                   </thead>
                   <tbody>
-                    {filtered.map((camp) => {
-                      const on = camp.status === "ACTIVE";
-                      const expanded = expandedId === camp.id;
-                      const campAdsets = adsets[camp.id] ?? [];
-                      return (
-                        <>
-                          <tr key={camp.id} className="border-b border-border hover:bg-muted/20 cursor-pointer" onClick={() => expandCampanha(camp.id)}>
-                            <td className="py-3 px-3 text-muted-foreground">
-                              {expanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-                            </td>
-                            <td className="py-3 px-3 font-medium">{camp.name}</td>
-                            <td className="py-3 px-3 text-muted-foreground hidden sm:table-cell text-[11px]">{camp.objective}</td>
-                            <td className="py-3 px-3 text-right hidden sm:table-cell tabular-nums">{fmtBudget(camp)}</td>
-                            <td className="py-3 px-3 text-center" onClick={(e) => e.stopPropagation()}>
-                              <StatusToggle on={on} onClick={() => requestToggle(camp.id, "campanha", camp.status, camp.name)} />
-                              <div className="text-[10px] text-muted-foreground mt-1">{camp.status}</div>
-                            </td>
-                          </tr>
-                          {expanded && (
-                            loadingAdsets === camp.id ? (
-                              <tr key={`${camp.id}-loading`} className="border-b border-border bg-muted/10">
-                                <td colSpan={5} className="py-3 px-10 text-muted-foreground text-[12px]">
-                                  <Loader2 size={12} className="animate-spin inline mr-1" /> Carregando conjuntos…
-                                </td>
-                              </tr>
-                            ) : campAdsets.length === 0 ? (
-                              <tr key={`${camp.id}-empty`} className="border-b border-border bg-muted/10">
-                                <td colSpan={5} className="py-3 px-10 text-muted-foreground text-[12px]">Nenhum conjunto ativo ou pausado.</td>
-                              </tr>
-                            ) : campAdsets.map((adset) => {
-                              const adOn = adset.status === "ACTIVE";
-                              return (
-                                <tr key={adset.id} className="border-b border-border last:border-0 bg-muted/10">
-                                  <td className="py-2 px-3"></td>
-                                  <td className="py-2 px-3 pl-8 text-muted-foreground">↳ {adset.name}</td>
-                                  <td className="py-2 px-3 hidden sm:table-cell"></td>
-                                  <td className="py-2 px-3 text-right hidden sm:table-cell tabular-nums text-[12px]">{fmtBudget(adset)}</td>
-                                  <td className="py-2 px-3 text-center">
-                                    <StatusToggle on={adOn} onClick={() => requestToggle(adset.id, "adset", adset.status, adset.name)} />
-                                    <div className="text-[10px] text-muted-foreground mt-1">{adset.status}</div>
-                                  </td>
-                                </tr>
-                              );
-                            })
-                          )}
-                        </>
-                      );
-                    })}
+                    {filteredInsta.length > 0 && (
+                      <tr className="bg-muted/30">
+                        <td colSpan={5} className="py-1.5 px-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                          Instagram
+                        </td>
+                      </tr>
+                    )}
+                    {filteredInsta.map((camp) => renderCampRow(camp))}
+                    {filteredOther.length > 0 && (
+                      <tr className="bg-muted/30">
+                        <td colSpan={5} className="py-1.5 px-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                          Outras
+                        </td>
+                      </tr>
+                    )}
+                    {filteredOther.map((camp) => renderCampRow(camp))}
                   </tbody>
                 </table>
               </div>
