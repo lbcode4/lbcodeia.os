@@ -95,3 +95,57 @@ describe("GET /api/carrosseis inclui campo inspiracoes", () => {
     }
   });
 });
+
+describe("GET /api/meta/campanhas", () => {
+  it("retorna 400 quando cliente não informado", async () => {
+    const res = await app.request("/api/meta/campanhas");
+    expect(res.status).toBe(400);
+    const body = await res.json() as { error: string };
+    expect(body.error).toContain("cliente");
+  });
+});
+
+describe("PUT /api/meta/campanhas/:id/status", () => {
+  it("retorna 400 para status inválido", async () => {
+    const res = await app.request("/api/meta/campanhas/cam_123/status", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: "INVALID" }),
+    });
+    expect(res.status).toBe(400);
+    const body = await res.json() as { error: string };
+    expect(body.error).toContain("ACTIVE");
+  });
+
+  it("retorna 400 para JSON malformado", async () => {
+    const res = await app.request("/api/meta/campanhas/cam_123/status", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: "isso nao eh json",
+    });
+    expect(res.status).toBe(400);
+  });
+});
+
+describe("GET /api/meta/adsets", () => {
+  it("retorna 400 quando campanha_id não informado", async () => {
+    const res = await app.request("/api/meta/adsets?cliente=X");
+    expect(res.status).toBe(400);
+  });
+
+  it("retorna 400 quando cliente não informado", async () => {
+    const res = await app.request("/api/meta/adsets?campanha_id=123");
+    expect(res.status).toBe(400);
+  });
+});
+
+describe("PUT /api/meta/adsets/:id/status", () => {
+  it("retorna 400 para status inválido", async () => {
+    const res = await app.request("/api/meta/adsets/ads_123/status", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: "NOPE" }),
+    });
+    expect(res.status).toBe(400);
+  });
+});

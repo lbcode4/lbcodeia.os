@@ -14,6 +14,7 @@ import { getBiblioteca, readBibliotecaFile } from "./biblioteca.js";
 import { getDashboardData } from "./dashboard.js";
 import { runChat } from "./chat.js";
 import { getOnboardingStatus, saveOnboarding, getConfiguracoes, saveConfiguracoes, getAiConfig, saveAiConfig, type Profile, type Configuracoes, type AiConfig } from "./onboarding.js";
+import { listCampanhas, setCampanhaStatus, listAdsets, setAdsetStatus, readMetaToken } from "./meta-campanhas.js";
 
 export const app = new Hono();
 
@@ -402,6 +403,66 @@ app.put("/api/ai-config", async (c) => {
   }
   await saveAiConfig(body);
   return c.json({ ok: true });
+});
+
+app.get("/api/meta/campanhas", async (c) => {
+  const cliente = c.req.query("cliente");
+  if (!cliente) return c.json({ error: "cliente obrigatório" }, 400);
+  try {
+    const contas = await listContas();
+    const conta = contas.find((ct) => ct.cliente === cliente);
+    if (!conta?.metaAdAccount) return c.json({ error: "Conta Meta não configurada para este cliente" }, 404);
+    const token = await readMetaToken();
+    const campanhas = await listCampanhas(conta.metaAdAccount, token);
+    return c.json(campanhas);
+  } catch (e) {
+    return c.json({ error: (e as Error).message }, 502);
+  }
+});
+
+app.put("/api/meta/campanhas/:id/status", async (c) => {
+  const id = c.req.param("id");
+  let body: { status: string };
+  try { body = await c.req.json(); } catch { return c.json({ error: "JSON inválido" }, 400); }
+  if (body.status !== "ACTIVE" && body.status !== "PAUSED") {
+    return c.json({ error: "status deve ser ACTIVE ou PAUSED" }, 400);
+  }
+  try {
+    const token = await readMetaToken();
+    await setCampanhaStatus(id, body.status as "ACTIVE" | "PAUSED", token);
+    return c.json({ id, new_status: body.status });
+  } catch (e) {
+    return c.json({ error: (e as Error).message }, 502);
+  }
+});
+
+app.get("/api/meta/adsets", async (c) => {
+  const campanha_id = c.req.query("campanha_id");
+  const cliente = c.req.query("cliente");
+  if (!campanha_id || !cliente) return c.json({ error: "campanha_id e cliente obrigatórios" }, 400);
+  try {
+    const token = await readMetaToken();
+    const adsets = await listAdsets(campanha_id, token);
+    return c.json(adsets);
+  } catch (e) {
+    return c.json({ error: (e as Error).message }, 502);
+  }
+});
+
+app.put("/api/meta/adsets/:id/status", async (c) => {
+  const id = c.req.param("id");
+  let body: { status: string };
+  try { body = await c.req.json(); } catch { return c.json({ error: "JSON inválido" }, 400); }
+  if (body.status !== "ACTIVE" && body.status !== "PAUSED") {
+    return c.json({ error: "status deve ser ACTIVE ou PAUSED" }, 400);
+  }
+  try {
+    const token = await readMetaToken();
+    await setAdsetStatus(id, body.status as "ACTIVE" | "PAUSED", token);
+    return c.json({ id, new_status: body.status });
+  } catch (e) {
+    return c.json({ error: (e as Error).message }, 502);
+  }
 });
 
 // Só sobe o listener quando executado direto (não nos testes).
