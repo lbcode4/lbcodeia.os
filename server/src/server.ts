@@ -429,8 +429,9 @@ app.put("/api/meta/campanhas/:id/status", async (c) => {
   }
   try {
     const token = await readMetaToken();
-    await setCampanhaStatus(id, body.status as "ACTIVE" | "PAUSED", token);
-    return c.json({ id, new_status: body.status });
+    const status = body.status as "ACTIVE" | "PAUSED";
+    await setCampanhaStatus(id, status, token);
+    return c.json({ id, new_status: status });
   } catch (e) {
     return c.json({ error: (e as Error).message }, 502);
   }
@@ -458,8 +459,9 @@ app.put("/api/meta/adsets/:id/status", async (c) => {
   }
   try {
     const token = await readMetaToken();
-    await setAdsetStatus(id, body.status as "ACTIVE" | "PAUSED", token);
-    return c.json({ id, new_status: body.status });
+    const status = body.status as "ACTIVE" | "PAUSED";
+    await setAdsetStatus(id, status, token);
+    return c.json({ id, new_status: status });
   } catch (e) {
     return c.json({ error: (e as Error).message }, 502);
   }
