@@ -88,7 +88,7 @@ function ConectarContas() {
       <h2 className="text-lg font-semibold mb-3">Cadastrar cliente → conta</h2>
       <Card className="mb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Field label="Nome do cliente" value={form.name} onChange={(v) => setForm({ ...form, name: v })} placeholder="Ex: Dordrian Store" />
+          <Field label="Nome do cliente" value={form.name} onChange={(v) => setForm({ ...form, name: v })} placeholder="Ex: Loja Beta" />
           <Field label="Meta Ad Account" value={form.metaAct} onChange={(v) => setForm({ ...form, metaAct: v })} placeholder="act_..." />
           <Field label="IG User ID" value={form.igUserId} onChange={(v) => setForm({ ...form, igUserId: v })} placeholder="178492..." />
           <Field label="Handle IG" value={form.handle} onChange={(v) => setForm({ ...form, handle: v })} placeholder="@nome" />

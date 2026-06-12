@@ -1,5 +1,5 @@
 ---
-status: em_desenvolvimento
+status: criados
 ---
 
 # Legenda — Instagram / Facebook

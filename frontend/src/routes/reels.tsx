@@ -48,7 +48,7 @@ function Reels() {
     <>
       <PageHeader
         title="Reels"
-        subtitle="Ranking de Reels da Dordrian Store por desempenho."
+        subtitle="Ranking de Reels da Loja Beta por desempenho."
         actions={
           <select className="h-9 px-3 rounded-md border border-border bg-card text-[13px]">
             <option>Últimos 7 dias</option>

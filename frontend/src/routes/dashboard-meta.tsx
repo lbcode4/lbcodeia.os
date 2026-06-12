@@ -51,7 +51,7 @@ const distGasto = [
 const topReelsBar = [
   { name: "Novos modelos de relógios...", alcance: 299, inter: 18 },
   { name: "Porta-relógio com 6...", alcance: 188, inter: 9 },
-  { name: "2 Anos de Dordrian Store!", alcance: 64, inter: 3 },
+  { name: "2 Anos de Loja Beta!", alcance: 64, inter: 3 },
   { name: "Vídeo de unboxing pra vocês...", alcance: 316, inter: 15 },
   { name: "Modelos de fones esportivos...", alcance: 227, inter: 9 },
   { name: "Mais um pouco das...", alcance: 709, inter: 28 },
@@ -65,7 +65,7 @@ const media7      = [ 1,    0.5,  0.3,  0.5,  0.6,  0.5,  0.6,  0.4,  0.4,  0.4,
 const comparativo = [
   { thumb: "#FF6B35", h: "Orgânico > Novos modelos de relógios...", tipo: "ORGÂNICO", alcance: 299, saves: 1, com: 6, shares: 1, ctr: "6,0 %", status: "Mediano" },
   { thumb: "#7A5CFF", h: "Orgânico > Porta-relogio com 6...",        tipo: "ORGÂNICO", alcance: 188, saves: 2, com: 0, shares: 0, ctr: "4,8 %", status: "Mediano" },
-  { thumb: "#1A8FE3", h: "Orgânico > 2 Anos de Dordrian Store!",     tipo: "ORGÂNICO", alcance: 64,  saves: 0, com: 0, shares: 0, ctr: "4,7 %", status: "Mediano" },
+  { thumb: "#1A8FE3", h: "Orgânico > 2 Anos de Loja Beta!",     tipo: "ORGÂNICO", alcance: 64,  saves: 0, com: 0, shares: 0, ctr: "4,7 %", status: "Mediano" },
   { thumb: "#22C55E", h: "Pago > Carrossel Black Friday",            tipo: "PAGO",     alcance: 8200,saves: 4, com: 12,shares: 6, ctr: "1,9 %", status: "Bom" },
   { thumb: "#EC4899", h: "Pago > Vídeo Depoimento Cliente",          tipo: "PAGO",     alcance: 11400,saves: 7,com: 18,shares: 9, ctr: "2,4 %", status: "Excelente" },
 ];
@@ -73,7 +73,7 @@ const comparativo = [
 const topReels = [
   { rank: 1, title: "Novos modelos de relógios...", alcance: 299,  inter: 18, eng: "6%",   saves: 1, com: 6, shares: 1, color: "#1A1A2E" },
   { rank: 2, title: "Porta-relógio com 6...",       alcance: 188,  inter: 9,  eng: "4.8%", saves: 2, com: 0, shares: 1, color: "#2E1A1A" },
-  { rank: 3, title: "2 Anos de Dordrian Store!",    alcance: 64,   inter: 3,  eng: "4.7%", saves: 0, com: 0, shares: 0, color: "#1E3A8A" },
+  { rank: 3, title: "2 Anos de Loja Beta!",    alcance: 64,   inter: 3,  eng: "4.7%", saves: 0, com: 0, shares: 0, color: "#1E3A8A" },
   { rank: 4, title: "Vídeo de unboxing pra vocês...",alcance: 316, inter: 15, eng: "4.7%", saves: 1, com: 4, shares: 0, color: "#FF6B35" },
   { rank: 5, title: "Modelos de fones esportivos...",alcance: 227, inter: 9,  eng: "4%",   saves: 0, com: 0, shares: 1, color: "#7A5CFF" },
   { rank: 6, title: "Mais um pouco das...",         alcance: 709,  inter: 28, eng: "3.9%", saves: 3, com: 1, shares: 6, color: "#15803D" },
@@ -309,8 +309,8 @@ function DashboardMeta() {
       <div className="rounded-xl p-6 md:p-8 mb-6 text-white flex items-start justify-between gap-4"
            style={{ background: "linear-gradient(120deg,#7A5CFF 0%,#B14BD1 55%,#E04C8A 100%)" }}>
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Dashboard Completo — Dordrian Store</h1>
-          <p className="text-white/90 mt-1 text-[13px]">@dordrianstore | 13/10/2023 – 04/06/2026 | Pago + Orgânico</p>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Dashboard Completo — Loja Beta</h1>
+          <p className="text-white/90 mt-1 text-[13px]">@lojabeta | 13/10/2023 – 04/06/2026 | Pago + Orgânico</p>
         </div>
         <div className="flex items-center gap-3">
           <div className="h-9 px-3 rounded-md bg-white/15 backdrop-blur flex items-center justify-center">

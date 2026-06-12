@@ -2,12 +2,12 @@ import { describe, it, expect } from "vitest";
 import { app } from "./server.js";
 
 describe("GET /api/contas", () => {
-  it("retorna lista de contas com Dordrian", async () => {
+  it("retorna lista de contas com Loja Beta", async () => {
     const res = await app.request("/api/contas");
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(Array.isArray(body)).toBe(true);
-    expect(body.some((c: { cliente: string }) => c.cliente.includes("Dordrian"))).toBe(true);
+    expect(body.some((c: { cliente: string }) => c.cliente.includes("Loja Beta"))).toBe(true);
   });
 });
 

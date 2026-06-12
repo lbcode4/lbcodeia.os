@@ -28,7 +28,7 @@ const reels: Reel[] = [
     caption: ["Vídeo de unboxing pra vocês do AMAZFIT ACTIVE EDGE", "Gostou desse modelo?"],
     insight: "Maior número de comentários do período (4). Formato unboxing cria curiosidade e aproximação. Caption ultra-curta + pergunta direta gera interação. Watch time 6.1s indica boa retenção para 59s de vídeo.",
     insightTone: "success", thumbColor: "from-orange-500 to-orange-700", thumbLabel: "ACTIVE EDGE" },
-  { rank: 3, titulo: "2 Anos de Dordrian Store", data: "30/09/25", engRate: 4.69, alcance: 64, likes: 3, cmts: 0, shares: 0, saves: 0, watch: 3.3, classe: "ALTO",
+  { rank: 3, titulo: "2 Anos de Loja Beta", data: "30/09/25", engRate: 4.69, alcance: 64, likes: 3, cmts: 0, shares: 0, saves: 0, watch: 3.3, classe: "ALTO",
     caption: ["Esse mês celebramos mais um ano de companhia, aprendizado e sucesso.", "Agradecemos a todos que fazem parte."],
     insight: "Conteúdo institucional. Alcance baixo (9× menor que a média) — público não engaja com aniversário da loja sem oferta atrelada.",
     insightTone: "warning", thumbColor: "from-blue-700 to-blue-900", thumbLabel: "2 ANOS" },
@@ -236,10 +236,10 @@ function OrganicoInstagram() {
           ☀ Tema
         </button>
         <h1 className="text-3xl md:text-[34px] font-bold tracking-tight mb-2">
-          Análise de Reels Orgânicos — Dordrian Store
+          Análise de Reels Orgânicos — Loja Beta
         </h1>
         <p className="text-white/85 text-[14px] mb-5">
-          @dordrianstore · Instagram · Últimos 7 Reels · Objetivo: Crescimento de seguidores
+          @lojabeta · Instagram · Últimos 7 Reels · Objetivo: Crescimento de seguidores
         </p>
         <div className="flex flex-wrap gap-2">
           {["FEV–SET 2025", "7 REELS ANALISADOS", "GERADO EM 04/06/2026"].map((t) => (
@@ -508,7 +508,7 @@ function OrganicoInstagram() {
               cta: "\"Salva esse vídeo e ativa agora! Qual smartwatch você usa? Comenta aqui 👇\"",
               porque: "Replica padrão do Reel de funcionalidades (maior alcance). Salvamentos geram boost orgânico + pergunta de comentário aumenta interações.",
               copy: ["Você usa smartwatch há meses mas nunca ativou isso… 🤯", "A maioria dos modelos tem uma função que a galera esquece de configurar: o monitoramento de SpO2 contínuo.", "Com ele ativo, o relógio monitora sua saturação de oxigênio durante o sono — e te avisa se algo estiver fora do normal.", "Simples de ativar. Pode fazer diferença de verdade.", "👇 Comenta qual smartwatch você usa e eu te mando como ativar no seu modelo!"],
-              tags: ["#smartwatch", "#dicasdesaude", "#tecnologiawearable", "#dordrianstore", "#smartwatchbrasil"],
+              tags: ["#smartwatch", "#dicasdesaude", "#tecnologiawearable", "#lojabeta", "#smartwatchbrasil"],
             },
             {
               n: "02", titulo: "\"R$XXX vs R$XXX: Qual smartwatch vale mais o dinheiro?\"",
@@ -518,7 +518,7 @@ function OrganicoInstagram() {
               cta: "\"Comenta A ou B: qual você levaria? Respondo nos comentários!\"",
               porque: "Pergunta de A ou B dispara comentários (padrão de maior interação do período). Formato comparativo retém atenção por mais tempo = watch time maior = mais alcance.",
               copy: ["Dois smartwatches, preços parecidos. Qual vai pro seu pulso? 👀", "Comparamos o Amazfit Active Edge vs. Zeblaze Stratos 2 nos 3 critérios que mais importam:", "🏃 Esporte & GPS", "🔋 Duração de bateria", "📱 Integração com apps", "Resultado surpreendeu até a gente.", "💬 Comenta A (Amazfit) ou B (Zeblaze) — qual você escolheria?"],
-              tags: ["#smartwatch", "#comparativo", "#amazfit", "#zeblaze", "#dordrianstore"],
+              tags: ["#smartwatch", "#comparativo", "#amazfit", "#zeblaze", "#lojabeta"],
             },
             {
               n: "03", titulo: "Unboxing surpresa: \"Vocês pediram, finalmente chegou!\"",
@@ -528,7 +528,7 @@ function OrganicoInstagram() {
               cta: "\"A função que mais te surpreendeu foi qual? Comenta aqui — a mais votada vira o próximo review!\"",
               porque: "Unboxing teve maior quantidade de comentários (4 — melhor do período). Elemento de antecipação aumenta retenção. Votação gera comentários E dados reais sobre interesse do público.",
               copy: ["Vocês pediram nos comentários e finalmente chegou! 📦 ✨", "Unboxing do [nome do produto] — o modelo que a galera tem pedido há semanas.", "Spoiler: a função de [X] deixou a gente sem palavras 🤯", "Qual funcionalidade mais te surpreendeu?", "Comenta aqui — a mais votada vira o próximo review detalhado!", "🔔 Segue pra não perder os próximos unboxings"],
-              tags: ["#unboxing", "#smartwatch", "#dordrianstore", "#novidade", "#techmobile"],
+              tags: ["#unboxing", "#smartwatch", "#lojabeta", "#novidade", "#techmobile"],
             },
           ].map((r) => (
             <div key={r.n} className="bg-card border border-border rounded-lg p-5">
@@ -590,7 +590,7 @@ function OrganicoInstagram() {
         </div>
 
         <div className="mt-12 mb-4 text-center text-[11px] text-muted-foreground">
-          Gerado por <span className="text-foreground font-medium">Claude Code</span> — LBCode_ADS · Dordrian Store · @dordrianstore · 04/06/2026
+          Gerado por <span className="text-foreground font-medium">Claude Code</span> — LBCode_ADS · Loja Beta · @lojabeta · 04/06/2026
         </div>
       </div>
     </div>

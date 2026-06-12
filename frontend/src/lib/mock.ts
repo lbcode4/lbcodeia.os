@@ -1,8 +1,8 @@
 // Mock data for LBCode Ads prototype (pt-BR)
 
 export const clients = [
-  { id: "dordrian", name: "Dordrian Store", handle: "@dordrianstore", metaAct: "act_8829110023", igUserId: "1784920033", googleAdsId: "748-221-9930", ativo: true },
-  { id: "beta", name: "Loja Beta", handle: "@lojabeta", metaAct: "act_5520199881", igUserId: "1928301122", googleAdsId: "229-118-4471", ativo: true },
+  { id: "loja-beta", name: "Loja Beta", handle: "@lojabeta", metaAct: "act_8829110023", igUserId: "1784920033", googleAdsId: "748-221-9930", ativo: true },
+  { id: "beta", name: "Loja Beta 2", handle: "@lojabeta2", metaAct: "act_5520199881", igUserId: "1928301122", googleAdsId: "229-118-4471", ativo: true },
   { id: "sorriso", name: "Clínica Sorriso", handle: "@clinicasorriso", metaAct: "act_7710022991", igUserId: "2010338829", googleAdsId: "554-902-1188", ativo: false },
 ];
 
@@ -16,8 +16,8 @@ export const fmtPct = (v: number) =>
 
 // Meta accounts (for Conectar Contas)
 export const metaAccounts = [
-  { conta: "Dordrian Store - Principal", id: "act_8829110023", status: "Ativo" },
-  { conta: "Dordrian Store - Retargeting", id: "act_8829110099", status: "Ativo" },
+  { conta: "Loja Beta - Principal", id: "act_8829110023", status: "Ativo" },
+  { conta: "Loja Beta - Retargeting", id: "act_8829110099", status: "Ativo" },
   { conta: "Loja Beta - Master", id: "act_5520199881", status: "Desativado" },
 ];
 
@@ -297,14 +297,14 @@ const baseHtml = (title: string, headline: string, sub: string, color: string) =
 
 export const sites: Site[] = [
   {
-    id: "dordrian-lp",
-    name: "Dordrian — Landing Black Friday",
-    domain: "dordrian-bf.lovable.app",
+    id: "loja-beta-lp",
+    name: "Loja Beta — Landing Black Friday",
+    domain: "loja-beta-bf.lovable.app",
     status: "em-desenvolvimento",
     updatedAt: "há 2 horas",
     pages: 3,
     thumbColor: "#FF6B35",
-    html: baseHtml("Dordrian BF", "Black Friday Dordrian", "Até 70% OFF nas melhores marcas. Frete grátis acima de R$ 199.", "#FF6B35"),
+    html: baseHtml("Loja Beta BF", "Black Friday Loja Beta", "Até 70% OFF nas melhores marcas. Frete grátis acima de R$ 199.", "#FF6B35"),
   },
   {
     id: "sorriso-site",

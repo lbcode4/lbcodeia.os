@@ -7,7 +7,7 @@ const TABELA = `# Contas de Anúncios
 
 | Cliente | Meta Ad Account | IG User ID | Handle IG | Google Ads ID | Ativo |
 |---------|-----------------|------------|-----------|---------------|-------|
-| Dordrian Store | act_123 | 999 | @dordrian | — | sim |
+| Loja Beta | act_123 | 999 | @lojabeta | — | sim |
 | Loja Beta | act_456 | 888 | @beta | 111-222 | sim |
 `;
 
@@ -16,9 +16,9 @@ describe("parseContas", () => {
     const contas = parseContas(TABELA);
     expect(contas).toHaveLength(2);
     expect(contas[0]).toEqual({
-      cliente: "Dordrian Store",
+      cliente: "Loja Beta",
       metaAdAccount: "act_123",
-      handleIg: "@dordrian",
+      handleIg: "@lojabeta",
       ativo: true,
     });
   });
