@@ -296,6 +296,14 @@ function GerenciarCampanhas() {
                     </tr>
                   </thead>
                   <tbody>
+                    {filteredOther.length > 0 && (
+                      <tr className="bg-muted/30">
+                        <td colSpan={5} className="py-1.5 px-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                          Meta
+                        </td>
+                      </tr>
+                    )}
+                    {filteredOther.map((camp) => renderCampRow(camp))}
                     {filteredInsta.length > 0 && (
                       <tr className="bg-muted/30">
                         <td colSpan={5} className="py-1.5 px-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
@@ -304,14 +312,6 @@ function GerenciarCampanhas() {
                       </tr>
                     )}
                     {filteredInsta.map((camp) => renderCampRow(camp))}
-                    {filteredOther.length > 0 && (
-                      <tr className="bg-muted/30">
-                        <td colSpan={5} className="py-1.5 px-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                          Outras
-                        </td>
-                      </tr>
-                    )}
-                    {filteredOther.map((camp) => renderCampRow(camp))}
                   </tbody>
                 </table>
               </div>
