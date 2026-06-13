@@ -58,6 +58,24 @@ describe("readReferencia", () => {
   it("rejeita extensão não-imagem", async () => {
     await expect(readReferencia("550e8400-e29b-41d4-a716-446655440000", "f.exe")).rejects.toThrow("Tipo inválido");
   });
+
+  it("rejeita tentativa de path traversal no filename", async () => {
+    await expect(
+      readReferencia("550e8400-e29b-41d4-a716-446655440000", "../../etc/shadow.png")
+    ).rejects.toThrow("Caminho inválido");
+  });
+
+  it("lê arquivo do path correto dentro da sessão", async () => {
+    const fakeBuf = Buffer.from("img");
+    mockReadFile.mockResolvedValue(fakeBuf as unknown as string);
+
+    await readReferencia("550e8400-e29b-41d4-a716-446655440000", "1234.png");
+
+    expect(mockReadFile).toHaveBeenCalledTimes(1);
+    const calledPath = mockReadFile.mock.calls[0][0] as string;
+    expect(calledPath).toContain("550e8400-e29b-41d4-a716-446655440000");
+    expect(calledPath).toContain("1234.png");
+  });
 });
 
 describe("deleteReferencias", () => {
