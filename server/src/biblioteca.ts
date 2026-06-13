@@ -117,11 +117,12 @@ export async function getBiblioteca(): Promise<BibliotecaSection[]> {
   const m = join(REPO_ROOT, "marketing");
   const s = join(REPO_ROOT, "saidas");
 
-  const [reels, stories, calendario, auditorias, auditoria_ig, campanhas, gbp, seo, sites, relatorios] =
+  const [reels, stories, calendario, carrosseis, auditorias, auditoria_ig, campanhas, gbp, seo, sites, relatorios, prospeccao] =
     await Promise.all([
       scanDir(join(m, "conteudo", "reels"), "Conteúdo", "reels", true),
       scanDir(join(m, "conteudo", "stories"), "Conteúdo", "stories", true),
       scanDir(join(m, "conteudo", "calendario"), "Conteúdo", "calendário", true),
+      scanDir(join(m, "conteudo", "carrossel"), "Conteúdo", "carrossel", true),
       scanDir(join(m, "auditorias"), "Auditorias", undefined, false),
       scanDir(join(m, "auditoria-ig"), "Auditorias", "Instagram", false),
       scanCampanhas(join(m, "campanhas")),
@@ -129,9 +130,10 @@ export async function getBiblioteca(): Promise<BibliotecaSection[]> {
       scanDir(join(m, "google-seo"), "SEO", undefined, false),
       scanSites(join(m, "sites")),
       scanDir(join(s, "relatorios"), "Relatórios", undefined, true),
+      scanDir(join(m, "prospeccao"), "Prospecção", undefined, true),
     ]);
 
-  const conteudo = [...reels, ...stories, ...calendario];
+  const conteudo = [...reels, ...stories, ...calendario, ...carrosseis];
 
   const sections: BibliotecaSection[] = [
     { id: "conteudo", label: "Conteúdo", items: conteudo },
@@ -141,6 +143,7 @@ export async function getBiblioteca(): Promise<BibliotecaSection[]> {
     { id: "seo", label: "SEO", items: seo },
     { id: "sites", label: "Sites", items: sites },
     { id: "relatorios", label: "Relatórios", items: relatorios },
+    { id: "prospeccao", label: "Prospecção", items: prospeccao },
   ];
 
   return sections.filter((sec) => sec.items.length > 0);

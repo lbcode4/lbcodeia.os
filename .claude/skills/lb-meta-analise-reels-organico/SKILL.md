@@ -23,7 +23,7 @@ Puxa dado real da Graph API → identifica o que viraliza no perfil → entrega 
 - **Framework:** `_memoria/framework-trafego.md` (RETINA + 4 ganchos)
 - **Contexto/voz:** `_memoria/empresa.md`, `estrategia.md`, `preferencias.md`
 - **Credencial:** `integracoes/credentials/meta.env` (validar com `python integracoes/meta-ads/scripts/meta_api.py --test`)
-- **Outputs:** `marketing/conteudo/reels/analise-<YYYY-MM-DD>/analise.md`
+- **Outputs:** `saidas/relatorios/reels-organico/<Cliente>/analise-<YYYY-MM-DD>.md`
 
 ---
 
@@ -55,7 +55,7 @@ Puxa dado real da Graph API → identifica o que viraliza no perfil → entrega 
    - Desenvolvimento (problema → solução)
    - CTA final
    - Legenda + hashtags
-7. Salvar análise + roteiro em `marketing/conteudo/reels/analise-<YYYY-MM-DD>/analise.md`.
+7. Salvar análise + roteiro em `saidas/relatorios/reels-organico/<Cliente>/analise-<YYYY-MM-DD>.md` (criar dirs se não existirem).
 8. Oferecer próximo passo:
    > "Quer que eu detalhe esse roteiro completo (direção de cena, trilha)? (chamo `/lb-conteudo-reels`)"
 
