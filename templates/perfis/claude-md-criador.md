@@ -1,7 +1,7 @@
 # [Seu Nome] — LBCode.IA
 
 > Perfil **criador solo** — marca pessoal + negócio digital. O sistema gira
-> em torno de conteúdo, audiência e ofertas. O `/lb-sistema-instalar` adapta
+> em torno de conteúdo, audiência e ofertas. O `/lb-sistema-onboarding` adapta
 > esse molde com a sua realidade.
 
 ## O que é esse workspace

@@ -73,5 +73,5 @@ Falta algo? Parar e avisar — criar `marketing/setup-automacao-meta.md` se prec
 É a execução final da operação de conteúdo:
 - Contexto vem de `_memoria/empresa.md` (site, redes)
 - Tom já calibrado em `/lb-conteudo-publicar`
-- Outputs vão pro histórico (`/lb-sistema-salvar`)
+- Outputs vão pro histórico (`/lb-sistema-versionar`)
 - Próxima execução rodeia `/lb-meta-relatorio` pra medir performance

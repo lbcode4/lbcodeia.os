@@ -1,5 +1,5 @@
 ---
-name: lb-sistema-abrir
+name: lb-sistema-contexto
 description: >
   Abre uma sessão de trabalho do LBCode.IA. Carrega memória operacional
   (empresa, preferências, estratégia, framework, identidade) e devolve briefing
@@ -8,7 +8,7 @@ description: >
   "carrega contexto", "/sistema-abrir".
 ---
 
-# /lb-sistema-abrir — Sessão de trabalho
+# /lb-sistema-contexto — Sessão de trabalho
 
 Abre a máquina. Em uma frase: recalibra quem você é, onde tá o foco, que tom usar.
 
@@ -29,7 +29,7 @@ Ler em ordem (se existirem e não estiverem vazios):
 Se algum dos **3 primeiros** estiver vazio (placeholder):
 
 > "Vi que `_memoria/<nome>.md` ainda não foi preenchido.
-> Quer rodar `/lb-sistema-instalar` agora pra completar?"
+> Quer rodar `/lb-sistema-onboarding` agora pra completar?"
 
 Parar. Sistema não roda com contexto incompleto.
 
@@ -69,10 +69,10 @@ Depois:
 
 ## Integração ao framework
 
-Internamente, `/lb-sistema-abrir` já sabe que:
+Internamente, `/lb-sistema-contexto` já sabe que:
 
 - Cada skill de marketing lê `framework-trafego.md`
 - Cada skill visual lê `design-guide.md`
-- Cada execução é versionada automaticamente via `/lb-sistema-salvar`
+- Cada execução é versionada automaticamente via `/lb-sistema-versionar`
 
 Usuário não precisa pensar — é automático. Mas é bom saber que o sistema está **integrado**, não solto.

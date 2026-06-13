@@ -26,4 +26,4 @@ Skills sabem onde salvar — você não precisa criar subpasta manualmente. Se u
 
 `saidas/` é "coisa pontual gerada hoje" — relatório que você manda pro cliente e nunca mais olha, rascunho de email que copia e cola no Gmail.
 
-A divisão importa pra `/lb-sistema-salvar` (commit) e pra clareza ao navegar a pasta.
+A divisão importa pra `/lb-sistema-versionar` (commit) e pra clareza ao navegar a pasta.

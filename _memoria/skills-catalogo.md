@@ -25,10 +25,10 @@ todas, cada filho usa o subconjunto do seu modelo.
 
 | Skill | SaaS B2B | Agência | Local | Criador | Notas |
 |-------|----------|---------|-------|---------|-------|
-| `/lb-sistema-abrir` | ✅ | ✅ | ✅ | ✅ | Núcleo |
-| `/lb-sistema-instalar` | ✅ | ✅ | ✅ | ✅ | Núcleo |
-| `/lb-sistema-atualizar` | ✅ | ✅ | ✅ | ✅ | Núcleo |
-| `/lb-sistema-salvar` | ✅ | ✅ | ✅ | ✅ | Núcleo |
+| `/lb-sistema-contexto` | ✅ | ✅ | ✅ | ✅ | Núcleo |
+| `/lb-sistema-onboarding` | ✅ | ✅ | ✅ | ✅ | Núcleo |
+| `/lb-sistema-sincronizar` | ✅ | ✅ | ✅ | ✅ | Núcleo |
+| `/lb-sistema-versionar` | ✅ | ✅ | ✅ | ✅ | Núcleo |
 | `/lb-sistema-novo-projeto` | ✅ | ✅ | ✅ | ✅ | Núcleo |
 | `/lb-negocio-mapear-rotinas` | ✅ | ✅ | ✅ | ✅ | Núcleo |
 | `/lb-conteudo-carrossel` | ✅ | ✅ | ✅ | ✅ | Universal |

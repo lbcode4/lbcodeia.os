@@ -42,4 +42,4 @@ marketing/
 
 ## Versionamento
 
-Tudo aqui versiona no git pelo `/lb-sistema-salvar`. Útil pra comparar evolução de SEO entre meses, rever copies antigas, ou recuperar peça depois de mexer no Insta.
+Tudo aqui versiona no git pelo `/lb-sistema-versionar`. Útil pra comparar evolução de SEO entre meses, rever copies antigas, ou recuperar peça depois de mexer no Insta.

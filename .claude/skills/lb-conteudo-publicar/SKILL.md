@@ -136,7 +136,7 @@ Próxima: `/lb-conteudo-aprovar <slug>` pra publicar tudo junto.
 ## Integração
 
 Pipeline operacional completo:
-- Tema vira Blog → Carrossel → Legendas → Versão (via `/lb-sistema-salvar`)
+- Tema vira Blog → Carrossel → Legendas → Versão (via `/lb-sistema-versionar`)
 - Pesquisa SEO alimenta ângulos (não repete concorrência)
 - Legenda aponta pro blog (cross-traffic)
 - Tudo aguarda `/lb-conteudo-aprovar` pra ir ao ar simultâneo

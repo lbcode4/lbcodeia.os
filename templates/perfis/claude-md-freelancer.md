@@ -1,7 +1,7 @@
 # [Seu Nome] — LBCode.IA
 
 > Perfil **freelancer** — vende tempo e talento pra clientes terceiros.
-> O sistema gira em torno de captar, entregar e cobrar. O `/lb-sistema-instalar`
+> O sistema gira em torno de captar, entregar e cobrar. O `/lb-sistema-onboarding`
 > adapta esse molde com a sua realidade.
 
 ## O que é esse workspace
@@ -35,7 +35,7 @@ Ticket médio: [valor]. Capacidade: [N clientes simultâneos].
 
 ## Clientes ativos
 
-[Lista. O `/lb-sistema-atualizar` mantém isso sincronizado com `clientes/`.]
+[Lista. O `/lb-sistema-sincronizar` mantém isso sincronizado com `clientes/`.]
 
 ## Como capto clientes
 

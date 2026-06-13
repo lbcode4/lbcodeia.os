@@ -1,5 +1,5 @@
 ---
-name: lb-sistema-atualizar
+name: lb-sistema-sincronizar
 description: >
   Faz auditoria do projeto: varre todas as pastas, git history recente, arquivos de contexto
   e propõe reconciliação. Detecta clientes/projetos novos, mudanças de foco, skills criadas,
@@ -9,7 +9,7 @@ description: >
   "revisar projeto", "/sistema-atualizar", ou pedir reconciliação geral.
 ---
 
-# /lb-sistema-atualizar — Auditoria + Reconciliação
+# /lb-sistema-sincronizar — Auditoria + Reconciliação
 
 Skill de manutenção. Varre o projeto, identifica o que mudou na realidade e propõe atualizar
 a memória operacional pra bater com o estado real. Serve pra descobrir quando contexto ficou
@@ -110,6 +110,6 @@ Exemplo:
 
 ## Integração ao framework
 
-`/lb-sistema-atualizar` é a auditoria do operacional. A máquina roda baseada no que tá em `_memoria/` —
+`/lb-sistema-sincronizar` é a auditoria do operacional. A máquina roda baseada no que tá em `_memoria/` —
 se memória fica desatualizada, sistema começa a ficar fora de prumo. Use toda semana ou
 quando tiver mudança grande (cliente novo, pivot de estratégia, skill criada).

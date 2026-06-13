@@ -53,7 +53,7 @@ cd LBCode.IA
 code .
 ```
 
-No terminal: `/lb-sistema-instalar`
+No terminal: `/lb-sistema-onboarding`
 
 Entrevista negócio + identidade + foco. Preenche memória automaticamente.  
 Depois: renomeia pasta pro nome da empresa. Pronto.
@@ -62,15 +62,15 @@ Depois: renomeia pasta pro nome da empresa. Pronto.
 
 ## Dia a Dia (3 Comandos)
 
-- **`/lb-sistema-abrir`** — carrega contexto antes de trabalhar
-- **`/lb-sistema-salvar`** — commit + push (resultado versionado no GitHub)
-- **`/lb-sistema-atualizar`** — varre projeto, sincroniza memória
+- **`/lb-sistema-contexto`** — carrega contexto antes de trabalhar
+- **`/lb-sistema-versionar`** — commit + push (resultado versionado no GitHub)
+- **`/lb-sistema-sincronizar`** — varre projeto, sincroniza memória
 
 ---
 
 ## Semana Tipo
 
-**Segunda:** `/lb-sistema-abrir` + planar semana em `estrategia.md`
+**Segunda:** `/lb-sistema-contexto` + planar semana em `estrategia.md`
 
 **Terça–Quarta:** 
 - 3× `/lb-conteudo-carrossel` = posts prontos
@@ -83,7 +83,7 @@ Depois: renomeia pasta pro nome da empresa. Pronto.
 
 **Sexta:**
 - `/lb-meta-relatorio` = identifica o que rompeu
-- `/lb-sistema-salvar` = tudo documentado
+- `/lb-sistema-versionar` = tudo documentado
 
 **Resultado:** 5 posts + 1 artigo + 1 campanha + 10+ prospecções + 3 propostas.  
 Tudo com framework. Pronto pra repetir.

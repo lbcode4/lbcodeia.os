@@ -122,10 +122,10 @@ const SKILLS: Record<string, SkillSpec> = {
 
   // ── Sistema ───────────────────────────────────────────────────────────
   "lb-sistema-novo-projeto": { skillName: "lb-sistema-novo-projeto", allowedTools: TEXT_TOOLS, mode: "text" },
-  "lb-sistema-abrir": { skillName: "lb-sistema-abrir", allowedTools: TEXT_TOOLS, mode: "text" },
-  "lb-sistema-instalar": { skillName: "lb-sistema-instalar", allowedTools: TEXT_TOOLS, mode: "text" },
-  "lb-sistema-atualizar": { skillName: "lb-sistema-atualizar", allowedTools: TEXT_TOOLS, mode: "text" },
-  "lb-sistema-salvar": { skillName: "lb-sistema-salvar", allowedTools: TEXT_TOOLS, mode: "text" },
+  "lb-sistema-contexto": { skillName: "lb-sistema-contexto", allowedTools: TEXT_TOOLS, mode: "text" },
+  "lb-sistema-onboarding": { skillName: "lb-sistema-onboarding", allowedTools: TEXT_TOOLS, mode: "text" },
+  "lb-sistema-sincronizar": { skillName: "lb-sistema-sincronizar", allowedTools: TEXT_TOOLS, mode: "text" },
+  "lb-sistema-versionar": { skillName: "lb-sistema-versionar", allowedTools: TEXT_TOOLS, mode: "text" },
 };
 
 export function isAllowedSkill(id: string): boolean {

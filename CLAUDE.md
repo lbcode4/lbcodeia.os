@@ -7,7 +7,7 @@ mensurado, repetível.
 Aqui moram as regras — como Claude carrega contexto, aprende de feedback, 
 mantém framework vivo, calibra execução conforme negócio evolui.
 
-Editável. `/lb-sistema-instalar` complementa fim do arquivo com regras do seu negócio.
+Editável. `/lb-sistema-onboarding` complementa fim do arquivo com regras do seu negócio.
 
 ---
 
@@ -115,7 +115,7 @@ Só editar linha — não reformatar tudo.
 - Conversas/perguntas simples
 - Mudanças já salvas em feedback loop
 
-Cmd `/lb-sistema-atualizar` faz varredura completa quando há dúvida.
+Cmd `/lb-sistema-sincronizar` faz varredura completa quando há dúvida.
 
 ---
 

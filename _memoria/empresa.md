@@ -1,7 +1,7 @@
 # Empresa
 
 > Memória central do negócio. O Claude lê esse arquivo antes de cada resposta.
-> Preenchido pelo `/lb-sistema-instalar` — você pode editar a qualquer momento.
+> Preenchido pelo `/lb-sistema-onboarding` — você pode editar a qualquer momento.
 
 **Nome:** LBCode.IA (LB Code — Soluções Digitais)
 **Negócio:** Software house / soluções digitais com IA

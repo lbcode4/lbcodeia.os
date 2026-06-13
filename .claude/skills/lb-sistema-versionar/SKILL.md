@@ -1,5 +1,5 @@
 ---
-name: lb-sistema-salvar
+name: lb-sistema-versionar
 description: >
   Publica o trabalho do LBCode.IA no GitHub (commit + push + versionamento).
   Na primeira vez configura repositório remoto e branch main. Depois, sincroniza
@@ -8,7 +8,7 @@ description: >
   "sync github", "/sistema-salvar" ou pedir backup/histórico do trabalho.
 ---
 
-# /lb-sistema-salvar — Publicar + Versionamento
+# /lb-sistema-versionar — Publicar + Versionamento
 
 Uma skill, uma função: garantir que tudo que você criar fica no GitHub, versionado e recuperável.
 Não é só backup — é auditoria do seu operacional.

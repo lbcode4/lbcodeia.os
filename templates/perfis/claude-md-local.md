@@ -2,7 +2,7 @@
 
 > Perfil **negócio local** — empresa estabelecida com presença física ou
 > regional. O sistema gira em torno de tráfego pago local, reputação online
-> e conversão. O `/lb-sistema-instalar` adapta esse molde com a sua realidade.
+> e conversão. O `/lb-sistema-onboarding` adapta esse molde com a sua realidade.
 
 ## O que é esse workspace
 

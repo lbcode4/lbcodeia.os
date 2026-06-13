@@ -98,4 +98,4 @@ Formato: Markdown com seções claras (não tabela gigante):
 Análise alimenta decisão operacional:
 - Resultado pode ir pro `/lb-meta-relatorio` (métricas de campanha)
 - Pode virar ação em `_memoria/estrategia.md` (ajustar foco)
-- Outputs versionados via `/lb-sistema-salvar`
+- Outputs versionados via `/lb-sistema-versionar`

@@ -2,7 +2,7 @@
 
 > Foco operacional do momento. Claude usa isso pra priorizar sugestões,
 > calibrar skills e entender urgência antes de executar qualquer tarefa.
-> Preenchido pelo `/lb-sistema-instalar` — atualizar sempre que prioridade mudar.
+> Preenchido pelo `/lb-sistema-onboarding` — atualizar sempre que prioridade mudar.
 
 ## Gargalo principal
 Conseguir o primeiro cliente (negócio iniciando, sem base ainda).

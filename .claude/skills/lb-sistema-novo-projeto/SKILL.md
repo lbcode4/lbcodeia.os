@@ -95,7 +95,7 @@ Abre terminal dentro da pasta pra eu carregar o contexto específico junto com o
 Novo projeto = novo contexto operacional isolado mas integrado:
 - Herda RETINA + GCC + OPA (se for marketing/vendas)
 - Segue identidade visual da marca
-- Outputs vão pro histórico (`/lb-sistema-salvar`)
-- Aparecem em `/lb-sistema-atualizar` depois (vai detectar novo cliente/projeto)
+- Outputs vão pro histórico (`/lb-sistema-versionar`)
+- Aparecem em `/lb-sistema-sincronizar` depois (vai detectar novo cliente/projeto)
 
 Não é sandbox — é extensão organizada da operação.

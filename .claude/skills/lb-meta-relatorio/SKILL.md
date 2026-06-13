@@ -143,5 +143,5 @@ Arquivo: `marketing/campanhas/relatorios/relatorio-2026-05-19.md`
 Relatório alimenta decisão operacional:
 - Resultado vai pro histórico (`relatorios/`)
 - Recomendações viram ação (pausar, aumentar, testar)
-- Saída documentada e versionada via `/lb-sistema-salvar`
+- Saída documentada e versionada via `/lb-sistema-versionar`
 - Próxima semana compara contra este benchmark

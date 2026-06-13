@@ -110,7 +110,7 @@ Significa que:
 - Lê contexto do negócio (`_memoria/empresa.md`)
 - Respeita tom de voz (`_memoria/preferencias.md`)
 - Usa metodologia RETINA/GCC/OPA (se for marketing/sales)
-- Entrega outputs prontos pra versionagem via `/lb-sistema-salvar`
+- Entrega outputs prontos pra versionagem via `/lb-sistema-versionar`
 - Fica mapeada em `_memoria/skills-catalogo.md` depois
 
 Você não tá criando helpers — tá expandindo sua operação.

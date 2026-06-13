@@ -1,5 +1,5 @@
 ---
-name: lb-sistema-instalar
+name: lb-sistema-onboarding
 description: >
   Instala LBCode.IA em 10-12min. Extrai site/Instagram, entrevista 18 perguntas
   (negócio + diferencial + tráfego + voz + frequência + gargalo + objetivo+métrica + prioridade).
@@ -7,7 +7,7 @@ description: >
   seo faz keywords, etc). Sem duplicação. Exemplos inline em cada pergunta.
 ---
 
-# /lb-sistema-instalar — Setup Rápido do LBCode.IA
+# /lb-sistema-onboarding — Setup Rápido do LBCode.IA
 
 Primeiro comando pós-clone. Descobre essencial em 10-12min. Skills específicas
 aprofundam depois quando user chamar (`/lb-google-ads` faz briefing detalhado de ads,

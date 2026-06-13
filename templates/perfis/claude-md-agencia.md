@@ -2,7 +2,7 @@
 
 > Perfil **agência** — equipe pequena entregando pra múltiplos clientes.
 > O sistema gira em torno de prospecção, proposta, produção e relatório.
-> O `/lb-sistema-instalar` adapta esse molde com a sua realidade.
+> O `/lb-sistema-onboarding` adapta esse molde com a sua realidade.
 
 ## O que é esse workspace
 
@@ -36,7 +36,7 @@ Time: [N pessoas]. Capacidade: [N clientes ativos simultâneos].
 
 ## Clientes ativos
 
-[Lista. O `/lb-sistema-atualizar` mantém isso sincronizado com `clientes/`.]
+[Lista. O `/lb-sistema-sincronizar` mantém isso sincronizado com `clientes/`.]
 
 ## Pipeline comercial
 

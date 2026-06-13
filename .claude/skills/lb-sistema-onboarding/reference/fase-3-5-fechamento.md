@@ -98,8 +98,8 @@ Se falhar (sem Node), avisar e seguir — skills não-visuais funcionam mesmo as
 > "**Setup pronto. LBCode.IA agora te conhece.**
 >
 > **Dia a dia:**
-> - `/lb-sistema-abrir` carrega contexto antes de trabalhar
-> - `/lb-sistema-salvar` commit + push automático
+> - `/lb-sistema-contexto` carrega contexto antes de trabalhar
+> - `/lb-sistema-versionar` commit + push automático
 >
 > **Primeira skill:**
 > Sua prioridade é [P18 — prioridade] e métrica é [P16].

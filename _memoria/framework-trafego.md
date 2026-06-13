@@ -196,7 +196,7 @@ Skills que coletam 10+ dados específicos do negócio (GBP, campanhas, auditoria
 > 15. (opcional) Avaliações ruins anteriores e contexto"
 
 ### Skills que aplicam esse pattern
-- `/lb-sistema-instalar` (já aplica — base do LBCode.IA)
+- `/lb-sistema-onboarding` (já aplica — base do LBCode.IA)
 - `/lb-google-meu-negocio` (caso clássico)
 - `/lb-google-ads` Modo B (Dominação Top 1)
 - `/lb-meta-campanha-whatsapp` (oferta + público + diferencial)
