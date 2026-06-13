@@ -16,6 +16,7 @@ import { Route as ProspeccaoRouteImport } from './routes/prospeccao'
 import { Route as OrganicoInstagramRouteImport } from './routes/organico-instagram'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as NegativasRouteImport } from './routes/negativas'
+import { Route as IdentidadeRouteImport } from './routes/identidade'
 import { Route as GerenciarAnunciosRouteImport } from './routes/gerenciar-anuncios'
 import { Route as GeradorCopyRouteImport } from './routes/gerador-copy'
 import { Route as DiagnosticoMetaRouteImport } from './routes/diagnostico-meta'
@@ -70,6 +71,11 @@ const OnboardingRoute = OnboardingRouteImport.update({
 const NegativasRoute = NegativasRouteImport.update({
   id: '/negativas',
   path: '/negativas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IdentidadeRoute = IdentidadeRouteImport.update({
+  id: '/identidade',
+  path: '/identidade',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GerenciarAnunciosRoute = GerenciarAnunciosRouteImport.update({
@@ -188,6 +194,7 @@ export interface FileRoutesByFullPath {
   '/diagnostico-meta': typeof DiagnosticoMetaRoute
   '/gerador-copy': typeof GeradorCopyRoute
   '/gerenciar-anuncios': typeof GerenciarAnunciosRoute
+  '/identidade': typeof IdentidadeRoute
   '/negativas': typeof NegativasRoute
   '/onboarding': typeof OnboardingRoute
   '/organico-instagram': typeof OrganicoInstagramRoute
@@ -217,6 +224,7 @@ export interface FileRoutesByTo {
   '/diagnostico-meta': typeof DiagnosticoMetaRoute
   '/gerador-copy': typeof GeradorCopyRoute
   '/gerenciar-anuncios': typeof GerenciarAnunciosRoute
+  '/identidade': typeof IdentidadeRoute
   '/negativas': typeof NegativasRoute
   '/onboarding': typeof OnboardingRoute
   '/organico-instagram': typeof OrganicoInstagramRoute
@@ -247,6 +255,7 @@ export interface FileRoutesById {
   '/diagnostico-meta': typeof DiagnosticoMetaRoute
   '/gerador-copy': typeof GeradorCopyRoute
   '/gerenciar-anuncios': typeof GerenciarAnunciosRoute
+  '/identidade': typeof IdentidadeRoute
   '/negativas': typeof NegativasRoute
   '/onboarding': typeof OnboardingRoute
   '/organico-instagram': typeof OrganicoInstagramRoute
@@ -278,6 +287,7 @@ export interface FileRouteTypes {
     | '/diagnostico-meta'
     | '/gerador-copy'
     | '/gerenciar-anuncios'
+    | '/identidade'
     | '/negativas'
     | '/onboarding'
     | '/organico-instagram'
@@ -307,6 +317,7 @@ export interface FileRouteTypes {
     | '/diagnostico-meta'
     | '/gerador-copy'
     | '/gerenciar-anuncios'
+    | '/identidade'
     | '/negativas'
     | '/onboarding'
     | '/organico-instagram'
@@ -336,6 +347,7 @@ export interface FileRouteTypes {
     | '/diagnostico-meta'
     | '/gerador-copy'
     | '/gerenciar-anuncios'
+    | '/identidade'
     | '/negativas'
     | '/onboarding'
     | '/organico-instagram'
@@ -366,6 +378,7 @@ export interface RootRouteChildren {
   DiagnosticoMetaRoute: typeof DiagnosticoMetaRoute
   GeradorCopyRoute: typeof GeradorCopyRoute
   GerenciarAnunciosRoute: typeof GerenciarAnunciosRoute
+  IdentidadeRoute: typeof IdentidadeRoute
   NegativasRoute: typeof NegativasRoute
   OnboardingRoute: typeof OnboardingRoute
   OrganicoInstagramRoute: typeof OrganicoInstagramRoute
@@ -430,6 +443,13 @@ declare module '@tanstack/react-router' {
       path: '/negativas'
       fullPath: '/negativas'
       preLoaderRoute: typeof NegativasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/identidade': {
+      id: '/identidade'
+      path: '/identidade'
+      fullPath: '/identidade'
+      preLoaderRoute: typeof IdentidadeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/gerenciar-anuncios': {
@@ -590,6 +610,7 @@ const rootRouteChildren: RootRouteChildren = {
   DiagnosticoMetaRoute: DiagnosticoMetaRoute,
   GeradorCopyRoute: GeradorCopyRoute,
   GerenciarAnunciosRoute: GerenciarAnunciosRoute,
+  IdentidadeRoute: IdentidadeRoute,
   NegativasRoute: NegativasRoute,
   OnboardingRoute: OnboardingRoute,
   OrganicoInstagramRoute: OrganicoInstagramRoute,
