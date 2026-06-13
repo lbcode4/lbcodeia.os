@@ -74,7 +74,26 @@ function DiagnosticoMeta() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 mb-6">
-        {metaKpis.map((k) => (
+        {liveData ? (() => {
+          const fmtBRL = (n: number) => `R$ ${n.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+          const fmtInt = (n: number) => n.toLocaleString("pt-BR");
+          const m = liveData.metricas;
+          const kpis = [
+            { label: "Gasto 7d", value: fmtBRL(m.gasto_total_7d ?? 0) },
+            { label: "Impressões", value: fmtInt(m.impressoes_7d ?? 0) },
+            { label: "Cliques", value: fmtInt(m.cliques_7d ?? 0) },
+            { label: "CTR", value: `${(m.ctr ?? 0).toFixed(2)}%` },
+            { label: "Campanhas", value: fmtInt(m.total_campanhas ?? 0) },
+            { label: "Ativas", value: fmtInt(m.campanhas_ativas ?? 0) },
+            { label: "Score", value: `${m.score ?? liveData.score}/100` },
+          ];
+          return kpis.map((k) => (
+            <Card key={k.label} className="!p-3">
+              <div className="text-[10px] text-muted-foreground uppercase tracking-wide">{k.label}</div>
+              <div className="text-[15px] font-semibold mt-1">{k.value}</div>
+            </Card>
+          ));
+        })() : metaKpis.map((k) => (
           <Card key={k.label} className="!p-3">
             <div className="text-[10px] text-muted-foreground uppercase tracking-wide">{k.label}</div>
             <div className="text-[15px] font-semibold mt-1">{k.value}</div>
