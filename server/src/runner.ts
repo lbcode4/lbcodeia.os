@@ -1,10 +1,28 @@
 import { query } from "@anthropic-ai/claude-agent-sdk";
-import { readFile } from "node:fs/promises";
+import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import { resolveSkill } from "./skills-map.js";
 
 const REPO_ROOT = join(import.meta.dirname, "..", "..");
+const RESULTS_ROOT = join(REPO_ROOT, "dados", "results");
 const MODEL = process.env.LBCODE_MODEL || "claude-sonnet-4-6";
+
+export async function saveResult(skill: string, cliente: string, payload: unknown): Promise<void> {
+  const dir = join(RESULTS_ROOT, skill);
+  await mkdir(dir, { recursive: true });
+  const safe = cliente.replace(/[^a-zA-Z0-9_-]/g, "_") || "default";
+  await writeFile(join(dir, `${safe}.json`), JSON.stringify({ savedAt: new Date().toISOString(), payload }, null, 2), "utf-8");
+}
+
+export async function loadResult(skill: string, cliente: string): Promise<unknown | null> {
+  const safe = cliente.replace(/[^a-zA-Z0-9_-]/g, "_") || "default";
+  try {
+    const raw = await readFile(join(RESULTS_ROOT, skill, `${safe}.json`), "utf-8");
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
 
 export type SkillEvent =
   | { type: "status"; text: string }
@@ -158,6 +176,7 @@ export async function* runSkill(
           const payload = extractJsonBlock(accumulated);
           if (payload !== null) {
             yield { type: "data", payload };
+            saveResult(skill, cliente, payload).catch(() => {});
           } else {
             yield { type: "error", text: "Resposta sem bloco JSON estruturado" };
           }

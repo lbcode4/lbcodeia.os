@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { PageHeader, Card, Badge, Button } from "@/components/app-shell";
 import { searchTerms, negativeGroups, fmtBRL } from "@/lib/mock";
 import { ChevronDown, ChevronRight, Download, PiggyBank, Loader2 } from "lucide-react";
-import { fetchContas, runSkill, type Conta } from "@/lib/skill-client";
+import { fetchContas, runSkill, fetchLastResult, type Conta } from "@/lib/skill-client";
 
 export const Route = createFileRoute("/negativas")({
   head: () => ({ meta: [{ title: "Negativas — LBCode Ads" }, { name: "description", content: "Termos de busca e palavras-chave negativas sugeridas para Google Ads." }] }),
@@ -25,7 +25,16 @@ function Negativas() {
   const [statusMsg, setStatusMsg] = useState("");
 
   useEffect(() => {
-    fetchContas().then((cs) => { setContas(cs); if (cs[0]) setCliente(cs[0].cliente); }).catch(() => {});
+    fetchContas()
+      .then((cs) => {
+        setContas(cs);
+        if (cs[0]) {
+          setCliente(cs[0].cliente);
+          return fetchLastResult<typeof liveData>("lb-ads-negativas", cs[0].cliente);
+        }
+      })
+      .then((last) => { if (last) setLiveData(last.payload); })
+      .catch(() => {});
   }, []);
 
   const executarAnalise = async () => {

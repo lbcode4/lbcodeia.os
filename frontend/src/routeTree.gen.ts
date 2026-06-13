@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RelatorioUnificadoRouteImport } from './routes/relatorio-unificado'
+import { Route as ReelsOrganicoRouteImport } from './routes/reels-organico'
 import { Route as ReelsRouteImport } from './routes/reels'
 import { Route as ProspeccaoRouteImport } from './routes/prospeccao'
 import { Route as OrganicoInstagramRouteImport } from './routes/organico-instagram'
@@ -39,6 +40,11 @@ import { Route as ApiPublicChatRouteImport } from './routes/api/public/chat'
 const RelatorioUnificadoRoute = RelatorioUnificadoRouteImport.update({
   id: '/relatorio-unificado',
   path: '/relatorio-unificado',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReelsOrganicoRoute = ReelsOrganicoRouteImport.update({
+  id: '/reels-organico',
+  path: '/reels-organico',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReelsRoute = ReelsRouteImport.update({
@@ -187,6 +193,7 @@ export interface FileRoutesByFullPath {
   '/organico-instagram': typeof OrganicoInstagramRoute
   '/prospeccao': typeof ProspeccaoRoute
   '/reels': typeof ReelsRoute
+  '/reels-organico': typeof ReelsOrganicoRoute
   '/relatorio-unificado': typeof RelatorioUnificadoRoute
   '/hub/$hubId': typeof HubHubIdRoute
   '/sites/$siteId': typeof SitesSiteIdRoute
@@ -215,6 +222,7 @@ export interface FileRoutesByTo {
   '/organico-instagram': typeof OrganicoInstagramRoute
   '/prospeccao': typeof ProspeccaoRoute
   '/reels': typeof ReelsRoute
+  '/reels-organico': typeof ReelsOrganicoRoute
   '/relatorio-unificado': typeof RelatorioUnificadoRoute
   '/hub/$hubId': typeof HubHubIdRoute
   '/sites/$siteId': typeof SitesSiteIdRoute
@@ -244,6 +252,7 @@ export interface FileRoutesById {
   '/organico-instagram': typeof OrganicoInstagramRoute
   '/prospeccao': typeof ProspeccaoRoute
   '/reels': typeof ReelsRoute
+  '/reels-organico': typeof ReelsOrganicoRoute
   '/relatorio-unificado': typeof RelatorioUnificadoRoute
   '/hub/$hubId': typeof HubHubIdRoute
   '/sites/$siteId': typeof SitesSiteIdRoute
@@ -274,6 +283,7 @@ export interface FileRouteTypes {
     | '/organico-instagram'
     | '/prospeccao'
     | '/reels'
+    | '/reels-organico'
     | '/relatorio-unificado'
     | '/hub/$hubId'
     | '/sites/$siteId'
@@ -302,6 +312,7 @@ export interface FileRouteTypes {
     | '/organico-instagram'
     | '/prospeccao'
     | '/reels'
+    | '/reels-organico'
     | '/relatorio-unificado'
     | '/hub/$hubId'
     | '/sites/$siteId'
@@ -330,6 +341,7 @@ export interface FileRouteTypes {
     | '/organico-instagram'
     | '/prospeccao'
     | '/reels'
+    | '/reels-organico'
     | '/relatorio-unificado'
     | '/hub/$hubId'
     | '/sites/$siteId'
@@ -359,6 +371,7 @@ export interface RootRouteChildren {
   OrganicoInstagramRoute: typeof OrganicoInstagramRoute
   ProspeccaoRoute: typeof ProspeccaoRoute
   ReelsRoute: typeof ReelsRoute
+  ReelsOrganicoRoute: typeof ReelsOrganicoRoute
   RelatorioUnificadoRoute: typeof RelatorioUnificadoRoute
   HubHubIdRoute: typeof HubHubIdRoute
   SitesSiteIdRoute: typeof SitesSiteIdRoute
@@ -375,6 +388,13 @@ declare module '@tanstack/react-router' {
       path: '/relatorio-unificado'
       fullPath: '/relatorio-unificado'
       preLoaderRoute: typeof RelatorioUnificadoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reels-organico': {
+      id: '/reels-organico'
+      path: '/reels-organico'
+      fullPath: '/reels-organico'
+      preLoaderRoute: typeof ReelsOrganicoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reels': {
@@ -575,6 +595,7 @@ const rootRouteChildren: RootRouteChildren = {
   OrganicoInstagramRoute: OrganicoInstagramRoute,
   ProspeccaoRoute: ProspeccaoRoute,
   ReelsRoute: ReelsRoute,
+  ReelsOrganicoRoute: ReelsOrganicoRoute,
   RelatorioUnificadoRoute: RelatorioUnificadoRoute,
   HubHubIdRoute: HubHubIdRoute,
   SitesSiteIdRoute: SitesSiteIdRoute,

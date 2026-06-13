@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { PageHeader, Card, Badge, Button } from "@/components/app-shell";
 import { metaKpis, diagnosticAlerts, recommendations } from "@/lib/mock";
 import { AlertCircle, AlertTriangle, CheckCircle2, Loader2 } from "lucide-react";
-import { fetchContas, runSkill, type Conta } from "@/lib/skill-client";
+import { fetchContas, runSkill, fetchLastResult, type Conta } from "@/lib/skill-client";
 
 export const Route = createFileRoute("/diagnostico-meta")({
   head: () => ({ meta: [{ title: "Diagnóstico Meta — LBCode Ads" }, { name: "description", content: "Alertas e recomendações priorizadas para Meta Ads." }] }),
@@ -23,7 +23,16 @@ function DiagnosticoMeta() {
   const [statusMsg, setStatusMsg] = useState("");
 
   useEffect(() => {
-    fetchContas().then((cs) => { setContas(cs); if (cs[0]) setCliente(cs[0].cliente); }).catch(() => {});
+    fetchContas()
+      .then((cs) => {
+        setContas(cs);
+        if (cs[0]) {
+          setCliente(cs[0].cliente);
+          return fetchLastResult<typeof liveData>("lb-meta-diagnostico", cs[0].cliente);
+        }
+      })
+      .then((last) => { if (last) setLiveData(last.payload); })
+      .catch(() => {});
   }, []);
 
   const executarAnalise = async () => {

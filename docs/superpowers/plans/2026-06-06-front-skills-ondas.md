@@ -181,7 +181,7 @@ const SKILLS: Record<string, SkillSpec> = {
   "lb-conteudo-publicar": { skillName: "lb-conteudo-publicar", allowedTools: TEXT_TOOLS, mode: "text" },
   "lb-conteudo-aprovar": { skillName: "lb-conteudo-aprovar", allowedTools: TEXT_TOOLS, mode: "text" },
   "lb-conteudo-auditoria-insta": { skillName: "lb-conteudo-auditoria-insta", allowedTools: SCRIPT_TOOLS, mode: "text" },
-  "lb-conteudo-analise-reels-organico": { skillName: "lb-conteudo-analise-reels-organico", allowedTools: SCRIPT_TOOLS, mode: "text" },
+  "lb-meta-analise-reels-organico": { skillName: "lb-meta-analise-reels-organico", allowedTools: SCRIPT_TOOLS, mode: "text" },
 
   // ── Vendas & CRM ──────────────────────────────────────────────────────
   "lb-venda-prospectar": { skillName: "lb-venda-prospectar", allowedTools: TEXT_TOOLS, mode: "text" },

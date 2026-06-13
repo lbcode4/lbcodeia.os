@@ -14,6 +14,16 @@ export type Conta = {
   ativo: boolean;
 };
 
+export async function fetchLastResult<T>(skill: string, cliente: string): Promise<{ savedAt: string; payload: T } | null> {
+  try {
+    const res = await fetch(`${BACKEND}/api/results/${encodeURIComponent(skill)}?cliente=${encodeURIComponent(cliente)}`);
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
+}
+
 export async function fetchContas(): Promise<Conta[]> {
   const res = await fetch(`${BACKEND}/api/contas`);
   if (!res.ok) throw new Error("Falha ao carregar contas");

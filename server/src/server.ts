@@ -4,7 +4,7 @@ import { serve } from "@hono/node-server";
 import { streamSSE } from "hono/streaming";
 import { listContas } from "./contas.js";
 import { isAllowedSkill } from "./skills-map.js";
-import { runSkill } from "./runner.js";
+import { runSkill, loadResult } from "./runner.js";
 import { listCampaigns, readCampaignFile } from "./prospeccao.js";
 import { listConteudo, readConteudoArquivo, updateConteudoStatus } from "./conteudo.js";
 import { createSite, listSites, readSiteHtml, writeSiteHtml, streamSiteChat, type ChatMessage } from "./sites.js";
@@ -48,6 +48,14 @@ app.post("/api/skills/run", async (c) => {
       if (ev.type === "done" || ev.type === "error") break;
     }
   });
+});
+
+app.get("/api/results/:skill", async (c) => {
+  const skill = c.req.param("skill");
+  const cliente = c.req.query("cliente") ?? "";
+  const result = await loadResult(skill, cliente);
+  if (!result) return c.json({ error: "Sem resultado salvo" }, 404);
+  return c.json(result);
 });
 
 app.post("/api/chat", async (c) => {

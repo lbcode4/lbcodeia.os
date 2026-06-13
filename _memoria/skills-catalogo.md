@@ -62,7 +62,7 @@ todas, cada filho usa o subconjunto do seu modelo.
 | `/lb-venda-objecoes` | ✅ | ✅ | ❌ | ❌ | Banco das 10 objeções B2B + contornos |
 | `/lb-venda-follow-up` | ✅ | ✅ | ❌ | ❌ | Sequência 5 msgs pós-abordagem; complementa /lb-venda-prospectar |
 | `/lb-conteudo-reels` | ✅ | ✅ | ✅ | ✅ | Formato de maior alcance orgânico — complementa /lb-conteudo-carrossel |
-| `/lb-conteudo-analise-reels-organico` | ✅ | ✅ | ✅ | ✅ | Live API — lê reels orgânicos, acha padrão vencedor e gera roteiro data-driven; precisa conta + token |
+| `/lb-meta-analise-reels-organico` | ✅ | ✅ | ✅ | ✅ | Live API — lê reels orgânicos, acha padrão vencedor e gera roteiro data-driven; precisa conta + token |
 | `/lb-conteudo-stories` | ✅ | ✅ | ✅ | ✅ | Sequência 5-7 stories interativos baseada em RETINA |
 | `/lb-conteudo-calendario` | ✅ | ✅ | ✅ | ✅ | Calendário mensal 20-25 posts nos 6 pilares RETINA |
 | `/lb-venda-precificar` | ✅ | ✅ | ❌ | ❌ | Calcula preço SaaS/serviço com margem e benchmark |

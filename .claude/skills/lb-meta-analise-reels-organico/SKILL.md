@@ -1,5 +1,5 @@
 ---
-name: lb-conteudo-analise-reels-organico
+name: lb-meta-analise-reels-organico
 description: >
   Analisa o desempenho ORGÂNICO dos Reels do Instagram (últimos 90 dias) via Graph API,
   identifica padrões vencedores e perdedores e devolve um roteiro data-driven pro próximo
@@ -7,10 +7,10 @@ description: >
   Diferente de /lb-meta-analise-reels (que decide qual Reel impulsionar com verba paga):
   esta foca o orgânico e a criação do próximo conteúdo. Use quando o usuário pedir
   "analisar reels orgânicos", "o que funciona nos meus reels", "padrão de reel que viraliza",
-  "próximo reel baseado em dados", "qual reel deu certo", ou /lb-conteudo-analise-reels-organico.
+  "próximo reel baseado em dados", "qual reel deu certo", ou /lb-meta-analise-reels-organico.
 ---
 
-# /lb-conteudo-analise-reels-organico — Padrões de Reels orgânicos → próximo roteiro
+# /lb-meta-analise-reels-organico — Padrões de Reels orgânicos → próximo roteiro
 
 "Não chuta o próximo Reel. Lê o que o teu público já premiou e repete o padrão."
 
@@ -32,7 +32,7 @@ Puxa dado real da Graph API → identifica o que viraliza no perfil → entrega 
 | Skill | Foco | Saída |
 |-------|------|-------|
 | `/lb-conteudo-reels` | Criar roteiro do zero a partir de tema | 1 roteiro |
-| **`/lb-conteudo-analise-reels-organico`** | **Ler performance orgânica → achar padrão → roteiro baseado em dados** | **análise + roteiro** |
+| **`/lb-meta-analise-reels-organico`** | **Ler performance orgânica → achar padrão → roteiro baseado em dados** | **análise + roteiro** |
 | `/lb-meta-analise-reels` | Decidir qual Reel impulsionar com verba (pago) | ranking + candidatos a boost |
 
 ---

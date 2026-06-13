@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { PageHeader, Card, Button } from "@/components/app-shell";
 import { auditRows, quickWins, fmtBRL } from "@/lib/mock";
 import { Check, AlertTriangle, TrendingDown, Loader2 } from "lucide-react";
-import { fetchContas, runSkill, type Conta } from "@/lib/skill-client";
+import { fetchContas, runSkill, fetchLastResult, type Conta } from "@/lib/skill-client";
 
 export const Route = createFileRoute("/auditoria-meta")({
   head: () => ({ meta: [{ title: "Auditoria Meta — LBCode Ads" }, { name: "description", content: "Auditoria de conjuntos, posicionamentos e quick wins." }] }),
@@ -24,7 +24,16 @@ function AuditoriaMeta() {
   const [statusMsg, setStatusMsg] = useState("");
 
   useEffect(() => {
-    fetchContas().then((cs) => { setContas(cs); if (cs[0]) setCliente(cs[0].cliente); }).catch(() => {});
+    fetchContas()
+      .then((cs) => {
+        setContas(cs);
+        if (cs[0]) {
+          setCliente(cs[0].cliente);
+          return fetchLastResult<typeof liveData>("lb-meta-auditoria", cs[0].cliente);
+        }
+      })
+      .then((last) => { if (last) setLiveData(last.payload); })
+      .catch(() => {});
   }, []);
 
   const executarAnalise = async () => {

@@ -91,7 +91,18 @@ const SKILLS: Record<string, SkillSpec> = {
   "lb-conteudo-publicar": { skillName: "lb-conteudo-publicar", allowedTools: TEXT_TOOLS, mode: "text" },
   "lb-conteudo-aprovar": { skillName: "lb-conteudo-aprovar", allowedTools: TEXT_TOOLS, mode: "text" },
   "lb-conteudo-auditoria-insta": { skillName: "lb-conteudo-auditoria-insta", allowedTools: SCRIPT_TOOLS, mode: "text" },
-  "lb-conteudo-analise-reels-organico": { skillName: "lb-conteudo-analise-reels-organico", allowedTools: SCRIPT_TOOLS, mode: "text" },
+  "lb-meta-analise-reels-organico": {
+    skillName: "lb-meta-analise-reels-organico", allowedTools: SCRIPT_TOOLS, mode: "data",
+    outputContract: {
+      periodo: "string",
+      reelsAnalisados: "number",
+      ranking: [{ id: "string", engRate: "number", plays: "number", data: "string" }],
+      padroesVencedores: ["string"],
+      padroesPerdedores: ["string"],
+      leituraRetina: "string",
+      roteiro: { hook: "string", desenvolvimento: "string", cta: "string", legenda: "string" },
+    },
+  },
 
   // ── Vendas & CRM ──────────────────────────────────────────────────────
   "lb-venda-prospectar": { skillName: "lb-venda-prospectar", allowedTools: SCRIPT_TOOLS, mode: "text" },

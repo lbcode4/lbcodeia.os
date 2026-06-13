@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { PageHeader, Card, Badge } from "@/components/app-shell";
 import { reels, fmtInt } from "@/lib/mock";
 import { Play, TrendingUp, Eye, Users, Loader2 } from "lucide-react";
-import { fetchContas, runSkill, type Conta } from "@/lib/skill-client";
+import { fetchContas, runSkill, fetchLastResult, type Conta } from "@/lib/skill-client";
 
 export const Route = createFileRoute("/reels")({
   head: () => ({ meta: [{ title: "Reels — LBCode Ads" }, { name: "description", content: "Ranking de Reels por desempenho e sugestões para impulsionar." }] }),
@@ -26,7 +26,16 @@ function Reels() {
   const [statusMsg, setStatusMsg] = useState("");
 
   useEffect(() => {
-    fetchContas().then((cs) => { setContas(cs); if (cs[0]) setCliente(cs[0].cliente); }).catch(() => {});
+    fetchContas()
+      .then((cs) => {
+        setContas(cs);
+        if (cs[0]) {
+          setCliente(cs[0].cliente);
+          return fetchLastResult<typeof liveData>("lb-meta-analise-reels", cs[0].cliente);
+        }
+      })
+      .then((last) => { if (last) setLiveData(last.payload); })
+      .catch(() => {});
   }, []);
 
   const executarAnalise = async () => {

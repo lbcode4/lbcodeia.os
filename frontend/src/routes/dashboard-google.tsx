@@ -4,7 +4,7 @@ import { PageHeader, Card } from "@/components/app-shell";
 import { AreaChart } from "@/components/charts";
 import { googleKpis, googleCampaigns, spendOverTime, fmtBRL } from "@/lib/mock";
 import { Loader2 } from "lucide-react";
-import { fetchContas, runSkill, type Conta } from "@/lib/skill-client";
+import { fetchContas, runSkill, fetchLastResult, type Conta } from "@/lib/skill-client";
 
 export const Route = createFileRoute("/dashboard-google")({
   head: () => ({ meta: [{ title: "Dashboard Google — LBCode Ads" }, { name: "description", content: "KPIs e campanhas Google Ads (Search e Performance Max)." }] }),
@@ -25,7 +25,16 @@ function DashboardGoogle() {
   const [statusMsg, setStatusMsg] = useState("");
 
   useEffect(() => {
-    fetchContas().then((cs) => { setContas(cs); if (cs[0]) setCliente(cs[0].cliente); }).catch(() => {});
+    fetchContas()
+      .then((cs) => {
+        setContas(cs);
+        if (cs[0]) {
+          setCliente(cs[0].cliente);
+          return fetchLastResult<typeof liveData>("lb-google-dashboard", cs[0].cliente);
+        }
+      })
+      .then((last) => { if (last) setLiveData(last.payload); })
+      .catch(() => {});
   }, []);
 
   const executarAnalise = async () => {
