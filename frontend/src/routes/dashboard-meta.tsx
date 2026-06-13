@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Card, Badge } from "@/components/app-shell";
 import { fmtBRL, fmtInt } from "@/lib/mock";
 import { Moon, Instagram, Heart, MessageCircle, Share2, Bookmark, Eye, Loader2 } from "lucide-react";
-import { fetchContas, runSkill, type Conta } from "@/lib/skill-client";
+import { fetchContas, runSkill, fetchLastResult, type Conta } from "@/lib/skill-client";
 
 export const Route = createFileRoute("/dashboard-meta")({
   head: () => ({
@@ -285,7 +285,16 @@ function DashboardMeta() {
   const [statusMsg, setStatusMsg] = useState("");
 
   useEffect(() => {
-    fetchContas().then((cs) => { setContas(cs); if (cs[0]) setCliente(cs[0].cliente); }).catch(() => {});
+    fetchContas()
+      .then((cs) => {
+        setContas(cs);
+        if (cs[0]) {
+          setCliente(cs[0].cliente);
+          return fetchLastResult<typeof liveData>("lb-meta-dashboard", cs[0].cliente);
+        }
+      })
+      .then((last) => { if (last) setLiveData(last.payload); })
+      .catch(() => {});
   }, []);
 
   const executarAnalise = async () => {
