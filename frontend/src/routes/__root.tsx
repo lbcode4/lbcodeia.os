@@ -120,6 +120,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
 import { ThemeProvider } from "../lib/theme";
 import { AppShell } from "../components/app-shell";
+import { ClienteProvider } from "../lib/cliente-context";
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
@@ -140,9 +141,11 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <AppShell>
-          <Outlet />
-        </AppShell>
+        <ClienteProvider>
+          <AppShell>
+            <Outlet />
+          </AppShell>
+        </ClienteProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { PageHeader, Card, Button } from "@/components/app-shell";
-import { fetchContas, type Conta } from "@/lib/skill-client";
+import { useCliente } from "@/lib/cliente-context";
 import { ChevronDown, ChevronRight, History, RefreshCw, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/gerenciar-anuncios")({
@@ -68,8 +68,7 @@ function StatusToggle({ on, onClick }: { on: boolean; onClick: () => void }) {
 }
 
 function GerenciarCampanhas() {
-  const [contas, setContas] = useState<Conta[]>([]);
-  const [cliente, setCliente] = useState("");
+  const { contas, cliente, setCliente } = useCliente();
   const [campanhas, setCampanhas] = useState<Campanha[]>([]);
   const [adsets, setAdsets] = useState<Record<string, Adset[]>>({});
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -82,26 +81,17 @@ function GerenciarCampanhas() {
   const [q, setQ] = useState("");
 
   useEffect(() => {
-    fetchContas()
-      .then((cs) => {
-        setContas(cs);
-        if (cs[0]) setCliente(cs[0].cliente);
-      })
-      .catch(() => setErro("Falha ao carregar contas"));
-  }, []);
-
-  useEffect(() => {
-    if (cliente) carregarCampanhas();
+    if (cliente) carregarCampanhasComCliente(cliente);
   }, [cliente]);
 
-  async function carregarCampanhas() {
+  async function carregarCampanhasComCliente(c: string) {
     setLoading(true);
     setErro("");
     setCampanhas([]);
     setExpandedId(null);
     setAdsets({});
     try {
-      const res = await fetch(`${BACKEND}/api/meta/campanhas?cliente=${encodeURIComponent(cliente)}`);
+      const res = await fetch(`${BACKEND}/api/meta/campanhas?cliente=${encodeURIComponent(c)}`);
       if (!res.ok) {
         const body = await res.json() as { error?: string };
         throw new Error(body.error ?? `Erro ${res.status}`);
@@ -112,6 +102,10 @@ function GerenciarCampanhas() {
     } finally {
       setLoading(false);
     }
+  }
+
+  function carregarCampanhas() {
+    if (cliente) carregarCampanhasComCliente(cliente);
   }
 
   async function expandCampanha(id: string) {
@@ -247,7 +241,7 @@ function GerenciarCampanhas() {
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <select
           value={cliente}
-          onChange={(e) => setCliente(e.target.value)}
+          onChange={(e) => { setCliente(e.target.value); carregarCampanhasComCliente(e.target.value); }}
           className="h-9 rounded-md border border-border bg-card text-[13px] px-3 min-w-[160px]"
         >
           {contas.map((c) => (

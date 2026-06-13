@@ -4,7 +4,8 @@ import {
   LayoutDashboard, Menu, X, Moon, Sun, ChevronDown, User, Bot, Globe, FileBarChart, Target, Library, Newspaper, TrendingUp, Settings,
 } from "lucide-react";
 import { useTheme } from "@/lib/theme";
-import { clients, periods } from "@/lib/mock";
+import { periods } from "@/lib/mock";
+import { useCliente } from "@/lib/cliente-context";
 import { hubs } from "@/lib/skills";
 
 const topNav = [
@@ -27,12 +28,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { theme, toggle } = useTheme();
-  const [client, setClient] = useState(clients[0].id);
+  const { contas, cliente, setCliente } = useCliente();
   const [period, setPeriod] = useState(periods[2]);
   const [clientOpen, setClientOpen] = useState(false);
   const [periodOpen, setPeriodOpen] = useState(false);
 
-  const activeClient = clients.find((c) => c.id === client)!;
+  const activeClient = contas.find((c) => c.cliente === cliente) ?? contas[0];
 
   return (
     <div className="min-h-screen flex bg-background text-foreground">
@@ -148,20 +149,20 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 onClick={() => { setClientOpen((o) => !o); setPeriodOpen(false); }}
                 className="flex items-center gap-2 h-9 px-3 rounded-md border border-border bg-card text-[13px] hover:bg-accent"
               >
-                <span className="font-medium">{activeClient.name}</span>
-                <span className="text-muted-foreground hidden sm:inline">{activeClient.handle}</span>
+                <span className="font-medium">{activeClient?.cliente ?? "—"}</span>
+                <span className="text-muted-foreground hidden sm:inline">{activeClient?.handleIg ?? ""}</span>
                 <ChevronDown size={14} />
               </button>
               {clientOpen && (
                 <div className="absolute mt-1 left-0 w-64 bg-popover border border-border rounded-md shadow-md py-1 z-50">
-                  {clients.map((c) => (
+                  {contas.map((c) => (
                     <button
-                      key={c.id}
-                      onClick={() => { setClient(c.id); setClientOpen(false); }}
+                      key={c.cliente}
+                      onClick={() => { setCliente(c.cliente); setClientOpen(false); }}
                       className="w-full text-left px-3 py-2 text-[13px] hover:bg-accent flex justify-between"
                     >
-                      <span>{c.name}</span>
-                      <span className="text-muted-foreground">{c.handle}</span>
+                      <span>{c.cliente}</span>
+                      <span className="text-muted-foreground">{c.handleIg}</span>
                     </button>
                   ))}
                 </div>
