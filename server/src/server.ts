@@ -201,7 +201,8 @@ app.get("/api/carrosseis/inspiracao", async (c) => {
 
 app.get("/api/dashboard/data", async (c) => {
   try {
-    return c.json(await getDashboardData());
+    const cliente = c.req.query("cliente");
+    return c.json(await getDashboardData(cliente));
   } catch (e) {
     return c.json({ error: (e as Error).message }, 500);
   }

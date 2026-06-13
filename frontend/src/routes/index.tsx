@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { PageHeader, Card } from "@/components/app-shell";
+import { useCliente } from "@/lib/cliente-context";
 import {
   ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, PieChart, Pie, Cell, Legend, BarChart,
@@ -374,17 +375,22 @@ export const Route = createFileRoute("/")({
 // ─── componente principal ─────────────────────────────────────────────────────
 
 function Overview() {
+  const { cliente } = useCliente();
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState("");
 
   useEffect(() => {
-    fetch(`${BACKEND}/api/dashboard/data`)
+    if (!cliente) return;
+    setLoading(true);
+    setErro("");
+    setData(null);
+    fetch(`${BACKEND}/api/dashboard/data?cliente=${encodeURIComponent(cliente)}`)
       .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
       .then((d) => setData(d as DashboardData))
       .catch(() => setErro("Backend offline ou relatório não encontrado"))
       .finally(() => setLoading(false));
-  }, []);
+  }, [cliente]);
 
   if (loading) return (
     <div className="flex items-center gap-2 text-muted-foreground text-[13px] mt-8">

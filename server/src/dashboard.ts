@@ -31,11 +31,18 @@ function extractJsonArray(html: string, marker: string): unknown[] {
   try { return JSON.parse(html.slice(i, j + 1)); } catch { return []; }
 }
 
-async function findLatestFile(nameFilter: (n: string) => boolean): Promise<string | null> {
+function normalizeSlug(s: string): string {
+  return s.toLowerCase().replace(/[\s\-_]+/g, "");
+}
+
+async function findLatestFile(nameFilter: (n: string) => boolean, clienteSlug?: string): Promise<string | null> {
   const candidates: { path: string; name: string }[] = [];
   try {
     const clients = await readdir(RELATORIOS_ROOT, { withFileTypes: true });
-    for (const c of clients.filter((d) => d.isDirectory())) {
+    const dirs = clients.filter((d) => d.isDirectory()).filter((d) =>
+      !clienteSlug || normalizeSlug(d.name) === normalizeSlug(clienteSlug)
+    );
+    for (const c of dirs) {
       const files = await readdir(join(RELATORIOS_ROOT, c.name), { withFileTypes: true });
       for (const f of files.filter((f) => f.isFile() && f.name.endsWith(".html") && nameFilter(f.name.toLowerCase()))) {
         candidates.push({ path: join(RELATORIOS_ROOT, c.name, f.name), name: f.name });
@@ -130,10 +137,10 @@ function parseAlertas(html: string): Array<{ type: string; icon: string; title: 
   return alertas;
 }
 
-export async function getDashboardData(): Promise<unknown> {
+export async function getDashboardData(cliente?: string): Promise<unknown> {
   const [dashPath, relatorioPath] = await Promise.all([
-    findLatestFile((n) => n.includes("dashboard")),
-    findLatestFile((n) => n.includes("relatorio-meta")),
+    findLatestFile((n) => n.includes("dashboard"), cliente),
+    findLatestFile((n) => n.includes("relatorio-meta"), cliente),
   ]);
 
   if (!dashPath && !relatorioPath) throw new Error("Nenhum relatório encontrado");
