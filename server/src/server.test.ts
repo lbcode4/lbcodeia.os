@@ -149,3 +149,73 @@ describe("PUT /api/meta/adsets/:id/status", () => {
     expect(res.status).toBe(400);
   });
 });
+
+describe("POST /api/carrosseis/referencias", () => {
+  it("retorna 400 quando sessionId não informado", async () => {
+    const res = await app.request("/api/carrosseis/referencias", { method: "POST" });
+    expect(res.status).toBe(400);
+  });
+
+  it("retorna 400 para sessionId inválido (não-UUID)", async () => {
+    const fd = new FormData();
+    fd.append("file", new Blob(["x"], { type: "image/png" }), "x.png");
+    const res = await app.request("/api/carrosseis/referencias?sessionId=nao-e-uuid", {
+      method: "POST",
+      body: fd,
+    });
+    expect(res.status).toBe(400);
+  });
+
+  it("retorna 400 quando campo 'file' ausente", async () => {
+    const fd = new FormData();
+    const res = await app.request(
+      "/api/carrosseis/referencias?sessionId=550e8400-e29b-41d4-a716-446655440000",
+      { method: "POST", body: fd },
+    );
+    expect(res.status).toBe(400);
+  });
+
+  it("retorna 400 para tipo de arquivo inválido", async () => {
+    const fd = new FormData();
+    fd.append("file", new Blob(["x"], { type: "text/plain" }), "x.txt");
+    const res = await app.request(
+      "/api/carrosseis/referencias?sessionId=550e8400-e29b-41d4-a716-446655440000",
+      { method: "POST", body: fd },
+    );
+    expect(res.status).toBe(400);
+  });
+});
+
+describe("GET /api/carrosseis/referencia", () => {
+  it("retorna 400 quando sessionId ou file ausentes", async () => {
+    const res = await app.request("/api/carrosseis/referencia?sessionId=550e8400-e29b-41d4-a716-446655440000");
+    expect(res.status).toBe(400);
+  });
+
+  it("retorna 404 para arquivo inexistente", async () => {
+    const res = await app.request(
+      "/api/carrosseis/referencia?sessionId=550e8400-e29b-41d4-a716-446655440000&file=naoexiste.png",
+    );
+    expect(res.status).toBe(404);
+  });
+});
+
+describe("DELETE /api/carrosseis/referencias", () => {
+  it("retorna 400 quando sessionId não informado", async () => {
+    const res = await app.request("/api/carrosseis/referencias", { method: "DELETE" });
+    expect(res.status).toBe(400);
+  });
+
+  it("retorna 400 para sessionId inválido", async () => {
+    const res = await app.request("/api/carrosseis/referencias?sessionId=nao-e-uuid", { method: "DELETE" });
+    expect(res.status).toBe(400);
+  });
+
+  it("retorna 200 para sessionId UUID válido (mesmo que pasta não exista — rm force)", async () => {
+    const res = await app.request(
+      "/api/carrosseis/referencias?sessionId=550e8400-e29b-41d4-a716-446655440000",
+      { method: "DELETE" },
+    );
+    expect(res.status).toBe(200);
+  });
+});

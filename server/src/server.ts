@@ -10,6 +10,7 @@ import { listConteudo, readConteudoArquivo, updateConteudoStatus } from "./conte
 import { createSite, listSites, readSiteHtml, writeSiteHtml, streamSiteChat, type ChatMessage } from "./sites.js";
 import { listCarrosseis, readSlide } from "./carrosseis.js";
 import { listIdentidade, readIdentidadeArquivo, listInspiracoes, saveInspiracao, readInspiracao } from "./identidade.js";
+import { saveReferencia, readReferencia, deleteReferencias } from "./referencias-temp.js";
 import { getBiblioteca, readBibliotecaFile } from "./biblioteca.js";
 import { getDashboardData } from "./dashboard.js";
 import { runChat } from "./chat.js";
@@ -196,6 +197,64 @@ app.get("/api/carrosseis/inspiracao", async (c) => {
     const code = (e as NodeJS.ErrnoException).code;
     if (code === "ENOENT") return c.json({ error: "Não encontrado" }, 404);
     return c.json({ error: "Erro ao ler arquivo" }, 500);
+  }
+});
+
+app.post("/api/carrosseis/referencias", async (c) => {
+  const sessionId = c.req.query("sessionId");
+  if (!sessionId) return c.json({ error: "sessionId obrigatório" }, 400);
+  let formData: FormData;
+  try {
+    formData = await c.req.formData();
+  } catch {
+    return c.json({ error: "Multipart inválido" }, 400);
+  }
+  const file = formData.get("file") as File | null;
+  if (!file) return c.json({ error: "Campo 'file' obrigatório" }, 400);
+  const ALLOWED = ["image/png", "image/jpeg", "image/webp"];
+  if (!ALLOWED.includes(file.type)) return c.json({ error: "Tipo inválido. Use PNG, JPG ou WebP." }, 400);
+  if (file.size > 10 * 1024 * 1024) return c.json({ error: "Arquivo muito grande. Máximo 10MB." }, 400);
+  const rawExt = file.name.split(".").pop()?.toLowerCase() ?? "png";
+  const ext = `.${rawExt}`;
+  try {
+    const filename = await saveReferencia(sessionId, ext, Buffer.from(await file.arrayBuffer()));
+    return c.json({ ok: true, filename });
+  } catch (e) {
+    const msg = (e as Error).message;
+    if (msg === "sessionId inválido" || msg === "Caminho inválido") return c.json({ error: "sessionId inválido" }, 400);
+    if (msg === "Tipo inválido") return c.json({ error: "Tipo inválido. Use PNG, JPG ou WebP." }, 400);
+    return c.json({ error: "Erro ao salvar" }, 500);
+  }
+});
+
+app.get("/api/carrosseis/referencia", async (c) => {
+  const sessionId = c.req.query("sessionId");
+  const file = c.req.query("file");
+  if (!sessionId || !file) return c.json({ error: "sessionId e file obrigatórios" }, 400);
+  try {
+    const { buf, mime } = await readReferencia(sessionId, file);
+    return new Response(buf.buffer as ArrayBuffer, { headers: { "Content-Type": mime } });
+  } catch (e) {
+    const msg = (e as Error).message;
+    if (msg === "sessionId inválido" || msg === "Caminho inválido" || msg === "Tipo inválido") {
+      return c.json({ error: "Não encontrado" }, 404);
+    }
+    const code = (e as NodeJS.ErrnoException).code;
+    if (code === "ENOENT") return c.json({ error: "Não encontrado" }, 404);
+    return c.json({ error: "Erro ao ler" }, 500);
+  }
+});
+
+app.delete("/api/carrosseis/referencias", async (c) => {
+  const sessionId = c.req.query("sessionId");
+  if (!sessionId) return c.json({ error: "sessionId obrigatório" }, 400);
+  try {
+    await deleteReferencias(sessionId);
+    return c.json({ ok: true });
+  } catch (e) {
+    const msg = (e as Error).message;
+    if (msg === "sessionId inválido") return c.json({ error: "sessionId inválido" }, 400);
+    return c.json({ error: "Erro ao deletar" }, 500);
   }
 });
 
