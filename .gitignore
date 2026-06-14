@@ -24,6 +24,7 @@ node_modules/
 # Arquivos temporários
 *.log
 *.tmp
+_referencias-temp/
 
 # Drop zone do usuário (só o README vai versionado)
 dados/*
