@@ -36,7 +36,8 @@ export async function readReferencia(sessionId: string, filename: string): Promi
   if (!mime) throw new Error("Tipo inválido");
   const dir = resolveSession(sessionId);
   const safe = resolve(join(dir, filename));
-  if (!safe.startsWith(resolve(TEMP_ROOT))) throw new Error("Caminho inválido");
+  // Session-level check (not TEMP_ROOT) — prevents cross-session access via ../../other-session/file.png
+  if (!safe.startsWith(dir)) throw new Error("Caminho inválido");
   return { buf: (await readFile(safe)) as Buffer, mime };
 }
 
