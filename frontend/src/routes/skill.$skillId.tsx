@@ -368,6 +368,73 @@ function SkillPanel() {
                       ))}
                     </div>
                   </div>
+
+                  <div>
+                    <label className="text-[12px] uppercase tracking-wide text-muted-foreground">
+                      Referências de Design
+                    </label>
+                    <label
+                      className={`mt-2 flex flex-col items-center justify-center gap-1.5 p-3 rounded-md border-2 border-dashed border-border text-center cursor-pointer hover:border-primary/40 transition-colors ${
+                        refs.length >= 4 || uploading ? "opacity-50 pointer-events-none" : ""
+                      }`}
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        Array.from(e.dataTransfer.files)
+                          .slice(0, 4 - refs.length)
+                          .forEach(uploadReferencia);
+                      }}
+                    >
+                      <input
+                        type="file"
+                        className="hidden"
+                        accept="image/png,image/jpeg,image/webp"
+                        multiple
+                        disabled={refs.length >= 4 || uploading}
+                        onChange={(e) => {
+                          Array.from(e.target.files ?? [])
+                            .slice(0, 4 - refs.length)
+                            .forEach(uploadReferencia);
+                          e.currentTarget.value = "";
+                        }}
+                      />
+                      {uploading ? (
+                        <Loader2 size={14} className="animate-spin text-muted-foreground" />
+                      ) : (
+                        <ImageIcon size={14} className="text-muted-foreground" />
+                      )}
+                      <span className="text-[11px] text-muted-foreground leading-tight">
+                        {refs.length >= 4
+                          ? "Máximo atingido (4)"
+                          : "Arraste ou clique · PNG, JPG, WebP · máx 4"}
+                      </span>
+                    </label>
+                    {refs.length > 0 && (
+                      <div className="flex gap-2 mt-2 flex-wrap">
+                        {refs.map((r) => (
+                          <div
+                            key={r.filename}
+                            className="relative w-14 h-14 rounded-md overflow-hidden border border-border group"
+                          >
+                            <img
+                              src={r.previewUrl}
+                              alt="referência"
+                              className="w-full h-full object-cover"
+                            />
+                            <button
+                              onClick={() => removerReferencia(r.filename)}
+                              className="absolute top-0.5 right-0.5 w-4 h-4 rounded-full bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              <X size={9} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {uploadErro && (
+                      <p className="text-[11px] text-red-500 mt-1">{uploadErro}</p>
+                    )}
+                  </div>
                 </>
               )}
 
