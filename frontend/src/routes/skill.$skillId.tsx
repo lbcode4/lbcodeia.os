@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { PageHeader, Card, Button } from "@/components/app-shell";
 import { runSkill, fetchContas, type Conta, type SkillEvent } from "@/lib/skill-client";
 import { findSkillById } from "@/lib/skills";
-import { Sparkles, Loader2, Copy, Check, RotateCcw, Send, User, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
+import { Sparkles, Loader2, Copy, Check, RotateCcw, Send, User, ChevronLeft, ChevronRight, ExternalLink, X, ImageIcon } from "lucide-react";
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8787";
 
@@ -78,6 +78,10 @@ function SkillPanel() {
   const [carrosselSlideIdx, setCarrosselSlideIdx] = useState(0);
   const [carrosselModel, setCarrosselModel] = useState("claude-sonnet-4-6");
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [refSessionId, setRefSessionId] = useState<string | null>(null);
+  const [refs, setRefs] = useState<{ filename: string; previewUrl: string }[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [uploadErro, setUploadErro] = useState("");
 
   useEffect(() => {
     Promise.all([
@@ -153,6 +157,17 @@ function SkillPanel() {
       setStatus("");
     } finally {
       setRunning(false);
+      if (isCarrossel && refSessionId) {
+        const sid = refSessionId;
+        const currentRefs = refs;
+        fetch(`${BACKEND}/api/carrosseis/referencias?sessionId=${encodeURIComponent(sid)}`, {
+          method: "DELETE",
+        }).catch(() => {});
+        currentRefs.forEach((r) => URL.revokeObjectURL(r.previewUrl));
+        setRefs([]);
+        setRefSessionId(null);
+        setUploadErro("");
+      }
     }
   };
 
@@ -166,6 +181,14 @@ function SkillPanel() {
     if (isCarrossel && tipoConteudo) {
       const opt = TIPO_OPTIONS.find((o) => o.id === tipoConteudo);
       parts.push(`Tipo de conteúdo: ${tipoConteudo} — ${opt?.label}`);
+    }
+    if (isCarrossel && refs.length > 0 && refSessionId) {
+      const paths = refs
+        .map((r) => `- _referencias-temp/${refSessionId}/${r.filename}`)
+        .join("\n");
+      parts.push(
+        `Referências de design — imitar estilo visual dessas imagens (carregar via Read antes de criar slides):\n${paths}`,
+      );
     }
     if (briefing.trim()) parts.push(briefing.trim());
     executar(parts.join("\n") || "(sem briefing)");
@@ -186,6 +209,60 @@ function SkillPanel() {
     setErro("");
     setCarrosselResult(null);
     setCarrosselSlideIdx(0);
+    refs.forEach((r) => URL.revokeObjectURL(r.previewUrl));
+    setRefs([]);
+    setRefSessionId(null);
+    setUploadErro("");
+  };
+
+  const uploadReferencia = async (file: File) => {
+    if (refs.length >= 4) return;
+    const ALLOWED = ["image/png", "image/jpeg", "image/webp"];
+    if (!ALLOWED.includes(file.type)) {
+      setUploadErro("Tipo inválido. Use PNG, JPG ou WebP.");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      setUploadErro("Arquivo muito grande. Máximo 10MB.");
+      return;
+    }
+    setUploading(true);
+    setUploadErro("");
+    let sessionId = refSessionId;
+    if (!sessionId) {
+      sessionId = crypto.randomUUID();
+      setRefSessionId(sessionId);
+    }
+    const previewUrl = URL.createObjectURL(file);
+    const fd = new FormData();
+    fd.append("file", file);
+    try {
+      const res = await fetch(
+        `${BACKEND}/api/carrosseis/referencias?sessionId=${encodeURIComponent(sessionId)}`,
+        { method: "POST", body: fd },
+      );
+      if (!res.ok) {
+        const err = await res.json() as { error: string };
+        setUploadErro(err.error ?? "Falha no upload");
+        URL.revokeObjectURL(previewUrl);
+        return;
+      }
+      const { filename } = await res.json() as { filename: string };
+      setRefs((r) => [...r, { filename, previewUrl }]);
+    } catch {
+      setUploadErro("Falha no upload");
+      URL.revokeObjectURL(previewUrl);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const removerReferencia = (filename: string) => {
+    setRefs((r) => {
+      const item = r.find((x) => x.filename === filename);
+      if (item) URL.revokeObjectURL(item.previewUrl);
+      return r.filter((x) => x.filename !== filename);
+    });
   };
 
   const handleModelChange = async (value: string) => {
