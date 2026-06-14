@@ -233,7 +233,7 @@ app.get("/api/carrosseis/referencia", async (c) => {
   if (!sessionId || !file) return c.json({ error: "sessionId e file obrigatórios" }, 400);
   try {
     const { buf, mime } = await readReferencia(sessionId, file);
-    return new Response(buf.buffer as ArrayBuffer, { headers: { "Content-Type": mime } });
+    return new Response(new Uint8Array(buf), { headers: { "Content-Type": mime } });
   } catch (e) {
     const msg = (e as Error).message;
     if (msg === "sessionId inválido" || msg === "Caminho inválido" || msg === "Tipo inválido") {
