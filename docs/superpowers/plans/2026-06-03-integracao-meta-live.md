@@ -151,7 +151,7 @@ Token secreto NÃO vive aqui (fica em `integracoes/credentials/`, gitignored).
 
 | Cliente | Meta Ad Account | IG User ID | Handle IG | Google Ads ID | Ativo |
 |---------|-----------------|------------|-----------|---------------|-------|
-| Dordrian Store | act_1388795691981562 | 17841461249791228 | @dordrianstore | — | sim |
+| Empresa Teste | act_1388795691981562 | 17841461249791228 | @empresateste | — | sim |
 ```
 
 - [ ] **Step 2: Commit**
@@ -239,7 +239,7 @@ TABELA = """# Contas
 
 | Cliente | Meta Ad Account | IG User ID | Handle IG | Google Ads ID | Ativo |
 |---------|-----------------|------------|-----------|---------------|-------|
-| Dordrian Store | act_123 | 999 | @dordrian | — | sim |
+| Empresa Teste | act_123 | 999 | @empresateste | — | sim |
 | Loja Beta | act_456 | 888 | @beta | 111-222 | sim |
 """
 
@@ -255,12 +255,12 @@ class TestParseContas(unittest.TestCase):
         path = self._write(TABELA)
         contas = parse_contas(path)
         self.assertEqual(len(contas), 2)
-        self.assertEqual(contas[0]["cliente"], "Dordrian Store")
+        self.assertEqual(contas[0]["cliente"], "Empresa Teste")
         self.assertEqual(contas[0]["meta_ad_account"], "act_123")
 
     def test_resolver_por_nome_parcial_case_insensitive(self):
         path = self._write(TABELA)
-        conta = resolver_cliente(path, "dordrian")
+        conta = resolver_cliente(path, "empresateste")
         self.assertEqual(conta["meta_ad_account"], "act_123")
 
     def test_resolver_unico_cliente_sem_filtro(self):
@@ -448,7 +448,7 @@ Expected: PASS (mesmo número de testes)
 - [ ] **Step 6: Smoke test de um script com --cliente (precisa token válido)**
 
 ```bash
-python integracoes/meta-ads/scripts/diagnostico.py --cliente Dordrian
+python integracoes/meta-ads/scripts/diagnostico.py --cliente Empresa Teste
 ```
 Expected: JSON de KPIs OU erro de API limpo. Não deve dar traceback de path/import.
 
@@ -515,7 +515,7 @@ Expected: PASS. Se algum teste mockava o path do CLAUDE.md, ajustar o mock para 
 - [ ] **Step 5: Smoke test do dashboard (precisa token)**
 
 ```bash
-python integracoes/meta-ads/scripts/relatorio.py --cliente Dordrian
+python integracoes/meta-ads/scripts/relatorio.py --cliente Empresa Teste
 ls integracoes/meta-ads/output/
 ```
 Expected: gera um `.html` em `output/<slug>/`. Não deve dar erro de path/CLAUDE.md.
@@ -748,7 +748,7 @@ git commit -m "docs: registrar integração Meta live no CLAUDE.md, skills-catal
 ## Done — critérios de aceite (Plano 1)
 
 - [ ] `pytest integracoes/meta-ads/ -v` todo verde (testes portados + `test_contas.py`)
-- [ ] `python integracoes/meta-ads/scripts/relatorio.py --cliente Dordrian` gera HTML em `output/`
+- [ ] `python integracoes/meta-ads/scripts/relatorio.py --cliente Empresa Teste` gera HTML em `output/`
 - [ ] Nenhum path Windows em `integracoes/meta-ads/scripts/`
 - [ ] `integracoes/credentials/meta.env` gitignored (token nunca commitado)
 - [ ] 6 skills `lb-meta-*` (dashboard/diagnostico/auditoria/reels/copy/gerenciar) criadas e registradas no skills-catalogo (a infra `/lb-ads-conectar` é do Plano 2)

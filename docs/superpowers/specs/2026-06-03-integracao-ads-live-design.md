@@ -177,12 +177,12 @@ de interpretação** via framework — exigência do CLAUDE.md ("cada skill tira
 
 ## 6. Fluxo de dado + tratamento de erro
 
-### Fluxo end-to-end (ex: `/lb-meta-dashboard` Dordrian)
+### Fluxo end-to-end (ex: `/lb-meta-dashboard` Empresa Teste)
 
 ```
-usuário: /lb-meta-dashboard Dordrian
-  → skill lê _memoria/contas-ads.md → resolve "Dordrian" = act_1388795691981562
-  → skill chama: python integracoes/meta-ads/scripts/relatorio.py --cliente "Dordrian"
+usuário: /lb-meta-dashboard Empresa Teste
+  → skill lê _memoria/contas-ads.md → resolve "Empresa Teste" = act_1388795691981562
+  → skill chama: python integracoes/meta-ads/scripts/relatorio.py --cliente "Empresa Teste"
       → meta_api.py lê token de credentials/meta.env
       → GET Graph API v21.0 (campanhas/adsets/ads/insights)
       → gera HTML (STYLE-GUIDE) em integracoes/meta-ads/output/
@@ -195,7 +195,7 @@ usuário: /lb-meta-dashboard Dordrian
 ```markdown
 | Cliente | Meta act_id | IG User ID | Google customer_id | Ativo |
 |---------|-------------|------------|--------------------|-------|
-| Dordrian Store | act_1388795691981562 | 17841461249791228 | — | sim |
+| Empresa Teste | act_1388795691981562 | 17841461249791228 | — | sim |
 ```
 
 Script parseia a tabela → pega a linha do cliente. Mesmo padrão dos projetos, mas em

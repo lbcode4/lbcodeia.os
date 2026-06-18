@@ -126,6 +126,7 @@ function useDailyChartData(data: DashboardData) {
       },
     };
   }
+  if (!data.daily?.days) return { days: [], agg: { spend: [], reach: [], clicks: [], saves: [] } };
   return { days: data.daily.days, agg: aggregate(data.daily.campaigns) };
 }
 
@@ -406,7 +407,7 @@ function Overview() {
   );
 
   const { days, agg } = useDailyChartData(data);
-  const dias = data.period.dias ?? data.period.days ?? 0;
+  const dias = data.period?.dias ?? data.period?.days ?? 0;
   const kpiOrder = ["spend", "reach", "clicks", "ctr", "dms", "saves", "video_views", "followers"] as const;
   const kpiLabels: Record<string, string> = {
     spend: "Investimento", reach: "Alcance", clicks: "Cliques", ctr: "CTR",
@@ -416,13 +417,13 @@ function Overview() {
   return (
     <>
       <PageHeader
-        title={`Dashboard — ${data.client}`}
-        subtitle={`${data.period.since} → ${data.period.until} · ${fNum(dias)} dias`}
+        title={`Dashboard — ${data.client ?? cliente}`}
+        subtitle={data.period ? `${data.period.since} → ${data.period.until} · ${fNum(dias)} dias` : ""}
       />
 
       {/* KPIs */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-2">
-        {kpiOrder.filter((k) => data.kpis[k]).map((key) => {
+        {kpiOrder.filter((k) => data.kpis?.[k]).map((key) => {
           const k = data.kpis[key];
           const dirUp = k.delta.direction === "up";
           const isSpend = key === "spend";

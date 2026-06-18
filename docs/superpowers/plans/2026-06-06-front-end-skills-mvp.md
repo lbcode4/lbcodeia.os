@@ -116,7 +116,7 @@ class TestCriativosMock(unittest.TestCase):
 
     def test_sem_token_cai_no_fixture(self):
         # Sem --mock e sem token: ainda deve devolver o fixture, não estourar.
-        proc = self._run("--cliente", "Dordrian")
+        proc = self._run("--cliente", "Empresa Teste")
         self.assertEqual(proc.returncode, 0, proc.stderr)
         data = json.loads(proc.stdout)
         self.assertGreater(len(data), 0)
@@ -183,7 +183,7 @@ Expected: PASS (2 testes).
 
 - [ ] **Step 6: Verificar que o comando real da skill funciona**
 
-Run: `cd /home/luan/teste/lbcodeia.os && python3 integracoes/meta-ads/scripts/criativos.py --cliente "Dordrian Store"`
+Run: `cd /home/luan/teste/lbcodeia.os && python3 integracoes/meta-ads/scripts/criativos.py --cliente "Empresa Teste"`
 Expected: imprime o JSON do fixture (3 criativos), exit 0.
 
 - [ ] **Step 7: Commit**
@@ -368,7 +368,7 @@ const TABELA = `# Contas de Anúncios
 
 | Cliente | Meta Ad Account | IG User ID | Handle IG | Google Ads ID | Ativo |
 |---------|-----------------|------------|-----------|---------------|-------|
-| Dordrian Store | act_123 | 999 | @dordrian | — | sim |
+| Empresa Teste | act_123 | 999 | @empresateste | — | sim |
 | Loja Beta | act_456 | 888 | @beta | 111-222 | sim |
 `;
 
@@ -377,9 +377,9 @@ describe("parseContas", () => {
     const contas = parseContas(TABELA);
     expect(contas).toHaveLength(2);
     expect(contas[0]).toEqual({
-      cliente: "Dordrian Store",
+      cliente: "Empresa Teste",
       metaAdAccount: "act_123",
-      handleIg: "@dordrian",
+      handleIg: "@empresateste",
       ativo: true,
     });
   });
@@ -451,7 +451,7 @@ Expected: PASS. Se o teste do separador `---` falhar, ajustar o guard: a linha s
 - [ ] **Step 5: Verificar contra o arquivo real**
 
 Run: `cd /home/luan/teste/lbcodeia.os/server && node --input-type=module -e "import('./src/contas.ts').catch(()=>import('tsx/esm').then(()=>0)); " 2>/dev/null; npx tsx -e "import {listContas} from './src/contas.ts'; listContas().then(c=>console.log(JSON.stringify(c,null,2)))"`
-Expected: imprime `[{ cliente: "Dordrian Store", metaAdAccount: "act_1388795691981562", handleIg: "@dordrianstore", ativo: true }]`.
+Expected: imprime `[{ cliente: "Empresa Teste", metaAdAccount: "act_1388795691981562", handleIg: "@empresateste", ativo: true }]`.
 
 - [ ] **Step 6: Commit**
 
@@ -479,9 +479,9 @@ import { buildPrompt } from "./runner.js";
 
 describe("buildPrompt", () => {
   it("inclui nome da skill, cliente e briefing", () => {
-    const p = buildPrompt("lb-meta-copy", "Dordrian Store", "anúncio de tênis");
+    const p = buildPrompt("lb-meta-copy", "Empresa Teste", "anúncio de tênis");
     expect(p).toContain("lb-meta-copy");
-    expect(p).toContain("Dordrian Store");
+    expect(p).toContain("Empresa Teste");
     expect(p).toContain("anúncio de tênis");
   });
 });
@@ -592,7 +592,7 @@ Run:
 cd /home/luan/teste/lbcodeia.os/server
 ANTHROPIC_API_KEY=<sua-chave> npx tsx -e "
 import { runSkill } from './src/runner.ts';
-for await (const ev of runSkill('lb-meta-copy','Dordrian Store','anúncio de tênis de corrida')) {
+for await (const ev of runSkill('lb-meta-copy','Empresa Teste','anúncio de tênis de corrida')) {
   console.log(ev.type, ev.type==='chunk'||ev.type==='status'||ev.type==='error' ? ev.text.slice(0,80) : '');
 }
 "
@@ -624,12 +624,12 @@ import { describe, it, expect } from "vitest";
 import { app } from "./server.js";
 
 describe("GET /api/contas", () => {
-  it("retorna lista de contas com Dordrian", async () => {
+  it("retorna lista de contas com Empresa Teste", async () => {
     const res = await app.request("/api/contas");
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(Array.isArray(body)).toBe(true);
-    expect(body.some((c: { cliente: string }) => c.cliente.includes("Dordrian"))).toBe(true);
+    expect(body.some((c: { cliente: string }) => c.cliente.includes("Empresa Teste"))).toBe(true);
   });
 });
 
@@ -708,9 +708,9 @@ Expected: PASS (2 testes). O teste de `/api/skills/run` rejeita antes de chamar 
 
 Run (terminal 1): `cd /home/luan/teste/lbcodeia.os/server && ANTHROPIC_API_KEY=<chave> npm run dev`
 Run (terminal 2): `curl -s http://localhost:8787/api/contas`
-Expected: JSON com Dordrian Store.
+Expected: JSON com Empresa Teste.
 
-Run (terminal 2): `curl -N -X POST http://localhost:8787/api/skills/run -H 'Content-Type: application/json' -d '{"skill":"lb-meta-copy","cliente":"Dordrian Store","input":"anúncio de tênis"}'`
+Run (terminal 2): `curl -N -X POST http://localhost:8787/api/skills/run -H 'Content-Type: application/json' -d '{"skill":"lb-meta-copy","cliente":"Empresa Teste","input":"anúncio de tênis"}'`
 Expected: stream de eventos SSE (`event: status`, `event: chunk` …, `event: done`).
 
 - [ ] **Step 6: Commit**
@@ -954,7 +954,7 @@ Expected: sem erro. Se `Button` não aceitar `onClick`/`disabled`, conferir a as
 1. Terminal 1: `cd /home/luan/teste/lbcodeia.os/server && ANTHROPIC_API_KEY=<chave> npm run dev`
 2. Terminal 2: `cd /home/luan/teste/lbcode-ad-pilot && npm run dev`
 3. Abrir a tela `/gerador-copy` no browser.
-4. Conferir: dropdown lista "Dordrian Store".
+4. Conferir: dropdown lista "Empresa Teste".
 5. Escrever um briefing, clicar "Gerar copy".
 6. Observar status ("Puxando top performers…") e a copy aparecendo em stream.
 7. Botão "Copiar tudo" copia o texto.

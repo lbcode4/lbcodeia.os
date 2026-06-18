@@ -89,8 +89,8 @@ permanecem mock até o pipe ser validado.
 ## Fluxo MVP (lb-meta-copy)
 
 1. Tela `/gerador-copy`: usuário escolhe cliente (dropdown de `contas-ads.md`) + digita briefing → "Gerar".
-2. Front → `POST /api/skills/run {skill:"lb-meta-copy", cliente:"Dordrian", input:"..."}`.
-3. Backend abre sessão Agent SDK; SDK lê a SKILL.md, roda `criativos.py --cliente Dordrian`
+2. Front → `POST /api/skills/run {skill:"lb-meta-copy", cliente:"Empresa Teste", input:"..."}`.
+3. Backend abre sessão Agent SDK; SDK lê a SKILL.md, roda `criativos.py --cliente Empresa Teste`
    (devolve fixture), lê `_memoria/`, gera copy (Gatilho → Copy → Conversão).
 4. Stream volta: eventos de status ("puxando top performers…", "gerando…") + texto final.
 5. Tela mostra as variações + botão copiar (reusa a UI existente, troca mock por stream).

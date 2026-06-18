@@ -40,13 +40,13 @@ e mobile). Idioma: **português do Brasil**. Moeda: Real (R$ 1.234,56). Datas em
   Visão Geral · Dashboard Meta · Diagnóstico Meta · Auditoria Meta · Reels · Gerador de Copy ·
   Gerenciar Anúncios · Dashboard Google · Relatório Unificado · Negativas · Conectar Contas.
   Cada item com ícone outline + label. Item ativo: barra lateral 3px `#FF6B35` + texto `#1A1A2E`.
-- **Topbar** com: seletor de cliente (dropdown, ex: "Dordrian Store"), seletor de período
+- **Topbar** com: seletor de cliente (dropdown, ex: "Empresa Teste"), seletor de período
   (Últimos 7/14/30 dias), toggle dark/light, avatar do usuário.
 - Conteúdo principal com título da tela + subtítulo curto.
 
 ## Dados de exemplo (use em todas as telas)
 
-Cliente ativo: **Dordrian Store** (@dordrianstore). Outros no dropdown: "Loja Beta", "Clínica Sorriso".
+Cliente ativo: **Empresa Teste** (@empresateste). Outros no dropdown: "Loja Beta", "Clínica Sorriso".
 Use números realistas de e-commerce (gasto na casa de R$ 3.000–8.000/mês, CTR 0,8–2,5%,
 CPA R$ 18–45, ROAS 2–4x). Invente nomes de campanha/anúncio plausíveis.
 
@@ -62,7 +62,7 @@ CPA R$ 18–45, ROAS 2–4x). Invente nomes de campanha/anúncio plausíveis.
 - Google como "Desconectado": estado vazio com instrução curta "Cole o developer token + OAuth2".
 - Seção **"Cadastrar cliente → conta"**: formulário (Nome do cliente, Meta Ad Account,
   IG User ID, Handle IG, Google Ads ID, Ativo) + botão "Salvar".
-- Tabela de clientes cadastrados (mock: Dordrian Store, Loja Beta, Clínica Sorriso) com as colunas.
+- Tabela de clientes cadastrados (mock: Empresa Teste, Loja Beta, Clínica Sorriso) com as colunas.
 
 ### 2. Visão Geral (home)
 - Linha de **KPI cards** cross-platform: Investimento total, Conversões, CPA médio, ROAS —
