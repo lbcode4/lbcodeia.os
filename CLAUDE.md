@@ -131,3 +131,29 @@ Usuário pede:
    pra alinhar tom/framework/approach ao negócio
 4. **Apoio:** Se precisar templates/exemplos → criar dentro da pasta skill
 5. **Fluxo:** Usar skill-creator do Claude Code nativo
+
+---
+
+## Negócio: LBCode.IA (Luan) — Criador Solo
+
+**Perfil:** Criador solo. Marca pessoal + negócio digital. Uma pessoa, audiência como ativo.
+
+**O que é:** Desenvolvimento de sistemas sob medida com IA — ERPs, CRMs, automações,
+agentes IA e painéis internos para médias empresas e startups.
+
+**Diferencial (RETINA):** Entrega orientada a resultado, IA aplicada de verdade (não
+buzzword), velocidade de entrega fora do padrão.
+
+**Cliente-alvo:** Gestores e donos de médias empresas/startups com dor em processos
+manuais, planilhas desintegradas e falta de controle operacional.
+
+**Prioridade agora:** Conseguir o primeiro cliente (negócio iniciando).
+**Métrica:** 3 clientes fechados/mês (horizonte 3-6 meses).
+
+**Tom:** Direto, objetivo, focado em ROI. Estrutura: problema → consequência → solução → CTA.
+**Evitar:** "vamos juntos", "alavancar", "sinergia", emojis excessivos, linguagem formal, gírias.
+
+**Conteúdo:** 3 posts/semana, carrossel educativo, criado pelo Luan.
+**Tráfego:** Orgânico ativo. Pago: não iniciado ainda.
+
+**Contato:** @lbcode.ia | [email protected] | Santarém/PA

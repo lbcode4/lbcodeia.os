@@ -6,19 +6,27 @@
 ---
 
 ## Status da identidade
-Não tem (preencher via `/lb-sistema-onboarding` ou editar manualmente)
+Parcial — identidade visual existe mas não está totalmente documentada aqui.
+Atualizar com logo, paleta e fontes quando disponível.
 
 ## Filosofia da marca
-
+Tecnologia que gera resultado real. Visual minimalista, orientado a dados.
+Transmite precisão, competência técnica e clareza — sem exageros.
+Azul como cor principal (referência do site oferta.lbcodeia.com.br).
 
 ## Cores
-
+- Primária: Azul (referência site) — confirmar hex exato
+- Fundo: escuro ou branco clean (minimalista)
+- Acento: a definir
 
 ## Tipografia
-
+A definir — confirmar com material de identidade quando disponível.
 
 ## Elementos
-
+- Minimalismo
+- Orientado a dados (gráficos, números, dashboards)
+- Sem elementos decorativos desnecessários
+- Linguagem visual direta (problema → solução)
 
 ## Galeria de referência
 
