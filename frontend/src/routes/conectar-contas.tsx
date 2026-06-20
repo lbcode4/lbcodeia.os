@@ -1,22 +1,41 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PageHeader, Card, Badge, Button } from "@/components/app-shell";
-import { metaAccounts, clients as seedClients } from "@/lib/mock";
-import { Facebook, Search as GoogleIcon, Plug, Check, X as XIcon, Plus } from "lucide-react";
+import { metaAccounts } from "@/lib/mock";
+import { fetchContas, createConta, type Conta } from "@/lib/skill-client";
+import { Facebook, Search as GoogleIcon, Plug, Check, X as XIcon, Plus, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/conectar-contas")({
   head: () => ({ meta: [{ title: "Conectar Contas — LBCode Ads" }, { name: "description", content: "Conecte Meta e Google Ads e cadastre clientes." }] }),
   component: ConectarContas,
 });
 
-function ConectarContas() {
-  const [clients, setClients] = useState(seedClients);
-  const [form, setForm] = useState({ name: "", metaAct: "", igUserId: "", handle: "", googleAdsId: "", ativo: true });
+type Form = { cliente: string; metaAdAccount: string; igUserId: string; handleIg: string; googleAdsId: string; ativo: boolean };
+const EMPTY_FORM: Form = { cliente: "", metaAdAccount: "", igUserId: "", handleIg: "", googleAdsId: "", ativo: true };
 
-  const save = () => {
-    if (!form.name) return;
-    setClients((p) => [...p, { id: form.name.toLowerCase().replace(/\s+/g, "-"), ...form }]);
-    setForm({ name: "", metaAct: "", igUserId: "", handle: "", googleAdsId: "", ativo: true });
+function ConectarContas() {
+  const [contas, setContas] = useState<Conta[]>([]);
+  const [form, setForm] = useState<Form>(EMPTY_FORM);
+  const [saving, setSaving] = useState(false);
+  const [erro, setErro] = useState("");
+
+  useEffect(() => {
+    fetchContas().then(setContas).catch(() => setErro("Backend offline?"));
+  }, []);
+
+  const save = async () => {
+    if (!form.cliente.trim() || saving) return;
+    setSaving(true);
+    setErro("");
+    try {
+      const updated = await createConta(form);
+      setContas(updated);
+      setForm(EMPTY_FORM);
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : "Falha ao salvar");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -88,10 +107,10 @@ function ConectarContas() {
       <h2 className="text-lg font-semibold mb-3">Cadastrar cliente → conta</h2>
       <Card className="mb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Field label="Nome do cliente" value={form.name} onChange={(v) => setForm({ ...form, name: v })} placeholder="Ex: Loja Beta" />
-          <Field label="Meta Ad Account" value={form.metaAct} onChange={(v) => setForm({ ...form, metaAct: v })} placeholder="act_..." />
+          <Field label="Nome do cliente" value={form.cliente} onChange={(v) => setForm({ ...form, cliente: v })} placeholder="Ex: Loja Beta" />
+          <Field label="Meta Ad Account" value={form.metaAdAccount} onChange={(v) => setForm({ ...form, metaAdAccount: v })} placeholder="act_..." />
           <Field label="IG User ID" value={form.igUserId} onChange={(v) => setForm({ ...form, igUserId: v })} placeholder="178492..." />
-          <Field label="Handle IG" value={form.handle} onChange={(v) => setForm({ ...form, handle: v })} placeholder="@nome" />
+          <Field label="Handle IG" value={form.handleIg} onChange={(v) => setForm({ ...form, handleIg: v })} placeholder="@nome" />
           <Field label="Google Ads ID" value={form.googleAdsId} onChange={(v) => setForm({ ...form, googleAdsId: v })} placeholder="123-456-7890" />
           <div>
             <label className="text-[12px] uppercase tracking-wide text-muted-foreground block mb-1.5">Ativo</label>
@@ -101,8 +120,11 @@ function ConectarContas() {
             </label>
           </div>
         </div>
+        {erro && <p className="text-[13px] text-red-500 mt-3">{erro}</p>}
         <div className="mt-5 flex justify-end">
-          <Button onClick={save}><Plus size={14} /> Salvar</Button>
+          <Button onClick={save} disabled={saving || !form.cliente.trim()}>
+            {saving ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />} Salvar
+          </Button>
         </div>
       </Card>
 
@@ -114,25 +136,28 @@ function ConectarContas() {
               <tr>
                 <th className="text-left font-medium py-2 px-4">Cliente</th>
                 <th className="text-left font-medium py-2 px-4">Meta Ad Account</th>
-                <th className="text-left font-medium py-2 px-4">IG User ID</th>
                 <th className="text-left font-medium py-2 px-4">Handle</th>
-                <th className="text-left font-medium py-2 px-4">Google Ads</th>
                 <th className="text-left font-medium py-2 px-4">Status</th>
               </tr>
             </thead>
             <tbody>
-              {clients.map((c) => (
-                <tr key={c.id} className="border-b border-border last:border-0">
-                  <td className="py-3 px-4 font-medium">{c.name}</td>
-                  <td className="py-3 px-4 font-mono text-muted-foreground">{c.metaAct}</td>
-                  <td className="py-3 px-4 font-mono text-muted-foreground">{c.igUserId}</td>
-                  <td className="py-3 px-4 text-muted-foreground">{c.handle}</td>
-                  <td className="py-3 px-4 font-mono text-muted-foreground">{c.googleAdsId}</td>
+              {contas.map((c) => (
+                <tr key={c.cliente} className="border-b border-border last:border-0">
+                  <td className="py-3 px-4 font-medium">{c.cliente}</td>
+                  <td className="py-3 px-4 font-mono text-muted-foreground">{c.metaAdAccount || "—"}</td>
+                  <td className="py-3 px-4 text-muted-foreground">{c.handleIg || "—"}</td>
                   <td className="py-3 px-4">
                     <Badge tone={c.ativo ? "success" : "neutral"}>{c.ativo ? "Ativo" : "Inativo"}</Badge>
                   </td>
                 </tr>
               ))}
+              {contas.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="py-6 px-4 text-center text-muted-foreground">
+                    Nenhum cliente cadastrado ainda.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

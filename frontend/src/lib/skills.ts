@@ -119,7 +119,7 @@ export const hubs: Hub[] = [
     skills: [
       { id: "lb-sistema-novo-projeto", name: "Novo Projeto", description: "Inicia projeto/cliente com a estrutura padrão.", icon: FolderPlus },
       { id: "lb-sistema-contexto", name: "Contexto", description: "Carrega memória do negócio e devolve briefing da sessão.", icon: FolderOpen },
-      { id: "lb-sistema-onboarding", name: "Onboarding", description: "Setup inicial: extrai site/Instagram, entrevista e preenche a memória.", icon: Download },
+      { id: "lb-sistema-onboarding", name: "Onboarding", description: "Setup inicial: extrai site/Instagram, entrevista e preenche a memória.", icon: Download, route: "/onboarding" },
       { id: "lb-sistema-sincronizar", name: "Sincronizar", description: "Varre projeto, detecta mudanças e reconcilia a memória.", icon: RefreshCw },
       { id: "lb-sistema-versionar", name: "Versionar", description: "Commit + push no GitHub — tudo documentado e recuperável.", icon: Save },
       { id: "lb-ads-conectar", name: "Conectar Contas", description: "Conecta Meta Ads, Google Ads e demais integrações.", icon: ClipboardList, route: "/conectar-contas" },

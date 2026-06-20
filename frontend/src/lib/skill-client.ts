@@ -30,6 +30,29 @@ export async function fetchContas(): Promise<Conta[]> {
   return res.json();
 }
 
+export type ContaInput = {
+  cliente: string;
+  metaAdAccount?: string;
+  igUserId?: string;
+  handleIg?: string;
+  googleAdsId?: string;
+  ativo?: boolean;
+};
+
+/** Cadastra ou atualiza (por nome de cliente) uma conta. Retorna a lista atualizada. */
+export async function createConta(input: ContaInput): Promise<Conta[]> {
+  const res = await fetch(`${BACKEND}/api/contas`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(input),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({})) as { error?: string };
+    throw new Error(err.error ?? "Falha ao salvar conta");
+  }
+  return res.json();
+}
+
 /** Abre o stream SSE e chama onEvent para cada evento da skill. */
 export async function runSkill(
   body: { skill: string; cliente: string; input: string; model?: string },

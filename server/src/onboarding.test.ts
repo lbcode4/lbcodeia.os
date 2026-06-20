@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { getOnboardingStatus, saveOnboarding, getConfiguracoes, saveConfiguracoes, getAiConfig, saveAiConfig, type Profile, type AiConfig } from "./onboarding.js";
+import { getOnboardingStatus, getConfiguracoes, saveConfiguracoes, getAiConfig, saveAiConfig, type AiConfig } from "./onboarding.js";
 import { app } from "./server.js";
 
 // Mock node:fs/promises so tests don't touch real files
@@ -23,63 +23,18 @@ describe("getOnboardingStatus", () => {
     expect(result).toEqual({ complete: false });
   });
 
-  it("returns complete=false when empresa.md has fewer than 50 chars", async () => {
-    mockReadFile.mockResolvedValue("# Empresa\n" as unknown as Buffer);
+  it("returns complete=false when Nome field is blank (template vazio, mesmo com 50+ chars)", async () => {
+    mockReadFile.mockResolvedValue(
+      "# Empresa\n\n**Nome:**\n**Negócio:**\n\n## Posicionamento (RETINA)\n- **Diferencial:**\n" as unknown as Buffer,
+    );
     const result = await getOnboardingStatus();
     expect(result).toEqual({ complete: false });
   });
 
-  it("returns complete=true when empresa.md has 50+ meaningful chars", async () => {
-    mockReadFile.mockResolvedValue("# Empresa\n\n**Nome:** Clínica Sorriso\n**Setor:** Odontologia\n**Produto:** Clareamento" as unknown as Buffer);
+  it("returns complete=true when Nome field has a value", async () => {
+    mockReadFile.mockResolvedValue("# Empresa\n\n**Nome:** Clínica Sorriso\n**Negócio:** Odontologia\n" as unknown as Buffer);
     const result = await getOnboardingStatus();
     expect(result).toEqual({ complete: true });
-  });
-});
-
-describe("saveOnboarding", () => {
-  const profile: Profile = {
-    nome: "Clínica Sorriso",
-    setor: "Odontologia",
-    produto: "Clareamento dental e ortodontia",
-    publico: "Mulheres 28-45, classe B/C, Belém-PA",
-    diferencial: "Atendimento no mesmo dia, parcelamento em 18x",
-    tom: "Profissional mas acolhedor",
-    objetivo: "Gerar leads para WhatsApp",
-  };
-
-  it("writes empresa.md with nome, setor, produto, publico, diferencial", async () => {
-    mockWriteFile.mockResolvedValue(undefined);
-    await saveOnboarding(profile);
-
-    const empresaCall = mockWriteFile.mock.calls.find((c) =>
-      (c[0] as string).endsWith("empresa.md"),
-    );
-    expect(empresaCall).toBeDefined();
-    const content = empresaCall![1] as string;
-    expect(content).toContain("Clínica Sorriso");
-    expect(content).toContain("Odontologia");
-    expect(content).toContain("Clareamento dental e ortodontia");
-    expect(content).toContain("Mulheres 28-45");
-    expect(content).toContain("Atendimento no mesmo dia");
-  });
-
-  it("writes preferencias.md with tom and objetivo", async () => {
-    mockWriteFile.mockResolvedValue(undefined);
-    await saveOnboarding(profile);
-
-    const prefCall = mockWriteFile.mock.calls.find((c) =>
-      (c[0] as string).endsWith("preferencias.md"),
-    );
-    expect(prefCall).toBeDefined();
-    const content = prefCall![1] as string;
-    expect(content).toContain("Profissional mas acolhedor");
-    expect(content).toContain("Gerar leads para WhatsApp");
-  });
-
-  it("calls writeFile exactly twice", async () => {
-    mockWriteFile.mockResolvedValue(undefined);
-    await saveOnboarding(profile);
-    expect(mockWriteFile).toHaveBeenCalledTimes(2);
   });
 });
 
@@ -91,33 +46,6 @@ describe("GET /api/onboarding/status", () => {
     expect(res.status).toBe(200);
     const body = await res.json() as { complete: boolean };
     expect(typeof body.complete).toBe("boolean");
-  });
-});
-
-describe("POST /api/onboarding/save", () => {
-  it("returns 200 { ok: true } with valid profile", async () => {
-    mockWriteFile.mockResolvedValue(undefined);
-    const profile: Profile = {
-      nome: "Teste", setor: "Tech", produto: "SaaS",
-      publico: "PMEs", diferencial: "Rápido", tom: "Direto", objetivo: "Leads",
-    };
-    const res = await app.request("/api/onboarding/save", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(profile),
-    });
-    expect(res.status).toBe(200);
-    const body = await res.json() as { ok: boolean };
-    expect(body.ok).toBe(true);
-  });
-
-  it("returns 400 when body is malformed", async () => {
-    const res = await app.request("/api/onboarding/save", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: "não é json",
-    });
-    expect(res.status).toBe(400);
   });
 });
 

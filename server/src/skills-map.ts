@@ -7,6 +7,7 @@ export type SkillSpec = {
 
 const TEXT_TOOLS = ["Skill", "Read", "Glob", "Grep"];
 const SCRIPT_TOOLS = ["Skill", "Bash", "Read", "Write", "Edit", "Glob", "Grep"];
+const ONBOARDING_TOOLS = ["Skill", "Read", "Write", "Edit", "Bash", "WebFetch", "Glob", "Grep"];
 
 const SKILLS: Record<string, SkillSpec> = {
   // ── Meta Ads ──────────────────────────────────────────────────────────
@@ -123,7 +124,7 @@ const SKILLS: Record<string, SkillSpec> = {
   // ── Sistema ───────────────────────────────────────────────────────────
   "lb-sistema-novo-projeto": { skillName: "lb-sistema-novo-projeto", allowedTools: TEXT_TOOLS, mode: "text" },
   "lb-sistema-contexto": { skillName: "lb-sistema-contexto", allowedTools: TEXT_TOOLS, mode: "text" },
-  "lb-sistema-onboarding": { skillName: "lb-sistema-onboarding", allowedTools: TEXT_TOOLS, mode: "text" },
+  "lb-sistema-onboarding": { skillName: "lb-sistema-onboarding", allowedTools: ONBOARDING_TOOLS, mode: "text" },
   "lb-sistema-sincronizar": { skillName: "lb-sistema-sincronizar", allowedTools: TEXT_TOOLS, mode: "text" },
   "lb-sistema-versionar": { skillName: "lb-sistema-versionar", allowedTools: TEXT_TOOLS, mode: "text" },
 };

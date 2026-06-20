@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { serve } from "@hono/node-server";
 import { streamSSE } from "hono/streaming";
-import { listContas } from "./contas.js";
+import { listContas, saveConta, type ContaInput } from "./contas.js";
 import { isAllowedSkill } from "./skills-map.js";
 import { runSkill, loadResult } from "./runner.js";
 import { listCampaigns, readCampaignFile } from "./prospeccao.js";
@@ -14,7 +14,7 @@ import { saveReferencia, readReferencia, deleteReferencias } from "./referencias
 import { getBiblioteca, readBibliotecaFile } from "./biblioteca.js";
 import { getDashboardData } from "./dashboard.js";
 import { runChat } from "./chat.js";
-import { getOnboardingStatus, saveOnboarding, getConfiguracoes, saveConfiguracoes, getAiConfig, saveAiConfig, type Profile, type Configuracoes, type AiConfig } from "./onboarding.js";
+import { getOnboardingStatus, getConfiguracoes, saveConfiguracoes, getAiConfig, saveAiConfig, type Configuracoes, type AiConfig } from "./onboarding.js";
 import { listCampanhas, setCampanhaStatus, listAdsets, setAdsetStatus, readMetaToken } from "./meta-campanhas.js";
 
 export const app = new Hono();
@@ -27,6 +27,24 @@ app.get("/api/contas", async (c) => {
     return c.json(contas);
   } catch {
     return c.json({ error: "Falha ao carregar contas" }, 500);
+  }
+});
+
+app.post("/api/contas", async (c) => {
+  let body: ContaInput;
+  try {
+    body = await c.req.json();
+  } catch {
+    return c.json({ error: "JSON inválido" }, 400);
+  }
+  if (!body.cliente || !body.cliente.trim()) {
+    return c.json({ error: "Cliente é obrigatório" }, 400);
+  }
+  try {
+    const contas = await saveConta(body);
+    return c.json(contas);
+  } catch {
+    return c.json({ error: "Falha ao salvar conta" }, 500);
   }
 });
 
@@ -415,17 +433,6 @@ app.get("/api/biblioteca/arquivo", async (c) => {
 
 app.get("/api/onboarding/status", async (c) => {
   return c.json(await getOnboardingStatus());
-});
-
-app.post("/api/onboarding/save", async (c) => {
-  let body: Profile;
-  try {
-    body = await c.req.json();
-  } catch {
-    return c.json({ error: "JSON inválido" }, 400);
-  }
-  await saveOnboarding(body);
-  return c.json({ ok: true });
 });
 
 app.get("/api/configuracoes", async (c) => {

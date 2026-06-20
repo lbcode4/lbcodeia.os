@@ -70,19 +70,21 @@ async function loadContext(skill: string, cliente: string): Promise<string> {
     } catch { /* skip */ }
   }
 
-  // Conta do cliente — resolve de contas-ads.md
-  try {
-    const contas = await readFile(join(REPO_ROOT, "_memoria/contas-ads.md"), "utf-8");
-    const row = contas.split("\n").find((l) =>
-      l.toLowerCase().includes(cliente.toLowerCase()) && l.includes("|"),
-    );
-    if (row) {
-      const [, , metaAcc, igUserId, handle, googleId] = row.split("|").map((s) => s.trim());
-      sections.push(
-        `### Conta de Anúncios — ${cliente}\nMeta Ad Account: ${metaAcc ?? "—"}\nIG User ID: ${igUserId ?? "—"}\nHandle IG: ${handle ?? "—"}\nGoogle Ads ID: ${googleId ?? "—"}`,
+  // Conta do cliente — resolve de contas-ads.md (só se skill tiver um cliente real)
+  if (cliente.trim()) {
+    try {
+      const contas = await readFile(join(REPO_ROOT, "_memoria/contas-ads.md"), "utf-8");
+      const row = contas.split("\n").find((l) =>
+        l.toLowerCase().includes(cliente.toLowerCase()) && l.includes("|"),
       );
-    }
-  } catch { /* skip */ }
+      if (row) {
+        const [, , metaAcc, igUserId, handle, googleId] = row.split("|").map((s) => s.trim());
+        sections.push(
+          `### Conta de Anúncios — ${cliente}\nMeta Ad Account: ${metaAcc ?? "—"}\nIG User ID: ${igUserId ?? "—"}\nHandle IG: ${handle ?? "—"}\nGoogle Ads ID: ${googleId ?? "—"}`,
+        );
+      }
+    } catch { /* skip */ }
+  }
 
   if (!sections.length) return "";
   return `## Contexto do projeto e do cliente\n\n${sections.join("\n\n")}\n\n---`;
@@ -101,7 +103,7 @@ export function buildPrompt(
   if (context) parts.push(context);
 
   parts.push(`Use a skill ${skill}.`);
-  parts.push(`Cliente: ${cliente}.`);
+  if (cliente.trim()) parts.push(`Cliente: ${cliente}.`);
 
   if (input.trim()) {
     parts.push(`Briefing / contexto do usuário: ${input}`);
