@@ -14,7 +14,7 @@
 - PNG re-render happens **only** on explicit "Salvar" — never automatically after a chat turn or a text edit. This keeps the chat/edit loop fast and guarantees `instagram/*.png` is never left mid-update.
 - No image upload/paste in the carousel chat in this version (sites' chat supports it; carousels' doesn't).
 - Path traversal guard (`resolve(...).startsWith(resolve(CARROSSEIS_ROOT))`) is required in every function that takes a carousel `id`.
-- Direct text edits commit **only on blur** (not on every keystroke) — switching slides or running a chat edit while a field is focused must trigger that blur first so no edit is lost silently.
+- Direct text edits commit **only on blur** (not on every keystroke) — switching slides or running a chat edit while a field is focused must trigger that blur first so no edit is lost silently. The one exception is the formatting toolbar (Task 7): its buttons commit immediately on click, because a click is a discrete action, not a keystroke stream, so it carries none of the mid-typing iframe-reload risk the blur-only rule exists to avoid.
 - `Enter` inside an editable text element confirms (blurs) instead of inserting a newline.
 - `streamCarrosselChat` (the live SDK call) is not unit-tested, mirroring the existing decision for `streamSiteChat` in `sites.test.ts` — it's exercised only by the manual end-to-end pass in Task 9.
 
