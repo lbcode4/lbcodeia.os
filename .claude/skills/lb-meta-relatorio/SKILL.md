@@ -18,7 +18,7 @@ Rotina de accountability. Lê dados brutos → entrega decisão.
 - **Contexto:** `_memoria/empresa.md`, `_memoria/estrategia.md`
 - **Tom:** `_memoria/preferencias.md`
 - **Inputs:** CSV exports Google Ads + Meta Ads Manager (ou prints)
-- **Arquivo histórico:** `marketing/campanhas/relatorios/relatorio-YYYY-MM-DD.md`
+- **Arquivo histórico:** `saidas/marketing/campanhas/relatorios/relatorio-YYYY-MM-DD.md`
 
 ## Fluxo
 
@@ -33,7 +33,7 @@ Usuário passa:
 
 Ou CLI:
 ```
-/lb-meta-relatorio dados/google-2026-05-12.csv dados/meta-2026-05-12.csv
+/lb-meta-relatorio saidas/entrada/google-2026-05-12.csv saidas/entrada/meta-2026-05-12.csv
 ```
 
 Extrair colunas mínimas:
@@ -46,7 +46,7 @@ Faltando métrica crítica (Conversões/Resultados)? Avisar, continua só com tr
 
 ### Passo 2 — Comparar vs semana anterior
 
-Buscar relatório anterior em `marketing/campanhas/relatorios/`.
+Buscar relatório anterior em `saidas/marketing/campanhas/relatorios/`.
 
 Calcular variação:
 - Investimento total (↑/↓)
@@ -100,7 +100,7 @@ Termo (keyword) → Anúncio (RSA) → Landing (página):
 
 ### Passo 5 — Entregar
 
-Arquivo: `marketing/campanhas/relatorios/relatorio-2026-05-19.md`
+Arquivo: `saidas/marketing/campanhas/relatorios/relatorio-2026-05-19.md`
 
 ```markdown
 # Relatório Semanal — Semana 19/2026

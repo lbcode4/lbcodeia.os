@@ -25,7 +25,7 @@ Uma vez só, setup:
 - Permissões corretas no Meta App
 - Scripts `scripts/postar-instagram.js` + `scripts/postar-facebook.js`
 
-Falta algo? Parar e avisar — criar `marketing/setup-automacao-meta.md` se precisar.
+Falta algo? Parar e avisar — criar `saidas/marketing/setup-automacao-meta.md` se precisar.
 
 ## Fluxo
 
@@ -34,9 +34,9 @@ Falta algo? Parar e avisar — criar `marketing/setup-automacao-meta.md` se prec
 (Slug = nome do arquivo blog **sem .md**)
 
 1. **Validar**
-   - Arquivo blog existe em `marketing/blog/como-conservar-produto.md`?
-   - Carrossel PNG existe em `marketing/conteudo/carrossel/<slug>-2026-06-01/`?
-   - Legendas existem em `marketing/conteudo/carrossel/<slug>-2026-06-01/legendas.md`?
+   - Arquivo blog existe em `saidas/marketing/blog/como-conservar-produto.md`?
+   - Carrossel PNG existe em `saidas/marketing/conteudo/carrossel/<slug>-2026-06-01/`?
+   - Legendas existem em `saidas/marketing/conteudo/carrossel/<slug>-2026-06-01/legendas.md`?
 
 2. **Publicar site** *(só se houver site configurado)*
    - **Checar primeiro:** existe `site/astro-site/` (ou outro stack de site)?

@@ -22,7 +22,7 @@ Skill central de criação de conteúdo visual. Pega um tema → entrega HTMLs e
 - **Tom de voz:** `_memoria/preferencias.md`
 - **Playwright:** pra renderizar HTML em PNG (`npx playwright screenshot` ou via `render.js`)
 - **Gemini / OpenAI API (foto IA):** ver `reference/prompts-imagem.md`
-- **Outputs vão em:** `marketing/conteudo/carrossel/<tema>-<YYYY-MM-DD>/`
+- **Outputs vão em:** `saidas/marketing/conteudo/carrossel/<tema>-<YYYY-MM-DD>/`
 
 ### Regra de calibração visual (obrigatória)
 
@@ -79,9 +79,9 @@ Se usuário não disser, perguntar: *"Que tipo RETINA esse post é?"* — sem is
 **Buscar referências (3 fontes):**
 1. **Biblioteca de Anúncios Meta** — `facebook.com/ads/library` — filtrar por nicho. Topo + mais tempo no ar = vencedores
 2. **Instagram pelo termo** — buscar termo do nicho → posts mais vistos = referências orgânicas
-3. **Inspirações do carrossel** — verificar se existe `marketing/conteudo/carrossel/{id-do-tema}/inspiracoes/`. Se tiver imagens, carregar via `Read` e incluir no contexto: "O usuário quer imitar o layout/estilo das imagens de inspiração nessa pasta. Adapte a composição, hierarquia tipográfica e uso de espaço ao que você vê nelas, mantendo a paleta e identidade da marca."
+3. **Inspirações do carrossel** — verificar se existe `saidas/marketing/conteudo/carrossel/{id-do-tema}/inspiracoes/`. Se tiver imagens, carregar via `Read` e incluir no contexto: "O usuário quer imitar o layout/estilo das imagens de inspiração nessa pasta. Adapte a composição, hierarquia tipográfica e uso de espaço ao que você vê nelas, mantendo a paleta e identidade da marca."
 
-Salvar 2-3 referências em `marketing/conteudo/carrossel/<pasta>/referencias/`.
+Salvar 2-3 referências em `saidas/marketing/conteudo/carrossel/<pasta>/referencias/`.
 
 ### Passo 1 — Entender e planejar
 
@@ -132,7 +132,7 @@ Mostrar slide 1, 2 e o CTA final renderizados. Se aprovado, mostrar os intermedi
 ### Passo 5 — Salvar e organizar
 
 ```
-marketing/conteudo/carrossel/<tema>-<YYYY-MM-DD>/
+saidas/marketing/conteudo/carrossel/<tema>-<YYYY-MM-DD>/
   texto.md              ← texto aprovado + legenda + tipo RETINA + gancho escolhido
   referencias/          ← prints/links dos anúncios-referência (Meta + IG)
   foto-<nome>.png       ← fotos IA (se houver)

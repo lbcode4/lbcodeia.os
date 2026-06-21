@@ -17,7 +17,7 @@ description: >
 
 - **WebSearch + WebFetch:** pra pesquisa — OBRIGATÓRIO
 - **Contexto:** `_memoria/empresa.md`
-- **Outputs:** `marketing/prospeccao/diagnosticos/<slug>.md`
+- **Outputs:** `saidas/marketing/prospeccao/diagnosticos/<slug>.md`
 
 ---
 
@@ -101,7 +101,7 @@ Agente de IA responde às 3h da manhã, qualifica e agenda direto."]
 
 ### Passo 4 — Salvar
 
-Path: `marketing/prospeccao/diagnosticos/<slug-da-clinica>.md`
+Path: `saidas/marketing/prospeccao/diagnosticos/<slug-da-clinica>.md`
 Slug: kebab-case do nome (ex: "Empresa Dr. Silva" → `clinica-dr-silva`)
 
 ### Passo 5 — Script de envio

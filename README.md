@@ -101,9 +101,11 @@ identidade/         → visual (cores, fontes, logo)
 integracoes/        → Meta Ads + Google Ads live (scripts Python, Graph/Ads API)
 frontend/           → dashboard (TanStack/React) que dispara skills via API
 server/             → backend (TS) que orquestra skills + entrega relatórios
-marketing/          → saídas conteúdo + campanhas + prospecção
-dados/              → CSVs, JSONs, insumos
-saidas/             → relatórios + planos gerados
+saidas/             → tudo gerado/consumido pelo LBCode.IA
+  saidas/entrada/     → CSVs, JSONs, insumos que você solta pra Claude ler
+  saidas/marketing/   → conteúdo + campanhas + prospecção (histórico vivo)
+  saidas/relatorios/  → relatórios + dashboards gerados
+  saidas/cache/       → cache interno dos resultados de skills (uso do dashboard)
 prompts/            → prompts reutilizáveis (persona, RETINA, keywords)
 docs/               → specs + planos de implementação das telas
 scripts/            → automações e templates

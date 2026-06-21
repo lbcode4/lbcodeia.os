@@ -19,10 +19,10 @@ GBP = rede social do Google. Aparece na hora da pesquisa de serviço. **~90% dos
 - **Framework de tráfego:** `_memoria/framework-trafego.md` — OBRIGATÓRIO (Bolo Cenoura)
 - **Contexto do negócio:** `_memoria/empresa.md`
 - **Tom de voz:** `_memoria/preferencias.md`
-- **Pesquisa SEO (se existir):** `marketing/google-seo/01-pesquisa-demanda.md` — usa top keywords
+- **Pesquisa SEO (se existir):** `saidas/marketing/google-seo/01-pesquisa-demanda.md` — usa top keywords
 - **Identidade visual:** `identidade/design-guide.md` (cores/fontes pra fotos quando aplicável)
 - **WebSearch:** pra ver perfil atual
-- **Outputs:** `marketing/gbp/<YYYY-MM-DD>/`
+- **Outputs:** `saidas/marketing/gbp/<YYYY-MM-DD>/`
 
 ---
 
@@ -241,7 +241,7 @@ Cada post:
 ## Output
 
 ```
-marketing/gbp/<YYYY-MM-DD>/
+saidas/marketing/gbp/<YYYY-MM-DD>/
   00-diagnostico.md     ← estado atual da ficha
   01-nome-categoria.md  ← nome novo + categorias
   02-descricao.md       ← 750 caracteres pronto

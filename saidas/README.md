@@ -1,29 +1,30 @@
-# saidas/ — outputs gerais do LBCode.IA
+# saidas/ — raiz única de tudo gerado/consumido pelo LBCode.IA
 
-Pasta pra qualquer output que não é marketing puro (não cabe em `marketing/`).
+Antes existiam 3 pastas soltas na raiz (`marketing/`, `dados/`, `saidas/`).
+Agora é só `saidas/`, com subpastas que deixam claro o papel de cada coisa.
 
-## O que vai aqui
+## Subpastas
 
-- **Análises** de `/lb-negocio-analisar-dados` — resumos executivos de CSV/XLSX/PDF
-- **Emails** rascunhados por `/lb-venda-email`
-- **Relatórios diversos** que não são de ads
-- **Documentos** que skills geram e você precisa enviar/imprimir/anexar
+- **`saidas/entrada/`** — drop zone. Solte aqui CSV de export, planilha, PDF,
+  print — qualquer arquivo que você quer que o Claude leia uma vez. Só o
+  `README.md` dessa pasta é versionado; o resto é local.
+- **`saidas/marketing/`** — histórico vivo do trabalho de marketing: conteúdo
+  (carrosséis, reels, stories, calendário), campanhas, prospecção, GBP, SEO,
+  auditorias, sites. Acumula com o tempo, não é "coisa pontual".
+- **`saidas/relatorios/`** — relatórios e dashboards gerados (Meta/Google Ads,
+  análises de Reels). Organizado por cliente.
+- **`saidas/cache/`** — cache interno dos resultados de skills, usado pelo
+  dashboard (`server/src/runner.ts`) pra não reprocessar. Não versionado,
+  não é pra navegar manualmente.
+- **Solto na raiz de `saidas/`** — documentos pontuais que não cabem em
+  nenhuma das categorias acima: planos mensais (`plano-<YYYY-MM>.md`),
+  propostas, precificações, emails rascunhados.
 
-## Estrutura sugerida
+Skills sabem onde salvar — você não precisa criar subpasta manualmente.
 
-```
-saidas/
-├── analises/        relatórios de /lb-negocio-analisar-dados
-├── emails/          rascunhos de /lb-venda-email
-└── outros/          qualquer coisa solta
-```
+## Por que `marketing/` e `cache/` não vão pro Git?
 
-Skills sabem onde salvar — você não precisa criar subpasta manualmente. Se uma skill perguntar onde salvar, vai propor aqui.
-
-## Por que separar de `marketing/`?
-
-`marketing/` é histórico vivo do trabalho de marketing — peças, campanhas, SEO acumulado.
-
-`saidas/` é "coisa pontual gerada hoje" — relatório que você manda pro cliente e nunca mais olha, rascunho de email que copia e cola no Gmail.
-
-A divisão importa pra `/lb-sistema-versionar` (commit) e pra clareza ao navegar a pasta.
+`saidas/marketing/` guarda dado real de cliente (leads, dossiês, campanhas) —
+fica de fora do versionamento por padrão (ver `.gitignore`). `saidas/cache/`
+é só estado regenerável, sem valor histórico. `saidas/relatorios/`,
+`saidas/entrada/README.md` e os documentos soltos na raiz são versionados.

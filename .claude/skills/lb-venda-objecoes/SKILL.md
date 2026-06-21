@@ -15,7 +15,7 @@ description: >
 
 - **Contexto:** `_memoria/empresa.md` — ler antes pra calibrar preço e oferta atual
 - **Tom:** `_memoria/preferencias.md`
-- **Outputs:** `marketing/prospeccao/venda-objecoes.md` (arquivo fixo — atualizado a cada uso)
+- **Outputs:** `saidas/marketing/prospeccao/venda-objecoes.md` (arquivo fixo — atualizado a cada uso)
 
 ---
 
@@ -25,7 +25,7 @@ description: >
 → Mostrar só o script da objeção pedida, inline
 
 **Modo B — Banco completo:** usuário quer todas as 10 ou arquivo atualizado
-→ Gerar/sistema-atualizar `marketing/prospeccao/venda-objecoes.md`
+→ Gerar/sistema-atualizar `saidas/marketing/prospeccao/venda-objecoes.md`
 
 ---
 
@@ -172,7 +172,7 @@ Para cada objeção, aplicar 4 passos em ordem:
 
 ## Output
 
-Salvar/sistema-atualizar em `marketing/prospeccao/venda-objecoes.md`.
+Salvar/sistema-atualizar em `saidas/marketing/prospeccao/venda-objecoes.md`.
 
 Arquivo fixo — não criar novo a cada uso. Adicionar objeções novas à medida que surgirem no campo.
 

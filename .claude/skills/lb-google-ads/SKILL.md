@@ -18,9 +18,9 @@ Skill que monta a campanha inteira em CSV pronto pra importar no Google Ads Edit
 - **Framework de tráfego:** `_memoria/framework-trafego.md` — **OBRIGATÓRIO ler antes** (OPA, Bolo Cenoura, regras transversais)
 - **Contexto do negócio:** `_memoria/empresa.md` (produto/serviço, público, região, diferenciais)
 - **Tom de voz:** `_memoria/preferencias.md`
-- **Pesquisa SEO (se existir):** `marketing/google-seo/01-pesquisa-demanda.md`, `06-google-ads.md` — usar como insumo
+- **Pesquisa SEO (se existir):** `saidas/marketing/google-seo/01-pesquisa-demanda.md`, `06-google-ads.md` — usar como insumo
 - **GBP otimizado (pra Dominação Top 1):** ver `/lb-google-meu-negocio` — campanha #3 exige perfil GBP completo antes
-- **Outputs vão em:** `marketing/campanhas/conversao/google-ads-<YYYY-MM-DD>/`
+- **Outputs vão em:** `saidas/marketing/campanhas/conversao/google-ads-<YYYY-MM-DD>/`
 
 ---
 

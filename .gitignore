@@ -27,9 +27,12 @@ node_modules/
 _referencias-temp/
 
 # Drop zone do usuário (só o README vai versionado)
-dados/*
-!dados/README.md
+saidas/entrada/*
+!saidas/entrada/README.md
 transcricoes/*
+
+# Cache interno de resultados de skills (regenerado a cada execução)
+saidas/cache/
 
 # Integrações — credenciais e outputs (NUNCA commitar)
 integracoes/credentials/*.env
@@ -41,4 +44,4 @@ __pycache__/
 .pytest_cache/
 .venv/
 
-marketing/
+saidas/marketing/

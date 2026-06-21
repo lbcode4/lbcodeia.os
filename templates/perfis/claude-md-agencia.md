@@ -15,9 +15,10 @@ Aqui ficam todos os clientes, propostas, conteúdo e relatórios."]
 - `clientes/` — uma subpasta por cliente, autossuficiente
 - `briefings/` — briefings de prospects ainda não fechados
 - `propostas/` — propostas em andamento
-- `marketing/` — conteúdo institucional da agência
-- `saidas/` — documentos pontuais, análises
-- `dados/` — arquivos a analisar (relatórios de cliente, exports de ads)
+- `saidas/` — tudo gerado/consumido pelo LBCode.IA
+  - `saidas/marketing/` — conteúdo institucional da agência
+  - `saidas/entrada/` — arquivos a analisar (relatórios de cliente, exports de ads)
+  - `saidas/relatorios/` — relatórios e análises geradas
 - `scripts/` — utilitários de geração de imagem e publicação
 - `transcricoes/` — conteúdo extraído de vídeos e referências
 - `tarefas.md` — pipeline comercial e operacional

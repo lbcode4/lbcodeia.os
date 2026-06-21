@@ -114,7 +114,7 @@ async function scanSites(dir: string): Promise<BibliotecaItem[]> {
 }
 
 export async function getBiblioteca(): Promise<BibliotecaSection[]> {
-  const m = join(REPO_ROOT, "marketing");
+  const m = join(REPO_ROOT, "saidas", "marketing");
   const s = join(REPO_ROOT, "saidas");
 
   const [reels, stories, calendario, carrosseis, auditorias, auditoria_ig, campanhas, gbp, seo, sites, relatorios, prospeccao] =
@@ -149,7 +149,7 @@ export async function getBiblioteca(): Promise<BibliotecaSection[]> {
   return sections.filter((sec) => sec.items.length > 0);
 }
 
-const ALLOWED_ROOTS = ["marketing", "saidas"];
+const ALLOWED_ROOTS = ["saidas"];
 
 export async function readBibliotecaFile(path: string): Promise<{ content: Buffer; ext: string }> {
   const safe = resolve(join(REPO_ROOT, path));

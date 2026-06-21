@@ -4,7 +4,7 @@
 //   node --env-file=.env scripts/postar-instagram.js <pasta-do-carrossel> [slug]
 //
 // Exemplo:
-//   node --env-file=.env scripts/postar-instagram.js marketing/conteudo/educativo-tema-2026-05-30 meu-slug
+//   node --env-file=.env scripts/postar-instagram.js saidas/marketing/conteudo/educativo-tema-2026-05-30 meu-slug
 //
 // Lê os slides de <pasta>/instagram/slide-*.png e a legenda de <pasta>/legenda.md.
 // As imagens precisam estar publicamente acessíveis em:

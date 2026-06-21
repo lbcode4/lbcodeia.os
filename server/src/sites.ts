@@ -21,7 +21,7 @@ async function fetchDesignSystem(keywords: string): Promise<string> {
 }
 
 const REPO_ROOT = join(import.meta.dirname, "..", "..");
-const SITES_ROOT = join(REPO_ROOT, "marketing", "sites");
+const SITES_ROOT = join(REPO_ROOT, "saidas", "marketing", "sites");
 
 export type SiteInfo = {
   id: string;

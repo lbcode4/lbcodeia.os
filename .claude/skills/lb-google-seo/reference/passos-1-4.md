@@ -20,7 +20,7 @@
    - **Dificuldade:** quantos concorrentes fortes aparecem?
    - **Relevância:** direto (produto exato) / indireto (nicho relacionado) / tangencial
 
-**Output:** Salvar em `marketing/google-seo/01-pesquisa-demanda.md` com:
+**Output:** Salvar em `saidas/marketing/google-seo/01-pesquisa-demanda.md` com:
 - Tabela de termos classificados
 - Top 10 termos prioritários (volume + intenção transacional + baixa concorrência)
 - Termos sazonais
@@ -58,7 +58,7 @@ Pra negócio NACIONAL/REGIONAL: pular Maps/Local Pack, focar orgânico + Ads.
    - **Ameaças:** concorrentes fortes demais pra competir de frente
    - **Benchmark:** o padrão mínimo que o negócio precisa atingir
 
-**Output:** `marketing/google-seo/02-analise-concorrencia.md` com:
+**Output:** `saidas/marketing/google-seo/02-analise-concorrencia.md` com:
 - Tabela de concorrentes
 - Mapa de gaps e oportunidades
 - Recomendações: onde atacar primeiro
@@ -77,13 +77,13 @@ Pra negócio NACIONAL/REGIONAL: pular Maps/Local Pack, focar orgânico + Ads.
 > entrevista → diagnóstico → nome otimizado → categorias → descrição 750 chars →
 > Perguntas & Respostas → templates de resposta → checklist de fotos → posts + calendário.
 >
-> Os outputs de `/lb-google-meu-negocio` vão em `marketing/gbp/<YYYY-MM-DD>/`.
-> Ao terminar, criar `marketing/google-seo/03-google-meu-negocio.md` com um **resumo de 1 página**:
-> keyword principal usada, nome otimizado, categorias escolhidas e link pro pacote completo em `marketing/gbp/`.
+> Os outputs de `/lb-google-meu-negocio` vão em `saidas/marketing/gbp/<YYYY-MM-DD>/`.
+> Ao terminar, criar `saidas/marketing/google-seo/03-google-meu-negocio.md` com um **resumo de 1 página**:
+> keyword principal usada, nome otimizado, categorias escolhidas e link pro pacote completo em `saidas/marketing/gbp/`.
 
 **Preço de mercado da gestão:** R$500 setup + R$300/mês (~30-40min/semana por negócio). Útil pra precificar serviço se for vender pra cliente.
 
-**Output:** `marketing/google-seo/03-google-meu-negocio.md` (resumo) + pacote completo em `marketing/gbp/<YYYY-MM-DD>/` (gerado pelo `/lb-google-meu-negocio`)
+**Output:** `saidas/marketing/google-seo/03-google-meu-negocio.md` (resumo) + pacote completo em `saidas/marketing/gbp/<YYYY-MM-DD>/` (gerado pelo `/lb-google-meu-negocio`)
 
 ---
 
@@ -115,7 +115,7 @@ Pra negócio NACIONAL/REGIONAL: pular Maps/Local Pack, focar orgânico + Ads.
 
    **Internal linking:** mapa de links internos sugerido
 
-**Output:** `marketing/google-seo/04-otimizacao-on-page.md` com:
+**Output:** `saidas/marketing/google-seo/04-otimizacao-on-page.md` com:
 - Tabela: página → keyword principal → title → description → H1
 - Schema markup pronto pra copiar (JSON-LD)
 - Checklist técnico com status (feito / pendente)

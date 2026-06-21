@@ -45,7 +45,7 @@ Rodar `npm install` na raiz uma vez antes (instala `@google/genai`, `openai`, `p
 ```bash
 node --env-file=.env scripts/gerar-imagem-gemini.js \
      "PROMPT" \
-     "marketing/conteudo/carrossel/<pasta>/foto-<nome>.png" \
+     "saidas/marketing/conteudo/carrossel/<pasta>/foto-<nome>.png" \
      "identidade/1.png,identidade/2.png" \
      "gemini-2.5-flash-image"   # 4º arg opcional = modelo
 ```
@@ -63,7 +63,7 @@ Se o usuário não pedir modelo, usar o default. Se pedir "mais qualidade/marca"
 ```bash
 node --env-file=.env scripts/gerar-imagem.js \
      "PROMPT" \
-     "marketing/conteudo/carrossel/<pasta>/foto-<nome>.png" high \
+     "saidas/marketing/conteudo/carrossel/<pasta>/foto-<nome>.png" high \
      "gpt-image-1"   # 4º arg = quality, 5º arg opcional = modelo
 ```
 

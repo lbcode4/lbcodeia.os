@@ -149,4 +149,4 @@ Sempre oferecer:
 - **Máximo 4 frentes** — mais que 4 é ansiedade organizada, não plano
 - **Checklist semanal obrigatório** — plano sem tracking não existe
 - **Skills por ação** — cada ação no plano deve ter a skill correspondente indicada
-- **Não criar plano pra mês já em andamento sem ler o que foi feito** — ler últimos commits ou arquivos de `marketing/` primeiro
+- **Não criar plano pra mês já em andamento sem ler o que foi feito** — ler últimos commits ou arquivos de `saidas/marketing/` primeiro

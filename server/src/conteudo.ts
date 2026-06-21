@@ -2,7 +2,7 @@ import { readdir, readFile, stat, writeFile } from "node:fs/promises";
 import { join, resolve, extname } from "node:path";
 
 const REPO_ROOT = join(import.meta.dirname, "..", "..");
-const CONTEUDO_ROOT = join(REPO_ROOT, "marketing", "conteudo");
+const CONTEUDO_ROOT = join(REPO_ROOT, "saidas", "marketing", "conteudo");
 
 export type ConteudoItem = {
   id: string;

@@ -19,7 +19,7 @@ Analogia "Pesadelo na Cozinha": levar tráfego a perfil despreparado = desperdí
 - **Tom de voz:** `_memoria/preferencias.md`
 - **Identidade visual:** `identidade/design-guide.md`
 - **WebFetch:** pra ler perfil público
-- **Outputs:** `marketing/auditoria-ig/<handle>-<YYYY-MM-DD>.md`
+- **Outputs:** `saidas/marketing/auditoria-ig/<handle>-<YYYY-MM-DD>.md`
 
 ---
 

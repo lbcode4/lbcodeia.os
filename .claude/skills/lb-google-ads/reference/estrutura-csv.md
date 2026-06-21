@@ -5,7 +5,7 @@
 Estrutura de pastas final:
 
 ```
-marketing/campanhas/conversao/google-ads-<YYYY-MM-DD>/
+saidas/marketing/campanhas/conversao/google-ads-<YYYY-MM-DD>/
   campanhas.csv          ← linha por campanha
   grupos.csv             ← linha por grupo de anúncio
   keywords.csv           ← keywords + match type
@@ -27,7 +27,7 @@ marketing/campanhas/conversao/google-ads-<YYYY-MM-DD>/
 Mostrar pro usuário:
 
 ```
-✓ Campanha pronta: marketing/campanhas/conversao/google-ads-<YYYY-MM-DD>/
+✓ Campanha pronta: saidas/marketing/campanhas/conversao/google-ads-<YYYY-MM-DD>/
 
 Estrutura:
 - <N> campanhas

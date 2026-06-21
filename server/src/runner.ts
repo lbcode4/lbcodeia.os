@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { resolveSkill } from "./skills-map.js";
 
 const REPO_ROOT = join(import.meta.dirname, "..", "..");
-const RESULTS_ROOT = join(REPO_ROOT, "dados", "results");
+const RESULTS_ROOT = join(REPO_ROOT, "saidas", "cache");
 const MODEL = process.env.LBCODE_MODEL || "claude-sonnet-4-6";
 
 export async function saveResult(skill: string, cliente: string, payload: unknown): Promise<void> {

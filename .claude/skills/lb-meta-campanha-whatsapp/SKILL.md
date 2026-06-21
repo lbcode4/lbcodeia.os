@@ -20,8 +20,8 @@ Melhor venda pra qualquer negócio = 1-a-1 no WhatsApp. Skill monta tudo pra sub
 - **Tom de voz:** `_memoria/preferencias.md`
 - **Identidade visual (criativos):** `identidade/design-guide.md`
 - **Auditoria perfil IG (recomendado):** rodar `/lb-conteudo-auditoria-insta` antes — sem perfil organizado, custo sobe
-- **99 scripts WhatsApp (se existir):** `marketing/scripts-whatsapp/` — pra mensagem inicial e follow-up
-- **Outputs vão em:** `marketing/campanhas/conversao/meta-whatsapp-<YYYY-MM-DD>/`
+- **99 scripts WhatsApp (se existir):** `saidas/marketing/scripts-whatsapp/` — pra mensagem inicial e follow-up
+- **Outputs vão em:** `saidas/marketing/campanhas/conversao/meta-whatsapp-<YYYY-MM-DD>/`
 
 ---
 
@@ -140,7 +140,7 @@ Default = Advantage (Meta escolhe — OK pra iniciante).
 ## Output
 
 ```
-marketing/campanhas/conversao/meta-whatsapp-<YYYY-MM-DD>/
+saidas/marketing/campanhas/conversao/meta-whatsapp-<YYYY-MM-DD>/
   configuracao.md       ← 7 passos preenchidos prontos pra copiar
   copies.md             ← textos principais + títulos + descrições (várias variações)
   mensagem-inicial.md   ← mensagens iniciais WhatsApp por criativo

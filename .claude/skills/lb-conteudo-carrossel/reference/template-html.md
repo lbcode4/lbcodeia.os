@@ -187,7 +187,7 @@ Esqueleto:
 
 Mesma pasta do `carrossel.html`. Tira screenshot de cada `.slide` no tamanho exato.
 Rodar **da raiz do projeto** pra reutilizar o `node_modules` local (sem `npm install` toda vez):
-`node marketing/conteudo/carrossel/<pasta>/render.js`
+`node saidas/marketing/conteudo/carrossel/<pasta>/render.js`
 
 ```js
 const { chromium } = require('playwright');

@@ -14,12 +14,12 @@ Transforma dossiê + oferta em proposta de 2 páginas pronta pra enviar.
 
 ## Dependências
 
-- **Dossiê do prospect (se existir):** `marketing/prospeccao/dossies/<slug>.md` — ler se existir
+- **Dossiê do prospect (se existir):** `saidas/marketing/prospeccao/dossies/<slug>.md` — ler se existir
 - **Contexto do negócio:** `_memoria/empresa.md`
 - **Identidade visual:** `identidade/design-guide.md` + imagens de referência em `identidade/`
 - **Referência de estrutura:** `exemplo/pack-soluccionar (1).pdf` (layout 2 páginas)
 - **Playwright:** pra renderizar HTML→PNG
-- **Outputs:** `marketing/prospeccao/<slug-prospect>/proposta-<YYYY-MM-DD>/`
+- **Outputs:** `saidas/marketing/prospeccao/<slug-prospect>/proposta-<YYYY-MM-DD>/`
 
 ---
 
@@ -33,7 +33,7 @@ Pedir ao usuário:
 3. **Preço** — à vista + parcelado, ou só um
 4. **Bônus** (se houver)
 
-Se dossiê existir em `marketing/prospeccao/dossies/<slug>.md`, ler e extrair:
+Se dossiê existir em `saidas/marketing/prospeccao/dossies/<slug>.md`, ler e extrair:
 - Nome do responsável e da empresa
 - Gaps identificados (seção "Gaps que [seu produto] pode resolver")
 - Ticket médio e atendimentos estimados (pra calcular ROI)
@@ -161,7 +161,7 @@ Ou usar `scripts/render.js` se existir.
 ### Passo 5 — Salvar
 
 ```
-marketing/prospeccao/<slug-prospect>/proposta-<YYYY-MM-DD>/
+saidas/marketing/prospeccao/<slug-prospect>/proposta-<YYYY-MM-DD>/
   proposta-p1.html
   proposta-p1.png
   proposta-p2.html

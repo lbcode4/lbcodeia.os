@@ -95,7 +95,7 @@ function ProspeccaoPage() {
 
     const skill = tipo === "dossie" ? "lb-venda-dossie" : "lb-venda-prospectar";
     const { nicho, date } = labelCampaign(activeCampaign!);
-    const campDir = `marketing/prospeccao/${activeCampaign}`;
+    const campDir = `saidas/marketing/prospeccao/${activeCampaign}`;
     const outputPath = tipo === "dossie"
       ? `${campDir}/dossies/${lead.slug}.md`
       : `${campDir}/03-roteiros/${lead.slug}-whatsapp.md`;

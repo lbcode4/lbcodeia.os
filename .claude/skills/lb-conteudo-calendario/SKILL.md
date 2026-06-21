@@ -17,7 +17,7 @@ description: >
 - **Framework de tráfego:** `_memoria/framework-trafego.md` — OBRIGATÓRIO (RETINA + GCC)
 - **Estratégia:** `_memoria/estrategia.md` — ler pra identificar foco atual e campanhas ativas
 - **Contexto:** `_memoria/empresa.md`
-- **Outputs:** `marketing/conteudo/calendario/<YYYY-MM>/calendario.md`
+- **Outputs:** `saidas/marketing/conteudo/calendario/<YYYY-MM>/calendario.md`
 
 ---
 
@@ -153,7 +153,7 @@ Gerado em [data] | [N] posts | Mix: [% carrossel] / [% reels] / [% outros]
 ### Passo 4 — Salvar
 
 ```
-marketing/conteudo/calendario/<YYYY-MM>/calendario.md
+saidas/marketing/conteudo/calendario/<YYYY-MM>/calendario.md
 ```
 
 ### Passo 5 — Próximo passo sugerido

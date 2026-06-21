@@ -111,7 +111,7 @@ function SitesIndex() {
       {listErro && <p className="text-[13px] text-red-500 mb-4">{listErro}</p>}
 
       {sites.length === 0 && !listErro && (
-        <p className="text-[13px] text-muted-foreground">Nenhum site encontrado em marketing/sites/.</p>
+        <p className="text-[13px] text-muted-foreground">Nenhum site encontrado em saidas/marketing/sites/.</p>
       )}
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">

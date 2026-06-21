@@ -3,7 +3,7 @@ import { join, resolve, extname, basename } from "node:path";
 
 const REPO_ROOT = join(import.meta.dirname, "..", "..");
 const IDENTIDADE_ROOT = join(REPO_ROOT, "identidade");
-const CARROSSEIS_ROOT = join(REPO_ROOT, "marketing", "conteudo", "carrossel");
+const CARROSSEIS_ROOT = join(REPO_ROOT, "saidas", "marketing", "conteudo", "carrossel");
 
 const IMAGE_EXTS = [".png", ".jpg", ".jpeg", ".webp"];
 const MIME_MAP: Record<string, string> = {

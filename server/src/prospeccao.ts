@@ -3,7 +3,7 @@ import { existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 const REPO_ROOT = join(import.meta.dirname, "..", "..");
-const PROSPECCAO_ROOT = join(REPO_ROOT, "marketing", "prospeccao");
+const PROSPECCAO_ROOT = join(REPO_ROOT, "saidas", "marketing", "prospeccao");
 
 export type ProspeccaoLead = {
   prioridade: number;

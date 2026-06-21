@@ -22,7 +22,7 @@ desatualizado e quando você criou algo novo que precisa ser registrado.
 Listar estado real do workspace:
 
 **Estrutura:**
-- Pastas na raiz — `marketing/`, `saidas/`, `dados/`, `scripts/`, `prompts/`, `transcricoes/`, `clientes/` (se houver)
+- Pastas na raiz — `saidas/` (com subpastas `marketing/`, `entrada/`, `relatorios/`, `cache/`), `scripts/`, `prompts/`, `transcricoes/`, `clientes/` (se houver)
 - Subpastas de `clientes/` (cada pasta = um cliente ou projeto isolado)
 - Skills criadas em `.claude/skills/` — quais novos?
 
@@ -32,9 +32,9 @@ Listar estado real do workspace:
 - Arquivos alterados nos últimos 30 dias — qual área foi mais tocada?
 
 **Outputs recentes:**
-- Carrosséis gerados (pasta `marketing/conteudo/`)
-- Campanhas criadas (pasta `marketing/campanhas/`)
-- Propostas salvas (pasta `marketing/prospeccao/`)
+- Carrosséis gerados (pasta `saidas/marketing/conteudo/`)
+- Campanhas criadas (pasta `saidas/marketing/campanhas/`)
+- Propostas salvas (pasta `saidas/marketing/prospeccao/`)
 - Planos e precificações (pasta `saidas/`)
 - Relatórios feitos
 

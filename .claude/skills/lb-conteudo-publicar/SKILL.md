@@ -14,12 +14,12 @@ Pipeline orquestrado. Entrada: tema. Saída: blog + visual + legendas, tudo inte
 
 ## Dependências
 
-- **Pesquisa SEO:** `marketing/google-seo/05-estrategia-conteudo.md` (lista de temas, keywords)
-- **Análise concorrência:** `marketing/google-seo/02-analise-concorrencia.md` (ângulos únicos)
-- **GEO (se aplicável):** `marketing/google-seo/08-geo-otimizacao-ia.md`
+- **Pesquisa SEO:** `saidas/marketing/google-seo/05-estrategia-conteudo.md` (lista de temas, keywords)
+- **Análise concorrência:** `saidas/marketing/google-seo/02-analise-concorrencia.md` (ângulos únicos)
+- **GEO (se aplicável):** `saidas/marketing/google-seo/08-geo-otimizacao-ia.md`
 - **Framework:** `_memoria/framework-trafego.md` (RETINA — posicionamento + diferenciação)
 - **Tom:** `_memoria/preferencias.md`
-- **Blog destino:** `site/astro-site/src/content/blog/` — **pode não existir.** Se a pasta não existir, NÃO quebrar: salvar o blog em `marketing/conteudo/blog/<slug>.md` e avisar que o pipeline Astro não está configurado (ver Passo 2). O carrossel + legendas seguem normalmente.
+- **Blog destino:** `site/astro-site/src/content/blog/` — **pode não existir.** Se a pasta não existir, NÃO quebrar: salvar o blog em `saidas/marketing/conteudo/blog/<slug>.md` e avisar que o pipeline Astro não está configurado (ver Passo 2). O carrossel + legendas seguem normalmente.
 - **Skill `/lb-conteudo-carrossel`:** pra gerar visual
 
 ## Fluxo
@@ -45,8 +45,8 @@ Ler sobre tema nas pesquisas:
 
 **Destino — checar antes de escrever:**
 - Se `site/astro-site/src/content/blog/` existir → salvar lá: `site/astro-site/src/content/blog/<slug>.md`.
-- Se NÃO existir → salvar em `marketing/conteudo/blog/<slug>.md` e avisar uma vez:
-  > "⚠️ Pipeline de blog (`site/astro-site/`) não configurado. Salvei o artigo em `marketing/conteudo/blog/` como markdown. Quando o site Astro existir, é só mover. Carrossel e legendas seguem normais."
+- Se NÃO existir → salvar em `saidas/marketing/conteudo/blog/<slug>.md` e avisar uma vez:
+  > "⚠️ Pipeline de blog (`site/astro-site/`) não configurado. Salvei o artigo em `saidas/marketing/conteudo/blog/` como markdown. Quando o site Astro existir, é só mover. Carrossel e legendas seguem normais."
 - Não interromper o fluxo por causa disso — o blog é uma das 3 saídas, as outras (carrossel, legendas) não dependem do site.
 
 **Slug:** kebab-case, sem stopwords. Ex: "conservar-carne-salgada"
@@ -85,7 +85,7 @@ Chamar skill `/lb-conteudo-carrossel` passando:
 - 5-7 pontos principais do artigo
 - Legenda (vai ser composta depois)
 
-Saída: 9 slides PNG (Insta padrão) em `marketing/conteudo/carrossel/<slug>-YYYY-MM-DD/`
+Saída: 9 slides PNG (Insta padrão) em `saidas/marketing/conteudo/carrossel/<slug>-YYYY-MM-DD/`
 
 ### Passo 4 — 3 Legendas (Insta/FB/LinkedIn)
 
@@ -113,7 +113,7 @@ Gerar 3 versões + CTA único pra blog:
 [CTA: "Leia na íntegra →"]
 ```
 
-Salvar em: `marketing/conteudo/carrossel/<slug>-YYYY-MM-DD/legendas.md`
+Salvar em: `saidas/marketing/conteudo/carrossel/<slug>-YYYY-MM-DD/legendas.md`
 
 ### Passo 5 — Resumo
 

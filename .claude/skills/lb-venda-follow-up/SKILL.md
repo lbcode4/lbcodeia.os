@@ -2,7 +2,7 @@
 name: lb-venda-follow-up
 description: >
   Gera sequência personalizada de 5 mensagens de follow-up pós-abordagem com ângulos diferentes
-  (confirmação, valor, prova, urgência, reativação). Salva em marketing/prospeccao/<prospect>/venda-follow-up.md.
+  (confirmação, valor, prova, urgência, reativação). Salva em saidas/marketing/prospeccao/<prospect>/venda-follow-up.md.
   Complementa /lb-venda-prospectar que para na abordagem inicial.
   Use quando o usuário pedir "follow-up", "sequência de acompanhamento", "como dar continuidade",
   "mensagens de follow", "não respondeu o que faço", "como reativar prospect", ou /lb-venda-follow-up.
@@ -14,10 +14,10 @@ description: >
 
 ## Dependências
 
-- **Dossiê do prospect (se existir):** `marketing/prospeccao/dossies/<slug>.md` — ler se existir
+- **Dossiê do prospect (se existir):** `saidas/marketing/prospeccao/dossies/<slug>.md` — ler se existir
 - **Contexto:** `_memoria/empresa.md`
 - **Tom:** `_memoria/preferencias.md`
-- **Outputs:** `marketing/prospeccao/<slug-prospect>/venda-follow-up.md`
+- **Outputs:** `saidas/marketing/prospeccao/<slug-prospect>/venda-follow-up.md`
 
 ---
 
@@ -120,7 +120,7 @@ Estágio: [A/B/C/D] | Canal: [WhatsApp/email/DM] | Iniciado em: <data>
 - [ ] Em andamento
 ```
 
-Path: `marketing/prospeccao/<slug-prospect>/venda-follow-up.md`
+Path: `saidas/marketing/prospeccao/<slug-prospect>/venda-follow-up.md`
 
 ### Passo 5 — Próximo passo sugerido
 

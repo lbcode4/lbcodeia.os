@@ -11,11 +11,11 @@ Se o usuário não passou briefing, perguntar:
 5. **Objetivo:** ligações / WhatsApp / formulário / visita?
 6. **Site/landing page** existe? URL?
 
-Se já existe `marketing/google-seo/06-google-ads.md` (criado pelo `/lb-google-seo`), usar como base — pular as perguntas que já foram respondidas lá.
+Se já existe `saidas/marketing/google-seo/06-google-ads.md` (criado pelo `/lb-google-seo`), usar como base — pular as perguntas que já foram respondidas lá.
 
 ## Passo 2 — Pesquisa de palavras-chave
 
-Se já existe `marketing/google-seo/01-pesquisa-demanda.md`, usar top 10-20 de termos prioritários (intenção transacional + comercial).
+Se já existe `saidas/marketing/google-seo/01-pesquisa-demanda.md`, usar top 10-20 de termos prioritários (intenção transacional + comercial).
 
 Se não existe, gerar via 3 vias (combinar):
 - **1º cérebro (natural):** perguntar ao dono o que público pesquisa + pesquisar termos no próprio Google

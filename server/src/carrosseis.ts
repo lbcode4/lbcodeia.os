@@ -3,7 +3,7 @@ import { existsSync } from "node:fs";
 import { join, resolve, extname } from "node:path";
 
 const REPO_ROOT = join(import.meta.dirname, "..", "..");
-const CARROSSEIS_ROOT = join(REPO_ROOT, "marketing", "conteudo", "carrossel");
+const CARROSSEIS_ROOT = join(REPO_ROOT, "saidas", "marketing", "conteudo", "carrossel");
 
 export type CarrosselMeta = {
   id: string;

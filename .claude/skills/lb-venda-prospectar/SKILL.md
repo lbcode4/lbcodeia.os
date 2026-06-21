@@ -21,9 +21,9 @@ Pega o conhecimento técnico e transforma em dinheiro via prospecção ativa.
 - **Skill `/lb-conteudo-auditoria-insta`** (Posicionamento — auditar próprio IG do gestor)
 - **Contexto:** `_memoria/empresa.md` (o que vende)
 - **Tom:** `_memoria/preferencias.md`
-- **99 scripts WhatsApp (se existir):** `marketing/scripts-whatsapp/`
+- **99 scripts WhatsApp (se existir):** `saidas/marketing/scripts-whatsapp/`
 - **WebSearch + WebFetch:** pra fontes de leads
-- **Outputs:** `marketing/prospeccao/<nicho>-<YYYY-MM-DD>/`
+- **Outputs:** `saidas/marketing/prospeccao/<nicho>-<YYYY-MM-DD>/`
 
 ---
 
@@ -108,7 +108,7 @@ site:instagram.com clinica estetica sao paulo gmail OR hotmail OR outlook
 
 Pra cada lead (ou lote priorizado de 20-30):
 - Chamar `/lb-venda-dossie` com nome+URL+handle
-- Dossiê de 1 página gerado em `marketing/prospeccao/dossies/<slug>.md`
+- Dossiê de 1 página gerado em `saidas/marketing/prospeccao/dossies/<slug>.md`
 
 Reservar 30-60 min/dia só pra dossiês.
 
@@ -174,7 +174,7 @@ Pode mandar em áudio (sorrir tem som; energia alta, voz confiante).
 ## Output
 
 ```
-marketing/prospeccao/<nicho>-<YYYY-MM-DD>/
+saidas/marketing/prospeccao/<nicho>-<YYYY-MM-DD>/
   00-persona-dono.md       ← persona do DONO + métricas financeiras
   01-leads.csv             ← 50-100 leads coletados das 5 fontes
   02-leads-priorizados.csv ← top 30 com critério (anuncia? IG forte? GBP fraco? margem alta?)

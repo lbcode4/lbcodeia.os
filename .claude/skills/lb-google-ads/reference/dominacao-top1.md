@@ -19,7 +19,7 @@ Campanha #3 das 4 Campanhas de Ouro. Roda DENTRO do Google Business Profile (`bu
 6. Títulos + descrições (repetir palavras-chave do nicho + bairro) + telefone (decidir exibir endereço ou não)
 7. Palavras-chave (do Passo 2 acima) + raio de atuação (~5 km início) + orçamento diário → publicar
 
-**Output:** documento curto em `marketing/campanhas/conversao/dominacao-top1-<YYYY-MM-DD>/configuracao.md` com:
+**Output:** documento curto em `saidas/marketing/campanhas/conversao/dominacao-top1-<YYYY-MM-DD>/configuracao.md` com:
 - Títulos+descrições aprovados
 - Lista de keywords usadas
 - Raio + orçamento configurado

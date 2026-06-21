@@ -51,7 +51,7 @@ Style reference: corporate headshot photography, natural editorial style.
 # Usar script Gemini do projeto (mesmo do /lb-conteudo-carrossel)
   node --env-file=.env scripts/gerar-imagem-gemini.js \
        "PROMPT_ACIMA" \
-       "marketing/auditoria-ig/<handle>-foto-profissional.png" \
+       "saidas/marketing/auditoria-ig/<handle>-foto-profissional.png" \
        "<caminho-da-selfie-original>"
 ```
 
@@ -62,7 +62,7 @@ Style reference: corporate headshot photography, natural editorial style.
 - **NUNCA usar filtro beleza** — fake demais
 - Se selfie estiver muito ruim (foco, resolução), pedir foto melhor — não tente milagre
 - Pra logo de marca (não pessoa), usar `identidade/logo.png` direto, não gerar foto
-- Salvar em `marketing/auditoria-ig/<handle>-foto-profissional.png` pra usar na nova foto de perfil
+- Salvar em `saidas/marketing/auditoria-ig/<handle>-foto-profissional.png` pra usar na nova foto de perfil
 
 ## Alternativas sem IA
 

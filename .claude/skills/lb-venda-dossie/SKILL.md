@@ -16,7 +16,7 @@ description: >
 
 - **Framework de tráfego:** `_memoria/framework-trafego.md`
 - **WebSearch + WebFetch:** pra pesquisa
-- **Outputs:** `marketing/prospeccao/dossies/<slug-do-prospect>.md`
+- **Outputs:** `saidas/marketing/prospeccao/dossies/<slug-do-prospect>.md`
 
 ---
 
@@ -120,7 +120,7 @@ Template:
 
 ### Passo 4 — Salvar
 
-Path: `marketing/prospeccao/dossies/<slug-do-prospect>.md`
+Path: `saidas/marketing/prospeccao/dossies/<slug-do-prospect>.md`
 Slug: kebab-case do nome (ex.: "Empresa Dr. Silva" → `clinica-dr-silva`).
 
 ### Passo 5 — Próximo passo sugerido

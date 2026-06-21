@@ -12,9 +12,10 @@ pessoal. Aqui eu produzo conteúdo, nutro audiência e fecho venda."]
 **Estrutura de pastas:**
 - `_memoria/` — quem sou, como falo, foco atual, framework
 - `identidade/` — cores, fontes, logo, design-guide
-- `marketing/` — conteúdo produzido (carrosséis, reels, stories, ads)
-- `saidas/` — documentos pontuais (emails, roteiros, análises)
-- `dados/` — arquivos a analisar (CSV, relatórios de ads, exports)
+- `saidas/` — tudo gerado/consumido pelo LBCode.IA
+  - `saidas/marketing/` — conteúdo produzido (carrosséis, reels, stories, ads)
+  - `saidas/entrada/` — arquivos a analisar (CSV, relatórios de ads, exports)
+  - `saidas/relatorios/` — documentos pontuais (emails, roteiros, análises)
 - `scripts/` — utilitários de geração de imagem e publicação
 - `transcricoes/` — conteúdo extraído de vídeos e áudios
 - `tarefas.md` — foco da semana, próximas ações
@@ -51,8 +52,8 @@ Evitar: [o que destoa do seu estilo]
 
 ## Regras do sistema
 
-- Conteúdo novo salvar em `marketing/conteudo/<tipo>-<tema>-<data>/`
-- Cada campanha de tráfego criar pasta em `marketing/campanhas/<nome>-<data>/`
+- Conteúdo novo salvar em `saidas/marketing/conteudo/<tipo>-<tema>-<data>/`
+- Cada campanha de tráfego criar pasta em `saidas/marketing/campanhas/<nome>-<data>/`
 - Proposta ou oferta gerada → `saidas/proposta-<cliente>-<data>.html`
 - Transcrições de referência salvar em `transcricoes/`
 

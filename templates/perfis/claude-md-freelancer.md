@@ -14,9 +14,10 @@ Aqui ficam todos os clientes, propostas, entregas e follow-up."]
 - `identidade/` — minha marca pessoal aplicada nas entregas
 - `clientes/` — uma subpasta por cliente, autossuficiente
 - `propostas/` — propostas em rascunho ou enviadas
-- `marketing/` — meu próprio conteúdo de atração (Insta, LinkedIn)
-- `saidas/` — emails, documentos pontuais
-- `dados/` — arquivos a analisar (relatórios de cliente, exports)
+- `saidas/` — tudo gerado/consumido pelo LBCode.IA
+  - `saidas/marketing/` — meu próprio conteúdo de atração (Insta, LinkedIn)
+  - `saidas/entrada/` — arquivos a analisar (relatórios de cliente, exports)
+  - `saidas/relatorios/` — emails, documentos pontuais
 - `scripts/` — utilitários de geração de imagem e publicação
 - `tarefas.md` — pipeline, prazos, próximas ações
 

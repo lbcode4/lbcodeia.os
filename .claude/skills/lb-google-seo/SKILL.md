@@ -18,7 +18,7 @@ description: >
 - **Tom de voz:** `_memoria/preferencias.md`
 - **Estratégia atual:** `_memoria/estrategia.md`
 - **Ferramentas:** WebSearch, WebFetch (nativos)
-- **Outputs vão em:** `marketing/google-seo/`
+- **Outputs vão em:** `saidas/marketing/google-seo/`
 
 ---
 

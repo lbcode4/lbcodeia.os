@@ -130,7 +130,7 @@ Distribuição em [N] dias (alternando tipo RETINA + formatos + ritmo visual de 
 Pra cada post, recomendar:
 - Rodar `/lb-conteudo-carrossel` se for carrossel/foto
 - Rodar `/lb-conteudo-aprovar` quando finalizado
-- Salvar em `marketing/conteudo/<slug>-<YYYY-MM-DD>/`
+- Salvar em `saidas/marketing/conteudo/<slug>-<YYYY-MM-DD>/`
 ```
 
 ## Output esperado

@@ -62,7 +62,7 @@ Fluxo padrão pra cada execução:
    Exemplo:
    ```
    M  _memoria/estrategia.md
-   M  marketing/conteudo/conteudo-carrossel-2026-06-01/index.html
+   M  saidas/marketing/conteudo/conteudo-carrossel-2026-06-01/index.html
    A  saidas/proposta-cliente-2026-06-01.pdf
    ```
 
@@ -72,8 +72,8 @@ Fluxo padrão pra cada execução:
 
 4. **Se não responder**, gerar mensagem baseada em padrão:
    - Arquivo `_memoria/X.md` → "Atualiza contexto"
-   - Pasta `marketing/conteudo/` → "Cria [N] carrosséis"
-   - Pasta `marketing/campanhas/` → "Monta campanha [tipo]"
+   - Pasta `saidas/marketing/conteudo/` → "Cria [N] carrosséis"
+   - Pasta `saidas/marketing/campanhas/` → "Monta campanha [tipo]"
    - Pasta `saidas/` → "Entrega [tipo de arquivo]"
    - Múltiplas → "[multi] Atualiza estratégia, conteúdo, propostas"
 

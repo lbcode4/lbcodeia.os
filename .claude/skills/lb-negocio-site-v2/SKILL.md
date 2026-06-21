@@ -27,7 +27,7 @@ Mesma proposta do `/lb-negocio-site` — site/landing com copy de conversão e i
 - **Foco atual:** `_memoria/estrategia.md`
 - **Framework de tráfego:** `_memoria/framework-trafego.md` — GCC, RETINA, ganchos
 - **Playwright:** preview desktop + mobile
-- **Outputs:** `marketing/sites/<tipo>-<nome>-<YYYY-MM-DD>/`
+- **Outputs:** `saidas/marketing/sites/<tipo>-<nome>-<YYYY-MM-DD>/`
 
 ---
 
@@ -287,7 +287,7 @@ Mostrar previews. Aguardar aprovação antes de finalizar.
 ### Passo 6 — Salvar e organizar
 
 ```
-marketing/sites/<tipo>-<nome>-<YYYY-MM-DD>/
+saidas/marketing/sites/<tipo>-<nome>-<YYYY-MM-DD>/
   copy.md               ← copy aprovada + tipo + objetivo de conversão
   design-system.md      ← output do ui-ux-pro-max reconciliado com identidade
   index.html
@@ -314,5 +314,5 @@ Salvar também o design system reconciliado em `design-system.md` — útil pra 
 - CHECKPOINT de copy (Passo 2) e preview (Passo 5) — não pular aprovação
 - Salvar `design-system.md` com o output reconciliado
 - Preview sempre desktop + mobile
-- Output em `marketing/sites/<tipo>-<nome>-<YYYY-MM-DD>/`
+- Output em `saidas/marketing/sites/<tipo>-<nome>-<YYYY-MM-DD>/`
 - Nome da marca sempre **[seu produto]** (capitalização exata)

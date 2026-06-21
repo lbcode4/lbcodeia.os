@@ -24,7 +24,7 @@
    - Páginas de área de atendimento (se fizer sentido)
    - Conteúdo com referências locais
 
-**Output:** `marketing/google-seo/05-estrategia-conteudo.md`
+**Output:** `saidas/marketing/google-seo/05-estrategia-conteudo.md`
 
 > Essa lista é o insumo da skill `/lb-conteudo-publicar` — cada item dessa estratégia vira artigo + carrossel + legendas com um único comando.
 
@@ -58,7 +58,7 @@
 
 4. **Landing page:** avaliar se o site atual serve ou precisa de página específica
 
-**Output:** `marketing/google-seo/06-google-ads.md` com estrutura completa, palavras-chave organizadas, copies prontas, orçamento e configurações.
+**Output:** `saidas/marketing/google-seo/06-google-ads.md` com estrutura completa, palavras-chave organizadas, copies prontas, orçamento e configurações.
 
 > A skill `/lb-google-ads` consome esse arquivo e gera o CSV pronto pra importar no Google Ads.
 
@@ -86,7 +86,7 @@
 - Revisar estratégia de conteúdo
 - Avaliar novas oportunidades de keywords
 
-**Output:** `marketing/google-seo/07-checklist-monitoramento.md`
+**Output:** `saidas/marketing/google-seo/07-checklist-monitoramento.md`
 
 ---
 
@@ -124,4 +124,4 @@
    - Registrar: a empresa apareceu? quem apareceu? fonte citada?
    - Ajustar conteúdo com base nos resultados
 
-**Output:** `marketing/google-seo/08-geo-otimizacao-ia.md` com auditoria, FAQ + schema JSON-LD, lista de ações pra aumentar citações, checklist de monitoramento.
+**Output:** `saidas/marketing/google-seo/08-geo-otimizacao-ia.md` com auditoria, FAQ + schema JSON-LD, lista de ações pra aumentar citações, checklist de monitoramento.

@@ -28,7 +28,7 @@ Skill de criação de páginas web. Pega um objetivo → entrega site/landing em
 - **Framework de tráfego:** `_memoria/framework-trafego.md` — OBRIGATÓRIO ler antes. RETINA, GCC, ganchos, Triângulo de Ouro. É a base da copy de conversão.
 - **Geração de imagem (se precisar de fotos/heros):** Gemini nano-banana 2 via `scripts/gerar-imagem-gemini.js` (default), OpenAI gpt-image-1 via `scripts/gerar-imagem.js` (fallback). Mesmas regras do `/lb-conteudo-carrossel`.
 - **Playwright:** renderizar preview do site em PNG.
-- **Outputs vão em:** `marketing/sites/<tipo>-<nome>-<YYYY-MM-DD>/`
+- **Outputs vão em:** `saidas/marketing/sites/<tipo>-<nome>-<YYYY-MM-DD>/`
 
 ---
 
@@ -237,7 +237,7 @@ Heros, fundos, mockups → mesmas regras do `/lb-conteudo-carrossel`:
 ### Passo 6 — Salvar e organizar
 
 ```
-marketing/sites/<tipo>-<nome>-<YYYY-MM-DD>/
+saidas/marketing/sites/<tipo>-<nome>-<YYYY-MM-DD>/
   copy.md               ← copy aprovada por seção + tipo + objetivo de conversão
   index.html            ← site (single-page) ou página principal
   <outras>.html         ← se multi-page
@@ -268,4 +268,4 @@ Depois de pronto, oferecer conforme o tipo:
 - Nome da marca sempre **[seu produto]** (capitalização exata).
 - Imagens IA: default Gemini com refs de `identidade/`; prompts em inglês; sem rostos; gerar em paralelo; aprovar antes de usar.
 - Preview sempre em desktop + mobile (site tem que ser responsivo).
-- Output em `marketing/sites/<tipo>-<nome>-<YYYY-MM-DD>/`.
+- Output em `saidas/marketing/sites/<tipo>-<nome>-<YYYY-MM-DD>/`.

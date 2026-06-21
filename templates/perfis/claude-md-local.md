@@ -12,10 +12,11 @@ Aqui ficam campanhas, conteúdo, avaliações e análise de resultado."]
 **Estrutura de pastas:**
 - `_memoria/` — quem é o negócio, como falamos, foco atual, framework
 - `identidade/` — cores, fontes, logo, design-guide
-- `marketing/` — campanhas, conteúdo orgânico, ads
 - `comercial/` — propostas, pipeline de venda consultiva
-- `saidas/` — documentos pontuais, análises
-- `dados/` — arquivos a analisar (exports de ads, planilhas)
+- `saidas/` — tudo gerado/consumido pelo LBCode.IA
+  - `saidas/marketing/` — campanhas, conteúdo orgânico, ads
+  - `saidas/entrada/` — arquivos a analisar (exports de ads, planilhas)
+  - `saidas/relatorios/` — documentos pontuais, análises
 - `scripts/` — utilitários de geração de imagem e publicação
 - `tarefas.md` — foco da semana, próximas ações
 
@@ -49,9 +50,9 @@ Evitar: [o que destoa da marca]
 
 ## Regras do sistema
 
-- Campanha nova → criar pasta `marketing/campanhas/<nome>-<data>/`
-- Conteúdo orgânico → `marketing/conteudo/<tipo>-<tema>-<data>/`
-- Relatório mensal → `dados/relatorio-<mes>.md`
+- Campanha nova → criar pasta `saidas/marketing/campanhas/<nome>-<data>/`
+- Conteúdo orgânico → `saidas/marketing/conteudo/<tipo>-<tema>-<data>/`
+- Relatório mensal → `saidas/relatorio-<mes>.md`
 - Proposta consultiva → `comercial/proposta-<cliente>-<data>.html`
 
 ## Skills principais
