@@ -13,6 +13,7 @@ vi.mock("node:child_process", () => ({
 import { readFile, writeFile, readdir, unlink } from "node:fs/promises";
 import { execFile } from "node:child_process";
 import { readCarrosselHtml, writeCarrosselHtmlAndRender } from "./carrossel-editor.js";
+import { app } from "./server.js";
 
 const mockReadFile = vi.mocked(readFile);
 const mockWriteFile = vi.mocked(writeFile);
@@ -98,5 +99,67 @@ describe("writeCarrosselHtmlAndRender", () => {
     expect(mockUnlink).toHaveBeenCalledTimes(1);
     expect(mockUnlink).toHaveBeenCalledWith(expect.stringContaining("slide-04.png"));
     expect(result.slides).toEqual(["slide-01.png", "slide-02.png", "slide-03.png"]);
+  });
+});
+
+describe("GET /api/carrosseis/html", () => {
+  it("400 sem id", async () => {
+    const res = await app.request("/api/carrosseis/html");
+    expect(res.status).toBe(400);
+  });
+
+  it("404 quando o arquivo não existe", async () => {
+    mockReadFile.mockRejectedValue(Object.assign(new Error("not found"), { code: "ENOENT" }));
+    const res = await app.request("/api/carrosseis/html?id=inexistente");
+    expect(res.status).toBe(404);
+  });
+
+  it("200 com o html quando existe", async () => {
+    mockReadFile.mockResolvedValue("<html>ok</html>" as never);
+    const res = await app.request("/api/carrosseis/html?id=teste");
+    expect(res.status).toBe(200);
+    expect(await res.text()).toBe("<html>ok</html>");
+  });
+});
+
+describe("PUT /api/carrosseis/html", () => {
+  it("400 sem id", async () => {
+    const res = await app.request("/api/carrosseis/html", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ html: "<a></a>" }),
+    });
+    expect(res.status).toBe(400);
+  });
+
+  it("200 com slides quando o render funciona", async () => {
+    mockWriteFile.mockResolvedValue(undefined);
+    mockReaddir.mockResolvedValue(["slide-01.png"] as never);
+
+    const res = await app.request("/api/carrosseis/html?id=teste", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ html: '<div class="slide">a</div>' }),
+    });
+
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { ok: boolean; slides: string[] };
+    expect(body.ok).toBe(true);
+    expect(body.slides).toEqual(["slide-01.png"]);
+  });
+
+  it("500 quando o render falha", async () => {
+    mockWriteFile.mockResolvedValue(undefined);
+    mockExecFile.mockImplementationOnce((_cmd, _args, _opts, cb) =>
+      (cb as (e: Error) => void)(new Error("Playwright crashou")),
+    );
+
+    const res = await app.request("/api/carrosseis/html?id=teste", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ html: '<div class="slide">a</div>' }),
+    });
+
+    expect(res.status).toBe(500);
   });
 });

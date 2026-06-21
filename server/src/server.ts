@@ -9,6 +9,7 @@ import { listCampaigns, readCampaignFile } from "./prospeccao.js";
 import { listConteudo, readConteudoArquivo, updateConteudoStatus } from "./conteudo.js";
 import { createSite, listSites, readSiteHtml, writeSiteHtml, streamSiteChat, type ChatMessage } from "./sites.js";
 import { listCarrosseis, readSlide } from "./carrosseis.js";
+import { readCarrosselHtml, writeCarrosselHtmlAndRender, streamCarrosselChat } from "./carrossel-editor.js";
 import { listIdentidade, readIdentidadeArquivo, listInspiracoes, saveInspiracao, readInspiracao } from "./identidade.js";
 import { saveReferencia, readReferencia, deleteReferencias } from "./referencias-temp.js";
 import { getBiblioteca, readBibliotecaFile } from "./biblioteca.js";
@@ -138,6 +139,50 @@ app.get("/api/carrosseis/slide", async (c) => {
       return c.json({ error: "Slide não encontrado" }, 404);
     return c.json({ error: "Erro ao ler slide" }, 500);
   }
+});
+
+app.get("/api/carrosseis/html", async (c) => {
+  const id = c.req.query("id");
+  if (!id) return c.json({ error: "id obrigatório" }, 400);
+  try {
+    const html = await readCarrosselHtml(id);
+    return new Response(html, { headers: { "Content-Type": "text/html; charset=utf-8" } });
+  } catch (e) {
+    const code = (e as NodeJS.ErrnoException).code;
+    if (code === "ENOENT" || (e as Error).message === "Caminho inválido")
+      return c.json({ error: "Carrossel não encontrado" }, 404);
+    return c.json({ error: "Erro ao ler carrossel" }, 500);
+  }
+});
+
+app.put("/api/carrosseis/html", async (c) => {
+  const id = c.req.query("id");
+  if (!id) return c.json({ error: "id obrigatório" }, 400);
+  try {
+    const { html } = await c.req.json<{ html: string }>();
+    const { slides } = await writeCarrosselHtmlAndRender(id, html);
+    return c.json({ ok: true, slides });
+  } catch (e) {
+    return c.json({ error: (e as Error).message }, 500);
+  }
+});
+
+app.post("/api/carrosseis/chat", async (c) => {
+  let body: { html: string; instruction: string; history?: ChatMessage[] };
+  try {
+    body = await c.req.json();
+  } catch {
+    return c.json({ error: "JSON inválido" }, 400);
+  }
+  const { html, instruction, history = [] } = body;
+  if (!html || !instruction) return c.json({ error: "html e instruction obrigatórios" }, 400);
+
+  return streamSSE(c, async (stream) => {
+    for await (const ev of streamCarrosselChat(html, instruction, history)) {
+      await stream.writeSSE({ event: ev.type, data: JSON.stringify(ev) });
+      if (ev.type === "done" || ev.type === "error") break;
+    }
+  });
 });
 
 app.get("/api/identidade", async (c) => {
