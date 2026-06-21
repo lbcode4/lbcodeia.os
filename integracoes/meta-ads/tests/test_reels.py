@@ -97,6 +97,44 @@ class TestFetchReels(unittest.TestCase):
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0]["id"], "r1")
 
+    def test_watch_time_converted_from_ms_to_seconds(self):
+        from reels import fetch_reels
+        client = self._make_client("ig_456", [
+            {"id": "r1", "media_type": "REEL", "caption": "test",
+             "timestamp": "2026-01-01T10:00:00+0000",
+             "like_count": 100, "comments_count": 10}
+        ], [
+            {"data": [
+                {"name": "reach", "values": [{"value": 1000}]},
+                {"name": "saved", "values": [{"value": 50}]},
+                {"name": "shares", "values": [{"value": 20}]},
+                {"name": "ig_reels_avg_watch_time", "values": [{"value": 4400}]},
+            ]}
+        ])
+
+        result = fetch_reels(client, days=30, limit=50)
+
+        # 4400 ms / 1000 = 4.4 s
+        self.assertAlmostEqual(result[0]["watch"], 4.4)
+
+    def test_watch_defaults_to_zero_when_metric_missing(self):
+        from reels import fetch_reels
+        client = self._make_client("ig_456", [
+            {"id": "r1", "media_type": "REEL", "caption": "",
+             "timestamp": "2026-01-01T10:00:00+0000",
+             "like_count": 10, "comments_count": 2}
+        ], [
+            {"data": [
+                {"name": "reach", "values": [{"value": 500}]},
+                {"name": "saved", "values": [{"value": 1}]},
+                {"name": "shares", "values": [{"value": 1}]},
+            ]}
+        ])
+
+        result = fetch_reels(client, days=30, limit=50)
+
+        self.assertEqual(result[0]["watch"], 0.0)
+
     def test_zero_reach_returns_zero_engagement_rate(self):
         from reels import fetch_reels
         client = self._make_client("ig_456", [

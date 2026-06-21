@@ -14,14 +14,17 @@ export const Route = createFileRoute("/reels-organico")({
   component: ReelsOrganico,
 });
 
+// Consome o contrato rico de lb-meta-analise-reels-organico (mesmo da tela /organico-instagram),
+// renderizando uma visão enxuta: ranking + padrões + RETINA + 1º roteiro.
+type Padrao = { titulo: string; desc: string };
 type LiveData = {
   periodo: string;
   reelsAnalisados: number;
-  ranking: Array<{ id: string; engRate: number; plays: number; data: string }>;
-  padroesVencedores: string[];
-  padroesPerdedores: string[];
+  reels: Array<{ rank: number; titulo: string; engRate: number; alcance: number; data: string }>;
+  padroesVencedores: Padrao[];
+  padroesPerdedores: Padrao[];
   leituraRetina: string;
-  roteiro: { hook: string; desenvolvimento: string; cta: string; legenda: string };
+  roteiros: Array<{ gancho: string; estrutura: string[]; cta: string; copy: string[] }>;
 };
 
 function ReelsOrganico() {
@@ -117,21 +120,21 @@ function ReelsOrganico() {
                     <th className="pb-2 pr-4">#</th>
                     <th className="pb-2 pr-4">Reel</th>
                     <th className="pb-2 pr-4 text-right">Eng. Rate</th>
-                    <th className="pb-2 pr-4 text-right">Plays</th>
+                    <th className="pb-2 pr-4 text-right">Alcance</th>
                     <th className="pb-2 text-right">Data</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {liveData.ranking.map((r, i) => (
-                    <tr key={r.id} className="border-b border-border/50 last:border-0">
+                  {liveData.reels.map((r, i) => (
+                    <tr key={r.rank} className="border-b border-border/50 last:border-0">
                       <td className="py-2 pr-4 font-bold text-muted-foreground">#{i + 1}</td>
-                      <td className="py-2 pr-4 font-medium max-w-[200px] truncate">{r.id}</td>
+                      <td className="py-2 pr-4 font-medium max-w-[200px] truncate">{r.titulo}</td>
                       <td className="py-2 pr-4 text-right tabular-nums">
-                        <span className={i < Math.ceil(liveData.ranking.length * 0.2) ? "text-[color:var(--success)] font-semibold" : ""}>
+                        <span className={i < Math.ceil(liveData.reels.length * 0.2) ? "text-[color:var(--success)] font-semibold" : ""}>
                           {r.engRate.toFixed(1)}%
                         </span>
                       </td>
-                      <td className="py-2 pr-4 text-right tabular-nums">{r.plays.toLocaleString("pt-BR")}</td>
+                      <td className="py-2 pr-4 text-right tabular-nums">{r.alcance.toLocaleString("pt-BR")}</td>
                       <td className="py-2 text-right text-muted-foreground">{r.data}</td>
                     </tr>
                   ))}
@@ -150,7 +153,7 @@ function ReelsOrganico() {
                 {liveData.padroesVencedores.map((p, i) => (
                   <li key={i} className="flex items-start gap-2 text-[12px]">
                     <CheckCircle2 size={13} className="text-[color:var(--success)] mt-0.5 shrink-0" />
-                    {p}
+                    <span><span className="font-medium">{p.titulo}</span> — <span className="text-muted-foreground">{p.desc}</span></span>
                   </li>
                 ))}
               </ul>
@@ -164,7 +167,7 @@ function ReelsOrganico() {
                 {liveData.padroesPerdedores.map((p, i) => (
                   <li key={i} className="flex items-start gap-2 text-[12px]">
                     <XCircle size={13} className="text-destructive mt-0.5 shrink-0" />
-                    {p}
+                    <span><span className="font-medium">{p.titulo}</span> — <span className="text-muted-foreground">{p.desc}</span></span>
                   </li>
                 ))}
               </ul>
@@ -180,29 +183,31 @@ function ReelsOrganico() {
           </Card>
 
           {/* Roteiro */}
-          <Card>
-            <h2 className="text-[14px] font-semibold mb-4 flex items-center gap-2">
-              <FileText size={15} /> Roteiro do próximo Reel (data-driven)
-            </h2>
-            <div className="space-y-3">
-              <div className="p-3 bg-muted/40 rounded-md">
-                <div className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1 font-medium">Hook (0–3s)</div>
-                <p className="text-[13px] leading-relaxed">{liveData.roteiro.hook}</p>
+          {liveData.roteiros[0] && (
+            <Card>
+              <h2 className="text-[14px] font-semibold mb-4 flex items-center gap-2">
+                <FileText size={15} /> Roteiro do próximo Reel (data-driven)
+              </h2>
+              <div className="space-y-3">
+                <div className="p-3 bg-muted/40 rounded-md">
+                  <div className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1 font-medium">Hook (0–3s)</div>
+                  <p className="text-[13px] leading-relaxed">{liveData.roteiros[0].gancho}</p>
+                </div>
+                <div className="p-3 bg-muted/40 rounded-md">
+                  <div className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1 font-medium">Desenvolvimento</div>
+                  <p className="text-[13px] leading-relaxed whitespace-pre-wrap">{liveData.roteiros[0].estrutura.join("\n")}</p>
+                </div>
+                <div className="p-3 bg-muted/40 rounded-md">
+                  <div className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1 font-medium">CTA</div>
+                  <p className="text-[13px] leading-relaxed">{liveData.roteiros[0].cta}</p>
+                </div>
+                <div className="p-3 bg-muted/40 rounded-md">
+                  <div className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1 font-medium">Legenda + hashtags</div>
+                  <p className="text-[13px] leading-relaxed whitespace-pre-wrap">{liveData.roteiros[0].copy.join("\n")}</p>
+                </div>
               </div>
-              <div className="p-3 bg-muted/40 rounded-md">
-                <div className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1 font-medium">Desenvolvimento</div>
-                <p className="text-[13px] leading-relaxed">{liveData.roteiro.desenvolvimento}</p>
-              </div>
-              <div className="p-3 bg-muted/40 rounded-md">
-                <div className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1 font-medium">CTA</div>
-                <p className="text-[13px] leading-relaxed">{liveData.roteiro.cta}</p>
-              </div>
-              <div className="p-3 bg-muted/40 rounded-md">
-                <div className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1 font-medium">Legenda + hashtags</div>
-                <p className="text-[13px] leading-relaxed whitespace-pre-wrap">{liveData.roteiro.legenda}</p>
-              </div>
-            </div>
-          </Card>
+            </Card>
+          )}
         </div>
       )}
     </>

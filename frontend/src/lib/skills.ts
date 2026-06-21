@@ -43,7 +43,7 @@ export const hubs: Hub[] = [
       { id: "lb-meta-relatorio", name: "Relatório Meta", description: "Gera relatório executivo com insights por período.", icon: FileBarChart },
       { id: "lb-meta-gerenciar", name: "Gerenciar Anúncios", description: "Pausar, escalar e ajustar campanhas/conjuntos/anúncios.", icon: Megaphone, route: "/gerenciar-anuncios" },
       { id: "lb-meta-analise-reels", name: "Análise de Reels (Pago)", description: "Performance dos Reels pagos e ranking de criativos.", icon: Film, route: "/reels" },
-      { id: "lb-meta-analise-reels-organico", name: "Análise de Reels (Orgânico)", description: "Padrões vencedores dos Reels orgânicos e roteiro do próximo.", icon: Film, route: "/reels-organico" },
+      { id: "lb-meta-analise-reels-organico", name: "Análise de Reels (Orgânico)", description: "Padrões vencedores dos Reels orgânicos e roteiro do próximo.", icon: Film, route: "/organico-instagram" },
       { id: "lb-meta-copy", name: "Gerador de Copy", description: "Variações de copy para anúncios (headline, primary, CTA).", icon: Sparkles, route: "/gerador-copy" },
       { id: "lb-meta-completo", name: "Análise Completa", description: "Roda diagnóstico + auditoria + relatório em sequência.", icon: Layers },
       { id: "lb-meta-campanha-seguidores", name: "Campanha de Seguidores", description: "Estrutura campanha para crescimento de seguidores no Instagram.", icon: Users },
@@ -77,7 +77,7 @@ export const hubs: Hub[] = [
       { id: "lb-conteudo-calendario", name: "Calendário Editorial", description: "Calendário mensal de conteúdos por pilar.", icon: Calendar },
       { id: "lb-conteudo-publicar", name: "Publicar Conteúdo", description: "Agendamento e publicação multi-plataforma.", icon: Send },
       { id: "lb-conteudo-aprovar", name: "Aprovação de Conteúdo", description: "Fluxo de aprovação com cliente.", icon: CheckCircle2 },
-      { id: "lb-conteudo-auditoria-insta", name: "Auditoria do Instagram", description: "Auditoria de bio, destaques, grade e performance orgânica.", icon: ImageIcon, route: "/organico-instagram" },
+      { id: "lb-conteudo-auditoria-insta", name: "Auditoria do Instagram", description: "Auditoria de bio, destaques, grade e performance orgânica.", icon: ImageIcon },
     ],
   },
   {

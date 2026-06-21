@@ -32,7 +32,7 @@ function extractJsonArray(html: string, marker: string): unknown[] {
 }
 
 function normalizeSlug(s: string): string {
-  return s.toLowerCase().replace(/[\s\-_]+/g, "");
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, "");
 }
 
 async function findLatestFile(nameFilter: (n: string) => boolean, clienteSlug?: string): Promise<string | null> {

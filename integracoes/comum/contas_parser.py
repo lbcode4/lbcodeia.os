@@ -52,7 +52,9 @@ def parsear_tabela_multi(conteudo):
             continue
         if linha.lstrip().startswith(">"):
             continue
-        partes = [p.strip() for p in linha.split("|") if p.strip()]
+        partes_raw = linha.split("|")
+        # Remove primeira e última (vazias por causa dos pipes externos da tabela markdown)
+        partes = [p.strip() for p in partes_raw[1:-1]]
         if not partes:
             continue
         if not headers:

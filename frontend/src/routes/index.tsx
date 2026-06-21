@@ -2,11 +2,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { PageHeader, Card } from "@/components/app-shell";
 import { useCliente } from "@/lib/cliente-context";
+import { runSkill } from "@/lib/skill-client";
 import {
   ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, PieChart, Pie, Cell, Legend, BarChart,
 } from "recharts";
-import { Loader2, ExternalLink } from "lucide-react";
+import { Loader2, ExternalLink, RefreshCw } from "lucide-react";
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8787";
 
@@ -380,18 +381,72 @@ function Overview() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState("");
+  const [running, setRunning] = useState(false);
+  const [statusMsg, setStatusMsg] = useState("");
+  const [periodo, setPeriodo] = useState("30");
 
-  useEffect(() => {
+  const carregarDados = () => {
     if (!cliente) return;
     setLoading(true);
     setErro("");
-    setData(null);
-    fetch(`${BACKEND}/api/dashboard/data?cliente=${encodeURIComponent(cliente)}`)
+    return fetch(`${BACKEND}/api/dashboard/data?cliente=${encodeURIComponent(cliente)}`)
       .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
       .then((d) => setData(d as DashboardData))
       .catch(() => setErro("Backend offline ou relatório não encontrado"))
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    if (!cliente) return;
+    setData(null);
+    carregarDados();
   }, [cliente]);
+
+  const periodoInput: Record<string, string> = {
+    "30": "",
+    "60": "Gere com período de 60 dias (use --periodo last_60d no comando do script).",
+    "90": "Gere com período de 90 dias (use --periodo last_90d no comando do script).",
+    max: "Gere com o período máximo histórico disponível (use --periodo max no comando do script).",
+  };
+
+  const executarDashboard = async () => {
+    setRunning(true);
+    setStatusMsg("Gerando dashboard completo…");
+    try {
+      await runSkill({ skill: "lb-meta-completo", cliente, input: periodoInput[periodo] ?? "" }, (ev) => {
+        if (ev.type === "status") setStatusMsg(ev.text);
+        else if (ev.type === "error") { setStatusMsg(""); setErro(ev.text); }
+      });
+      await carregarDados();
+    } finally {
+      setRunning(false);
+      setStatusMsg("");
+    }
+  };
+
+  const refreshButton = (
+    <div className="flex items-center gap-2">
+      <select
+        value={periodo}
+        onChange={(e) => setPeriodo(e.target.value)}
+        disabled={running}
+        className="h-9 px-3 rounded-md border border-border bg-card text-[13px] disabled:opacity-50"
+      >
+        <option value="30">Últimos 30 dias</option>
+        <option value="60">Últimos 60 dias</option>
+        <option value="90">Últimos 90 dias</option>
+        <option value="max">Máximo</option>
+      </select>
+      <button
+        onClick={executarDashboard}
+        disabled={running || !cliente}
+        className="h-9 px-4 rounded-md bg-primary text-primary-foreground text-[13px] font-medium disabled:opacity-50 inline-flex items-center gap-2"
+      >
+        {running ? <Loader2 size={13} className="animate-spin" /> : <RefreshCw size={13} />}
+        {running ? statusMsg || "Gerando…" : "Atualizar dados"}
+      </button>
+    </div>
+  );
 
   if (loading) return (
     <div className="flex items-center gap-2 text-muted-foreground text-[13px] mt-8">
@@ -401,7 +456,7 @@ function Overview() {
 
   if (!data) return (
     <div className="mt-8">
-      <PageHeader title="Visão Geral" subtitle="Sem dados" />
+      <PageHeader title="Visão Geral" subtitle="Sem dados" actions={refreshButton} />
       {erro && <p className="text-[13px] text-red-500">{erro}</p>}
     </div>
   );
@@ -419,6 +474,7 @@ function Overview() {
       <PageHeader
         title={`Dashboard — ${data.client ?? cliente}`}
         subtitle={data.period ? `${data.period.since} → ${data.period.until} · ${fNum(dias)} dias` : ""}
+        actions={refreshButton}
       />
 
       {/* KPIs */}

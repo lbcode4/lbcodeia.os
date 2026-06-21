@@ -8,8 +8,8 @@ from datetime import datetime, timedelta
 sys.path.insert(0, os.path.dirname(__file__))
 from meta_api import MetaAPIClient, MetaAPIError
 
-MEDIA_FIELDS = "id,caption,timestamp,media_type,like_count,comments_count"
-INSIGHTS_METRICS = "plays,reach,saved,shares"
+MEDIA_FIELDS = "id,caption,timestamp,media_type,permalink,like_count,comments_count"
+INSIGHTS_METRICS = "reach,saved,shares,ig_reels_avg_watch_time"
 
 
 def get_ig_user_id(client):
@@ -50,7 +50,8 @@ def fetch_reels(client, days, limit):
         comments = int(item.get("comments_count") or 0)
         saves = int(metrics.get("saved") or 0)
         shares = int(metrics.get("shares") or 0)
-        plays = int(metrics.get("plays") or 0)
+        # ig_reels_avg_watch_time vem em milissegundos (plays foi descontinuado na v22+)
+        watch = round(int(metrics.get("ig_reels_avg_watch_time") or 0) / 1000, 1)
 
         engagement_rate = (
             round((likes + comments + shares + saves) / reach * 100, 2)
@@ -61,12 +62,13 @@ def fetch_reels(client, days, limit):
             "id": item["id"],
             "caption": (item.get("caption") or "")[:200],
             "timestamp": item.get("timestamp", ""),
-            "plays": plays,
+            "permalink": item.get("permalink", ""),
             "reach": reach,
             "likes": likes,
             "comments": comments,
             "shares": shares,
             "saves": saves,
+            "watch": watch,
             "engagement_rate": engagement_rate,
         })
 

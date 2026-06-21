@@ -229,8 +229,15 @@ def parse_periodo(periodo_str):
     elif periodo_str == "last_30d":
         since = yesterday - timedelta(days=29)
         until = yesterday
+    elif periodo_str == "last_60d":
+        since = yesterday - timedelta(days=59)
+        until = yesterday
     elif periodo_str == "last_90d":
         since = yesterday - timedelta(days=89)
+        until = yesterday
+    elif periodo_str == "max":
+        # Máximo histórico permitido pela Graph API (37 meses retroativos)
+        since = date.today() - timedelta(days=37 * 30)
         until = yesterday
     else:
         since = yesterday - timedelta(days=29)
@@ -1286,7 +1293,7 @@ def main():
     parser.add_argument("--cliente", default=None,
                         help='Nome do cliente (ex: "Meu Cliente"). Auto se 1 cliente.')
     parser.add_argument("--periodo", default="last_30d",
-                        help="yesterday, last_7d, last_14d, last_30d ou YYYY-MM-DD:YYYY-MM-DD")
+                        help="yesterday, last_7d, last_14d, last_30d, last_60d, last_90d, max ou YYYY-MM-DD:YYYY-MM-DD")
     args = parser.parse_args()
 
     # Carregar config de CLAUDE.md

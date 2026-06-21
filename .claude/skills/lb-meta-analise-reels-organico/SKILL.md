@@ -41,51 +41,36 @@ Puxa dado real da Graph API → identifica o que viraliza no perfil → entrega 
 
 1. Carregar contexto + voz de `_memoria/`. Ler o método em `agente-reels-organico.md`.
 2. Identificar o cliente. Se não dito, listar os de `_memoria/contas-ads.md`.
-3. Rodar o motor:
-   `python integracoes/meta-ads/scripts/reels.py --cliente "<Cliente>"`
-4. Aplicar o **processo do agente** sobre o retorno:
-   - **Padrões vencedores** — top 20% por engagement rate: tema, duração, formato, hook, horário em comum
-   - **Padrões perdedores** — bottom 20%: o que evitar
-   - **Análise de hook** — primeiros 3s dos campeões (pergunta / dado surpreendente / demonstração)
-   - **Retenção** — Reels com retenção >50% = molde a seguir
-5. **Camada framework (RETINA):** mapear cada padrão vencedor a um pilar RETINA — qual pilar ressoa
-   com o público e alinha ao posicionamento. Descartar padrão que viraliza mas foge do diferencial.
-6. **Gerar roteiro do próximo Reel** baseado nos padrões (não do zero — clonando o que funcionou):
-   - Hook (0-3s) no estilo dos campeões
-   - Desenvolvimento (problema → solução)
-   - CTA final
-   - Legenda + hashtags
-7. Salvar análise + roteiro em `saidas/relatorios/reels-organico/<Cliente>/analise-<YYYY-MM-DD>.md` (criar dirs se não existirem).
-8. Oferecer próximo passo:
-   > "Quer que eu detalhe esse roteiro completo (direção de cena, trilha)? (chamo `/lb-conteudo-reels`)"
+3. Rodar o motor (90 dias por padrão):
+   `python integracoes/meta-ads/scripts/reels.py --cliente "<Cliente>" --days 90`
+   Retorna por Reel: `caption, timestamp, permalink, reach, likes, comments, shares, saves, watch, engagement_rate`.
+4. **Classificar cada Reel** pela média de engagement rate do período:
+   - **TOP** — melhor Reel (maior eng rate)
+   - **ALTO** — eng rate > média + 20%
+   - **MÉDIO** — dentro de ±20% da média
+   - **BAIXO** — eng rate < média − 30%
+   Ordenar por eng rate desc (o motor já ordena). Derivar `titulo` curto da caption, `data` em DD/MM/AA do timestamp.
+5. **Insight por Reel** — 1 parágrafo conectando métricas a causa (alcance, saves=intenção de compra,
+   shares=viral, watch=retenção). Definir `insightTone`: `success` (campeão/aprende com), `info` (neutro/teste),
+   `warning` (sinal de alerta), `error` (pior do período).
+6. Aplicar o **processo do agente** → **padrões**:
+   - **padroesVencedores** (top 20%): tema, duração, formato, hook, horário em comum → cada item `{titulo, desc}`
+   - **padroesPerdedores** (bottom 20%): o que evitar → cada item `{titulo, desc}`
+   - **Camada RETINA:** mapear cada padrão vencedor a um pilar; descartar o que viraliza mas foge do posicionamento.
+     Resumir em `leituraRetina`.
+7. **Impulsionamento** (`impulsionar`) — escolher os Reels que valem verba, priorizados:
+   - `prioridade` (P1 investir agora / P2 segunda onda / P3 monitorar), `reelRank` (rank no array),
+     `desc` (justificativa com métricas), `publico`, `objetivo`, `orcamento` (R$/dia × dias), `duracao`.
+   - `naoImpulsionar`: Reels que NÃO valem verba + `motivo`.
+8. **3 novos roteiros** (`roteiros`) clonando os padrões vencedores — cada um com
+   `n, titulo, tema, formato, duracao, gancho, estrutura[], cta, porque, copy[], tags[]`.
+9. **Alertas e próximos passos** (`alertas`): pontos fortes, riscos (ex: gap de publicação), próximos passos →
+   cada item `{tipo, titulo, desc}`.
+10. Salvar cópia em markdown em `saidas/relatorios/reels-organico/<Cliente>/analise-<YYYY-MM-DD>.md`
+    (criar dirs se não existirem) e emitir o **bloco JSON do contrato** (a tela `/organico-instagram` consome).
 
----
-
-## Formato de saída (segue o agente)
-
-```markdown
-# Análise de Reels Orgânicos — [Cliente] — [data]
-Período: últimos 90 dias | [N] Reels analisados
-
-## 1. Ranking
-| # | Reel | Eng. rate | Plays | Data |
-|---|------|-----------|-------|------|
-
-## 2. Padrões vencedores (top 20%)
-- [o que os campeões têm em comum: tema, duração, hook, horário]
-
-## 3. Padrões perdedores (evitar)
-- [...]
-
-## 4. Leitura RETINA
-- [qual pilar ressoa + o que alinha ao posicionamento]
-
-## 5. Roteiro do próximo Reel (data-driven)
-**Hook (0-3s):** [...]
-**Desenvolvimento:** [...]
-**CTA:** [...]
-**Legenda + hashtags:** [...]
-```
+> **Saída para a tela:** o runner injeta o `outputContract`. Preencher TODOS os campos do contrato no bloco
+> ```json final. `reels[].rank` é 1-based; `impulsionar[].reelRank` referencia esse rank.
 
 ---
 

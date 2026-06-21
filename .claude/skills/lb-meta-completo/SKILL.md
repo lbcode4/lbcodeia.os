@@ -23,6 +23,8 @@ Visão executiva ampla: pago + orgânico + seguidores + otimizações num HTML.
 1. Carregar contexto + voz de `_memoria/`.
 2. Resolver cliente em `_memoria/contas-ads.md` (precisa act_id E IG User ID).
 3. Rodar: `python integracoes/meta-ads/scripts/dashboard_completo.py --cliente "<Cliente>"`
+   Se o briefing pedir período diferente do padrão (30 dias), adicionar `--periodo`:
+   `last_60d` (60 dias), `last_90d` (90 dias), `max` (máximo histórico — 37 meses) ou `YYYY-MM-DD:YYYY-MM-DD`.
 4. Pegar o HTML gerado em `saidas/relatorios/<slug>/`.
 5. **Camada framework (Bolo de Cenoura):** ler o resumo executivo + comparativo pago vs orgânico
    e entregar 3 leituras acionáveis na voz LBCode (onde o pago alavanca o orgânico, otimizações).

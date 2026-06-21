@@ -172,7 +172,7 @@
 **Entregável:** Vídeo editado pronto pra upload.
 
 - [ ] **Step 1: Instalar DaVinci Resolve gratuito**
-  - Download: https://www.blackmagicdesign.com/products/davinciresolve
+  - Download:   
   - Instalar versão gratuita (suficiente pra edição básica)
 
 - [ ] **Step 2: Criar projeto e importar vídeo**

@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Completo — LBCode.IA | 22/05/2026 – 20/06/2026</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root, [data-theme="dark"] {
+  --bg:#0c0e18; --card:#13161f; --card2:#1a1e2e; --border:#252a3d;
+  --accent:#6c5ce7; --accent2:#a855f7; --green:#22c55e; --red:#ef4444;
+  --amber:#f59e0b; --blue:#0984e3; --pink:#e84393;
+  --text:#e4e9f5; --dim:#5e6a8a; --meta:#1877f2; --ig:#e1306c;
+  --shadow: 0 2px 8px rgba(0,0,0,.3);
+}
+[data-theme="light"] {
+  --bg:#f5f7fa; --card:#ffffff; --card2:#f0f2f5; --border:#e2e5ea;
+  --accent:#3b5bdb; --accent2:#7c3aed; --green:#16a34a; --red:#dc2626;
+  --amber:#d97706; --blue:#2563eb; --pink:#db2777;
+  --text:#1e293b; --dim:#64748b; --meta:#1877f2; --ig:#e1306c;
+  --shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+body { background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif; font-size:15px; line-height:1.6; max-width:1300px; margin:0 auto; padding:20px; }
+a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+
+/* Header */
+.header { background:linear-gradient(135deg, var(--accent), var(--pink)); padding:28px 32px; border-radius:16px; margin-bottom:24px; color:#fff; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; }
+.header h1 { font-size:24px; font-weight:800; } .header p { font-size:13px; opacity:.85; margin-top:4px; }
+.header-right { display:flex; gap:12px; align-items:center; }
+.theme-toggle { background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.3); border-radius:10px; padding:6px 14px; cursor:pointer; font-size:18px; color:#fff; }
+
+/* Section titles */
+.section-title { font-size:17px; font-weight:700; margin:32px 0 16px; color:var(--text); display:flex; align-items:center; gap:12px; }
+.section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* KPI grid */
+.kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:24px; }
+.kpi-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; text-align:center; box-shadow:var(--shadow); }
+.kpi-label { font-size:11px; color:var(--dim); text-transform:uppercase; letter-spacing:.5px; font-weight:700; }
+.kpi-value { font-size:24px; font-weight:800; margin:8px 0 4px; }
+.kpi-sub { font-size:11px; color:var(--dim); }
+.delta { font-size:12px; font-weight:700; padding:2px 8px; border-radius:12px; display:inline-block; }
+.delta.up { background:rgba(34,197,94,.15); color:var(--green); }
+.delta.down { background:rgba(239,68,68,.15); color:var(--red); }
+.delta.neutral { background:rgba(94,106,138,.15); color:var(--dim); }
+.kpi-card.inverted .delta.up { background:rgba(239,68,68,.15); color:var(--red); }
+.kpi-card.inverted .delta.down { background:rgba(34,197,94,.15); color:var(--green); }
+
+/* Benchmark legend */
+.bench-legend { display:flex; gap:20px; margin-bottom:16px; font-size:12px; color:var(--dim); }
+.bench-legend .dot { width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:5px; }
+.bench-legend .dot.g { background:var(--green); } .bench-legend .dot.b { background:var(--blue); } .bench-legend .dot.r { background:var(--red); }
+
+/* Ad cards */
+.ad-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:16px; box-shadow:var(--shadow); }
+.ad-card.perf-excelente { border-left:4px solid var(--green); }
+.ad-card.perf-bom { border-left:4px solid var(--blue); }
+.ad-card.perf-ruim { border-left:4px solid var(--red); }
+.ad-hierarchy { font-size:11px; color:var(--dim); margin-bottom:12px; }
+.ad-header { display:flex; gap:16px; align-items:flex-start; margin-bottom:16px; }
+.ad-thumb { width:72px; height:72px; border-radius:8px; object-fit:cover; background:var(--border); flex-shrink:0; }
+.ad-info h3 { font-size:15px; margin-bottom:4px; }
+.funnel-tag { padding:2px 10px; border-radius:20px; font-size:11px; font-weight:700; }
+.tag-tofu { background:rgba(108,92,231,.2); color:var(--accent); }
+.tag-mofu { background:rgba(9,132,227,.2); color:var(--blue); }
+.tag-retarget { background:rgba(232,67,147,.2); color:var(--pink); }
+.tag-bofu { background:rgba(34,197,94,.2); color:var(--green); }
+.perf-badge { padding:2px 10px; border-radius:20px; font-size:11px; font-weight:700; margin-left:8px; }
+.perf-excelente { background:rgba(34,197,94,.2); color:var(--green); }
+.perf-bom { background:rgba(9,132,227,.2); color:var(--blue); }
+.perf-ruim { background:rgba(239,68,68,.2); color:var(--red); }
+.ad-metrics-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; }
+.ad-metric { text-align:center; background:var(--bg); border-radius:8px; padding:10px 6px; min-width:0; overflow:hidden; }
+.am-val { font-size:16px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.am-label { font-size:9px; color:var(--dim); text-transform:uppercase; margin-top:3px; }
+.am-dot { width:8px; height:8px; border-radius:50%; display:inline-block; margin-top:4px; }
+
+/* Charts */
+.charts-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px; }
+.chart-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; box-shadow:var(--shadow); }
+.chart-card h3 { font-size:14px; margin-bottom:12px; color:var(--dim); }
+
+/* Comparativo table */
+.comp-table { width:100%; border-collapse:collapse; background:var(--card); border-radius:12px; overflow:hidden; margin-bottom:24px; box-shadow:var(--shadow); }
+.comp-table th { background:var(--bg); padding:10px 12px; font-size:11px; text-transform:uppercase; color:var(--dim); text-align:left; }
+.comp-table td { padding:10px 12px; font-size:13px; border-bottom:1px solid var(--border); }
+.comp-table tr:last-child td { border-bottom:none; }
+.comp-thumb { width:40px; height:40px; border-radius:6px; object-fit:cover; background:var(--border); }
+.status-badge { padding:3px 10px; border-radius:12px; font-size:11px; font-weight:600; }
+.status-viral { background:rgba(245,158,11,.2); color:var(--amber); }
+.status-performando { background:rgba(34,197,94,.2); color:var(--green); }
+.status-mediano { background:rgba(9,132,227,.2); color:var(--blue); }
+.status-ruim { background:rgba(239,68,68,.2); color:var(--red); }
+
+/* Reels grid */
+.reels-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-bottom:24px; }
+.reel-card { background:var(--card); border:1px solid var(--border); border-radius:12px; overflow:hidden; padding:14px; box-shadow:var(--shadow); }
+.reel-card.viral { border:2px solid var(--amber); }
+.reel-thumb { width:100%; height:110px; object-fit:cover; border-radius:8px; background:var(--border); margin-bottom:8px; }
+.reel-caption { font-size:12px; color:var(--dim); max-height:36px; overflow:hidden; margin-bottom:8px; }
+.reel-metrics { display:grid; grid-template-columns:repeat(3,1fr); gap:4px; }
+.rm-val { font-size:16px; font-weight:700; text-align:center; }
+.rm-label { font-size:9px; color:var(--dim); text-align:center; text-transform:uppercase; }
+.reel-link { display:block; text-align:center; padding:8px; color:var(--accent); font-size:12px; border-top:1px solid var(--border); margin-top:8px; }
+.viral-badge { background:var(--amber); color:#000; padding:2px 10px; border-radius:12px; font-size:11px; font-weight:700; display:inline-block; margin-bottom:6px; }
+
+/* Optimization cards */
+.opt-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:16px; margin-bottom:24px; }
+.insight-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:6px; }
+.insight-card.critical { border-left:4px solid var(--red); }
+.insight-card.warning { border-left:4px solid var(--amber); }
+.insight-card.info { border-left:4px solid var(--blue); }
+.insight-card.positive { border-left:4px solid var(--green); }
+.opt-header { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.priority-tag { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; padding:3px 8px; border-radius:4px; white-space:nowrap; }
+.priority-high { color:#fff; background:var(--red); } .priority-medium { color:#fff; background:var(--amber); } .priority-low { color:#fff; background:var(--blue); }
+.opt-creative { font-size:11px; color:var(--dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
+.insight-card h4 { font-size:14px; margin:0; line-height:1.3; }
+.insight-card p { font-size:13px; color:var(--dim); line-height:1.5; margin:0; }
+
+/* Resumo */
+.resumo-box { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:24px; margin-bottom:24px; box-shadow:var(--shadow); }
+.resumo-box p { font-size:14px; line-height:1.7; color:var(--dim); }
+
+/* Footer */
+.footer { border-top:1px solid var(--border); padding:20px 0; color:var(--dim); font-size:12px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+.footer strong { color:var(--accent); }
+
+/* Mobile */
+@media (max-width: 768px) {
+  body { padding:10px; }
+  .charts-grid { grid-template-columns:1fr; }
+  .kpi-grid { grid-template-columns:repeat(2,1fr); }
+  .reels-grid { grid-template-columns:1fr; }
+  .opt-grid { grid-template-columns:1fr; }
+  .ad-metrics-grid { grid-template-columns:repeat(3,1fr); gap:4px; }
+  .comp-table { font-size:11px; }
+  .header { flex-direction:column; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <h1>Dashboard Completo — LBCode.IA</h1>
+    <p>@lbcode.ia | 22/05/2026 – 20/06/2026 | Pago + Orgânico</p>
+  </div>
+  <div class="header-right">
+    <button class="theme-toggle" onclick="toggleTheme()" title="Alternar tema"><span id="theme-icon">&#127769;</span></button>
+    <span style="font-size:12px;opacity:.7;">21/06/2026 00:09</span>
+  </div>
+</div>
+
+<!-- 1. RESUMO EXECUTIVO -->
+<div class="section-title">Resumo Executivo</div>
+<div class="resumo-box"><p id="resumoText"></p></div>
+<div class="kpi-grid" id="kpiGrid"></div>
+
+<!-- 2. PERFORMANCE POR ANÚNCIO -->
+<div class="section-title">Performance por Anúncio (com alertas de mercado)</div>
+<div class="bench-legend">
+  <span><span class="dot g"></span> Excelente (acima da média)</span>
+  <span><span class="dot b"></span> Bom (dentro da média)</span>
+  <span><span class="dot r"></span> Ruim (abaixo da média)</span>
+</div>
+<div id="adCardsContainer"></div>
+
+<!-- 3. EVOLUÇÃO DIÁRIA -->
+<div class="section-title">Evolução Diária</div>
+<div class="charts-grid">
+  <div class="chart-card"><h3>Gasto vs Alcance</h3><canvas id="chartSpend"></canvas></div>
+  <div class="chart-card"><h3>Engajamento Diário</h3><canvas id="chartEngagement"></canvas></div>
+  <div class="chart-card"><h3>Distribuição de Gasto</h3><canvas id="chartPie"></canvas></div>
+  <div class="chart-card"><h3>Top Reels — Alcance vs Interações</h3><canvas id="chartReels"></canvas></div>
+</div>
+
+<!-- 4. EVOLUÇÃO DE SEGUIDORES -->
+<div class="section-title">Evolução de Seguidores (30 dias)</div>
+<div id="followersTitle" style="font-size:14px;margin-bottom:12px;color:var(--dim);"></div>
+<div class="chart-card" style="margin-bottom:24px"><canvas id="chartFollowers"></canvas></div>
+
+<!-- 5. COMPARATIVO: PAGO VS ORGÂNICO -->
+<div class="section-title">Comparativo: Pago vs Orgânico</div>
+<table class="comp-table">
+  <thead><tr><th>Thumb</th><th>Hierarquia</th><th>Tipo</th><th>Alcance</th><th>Saves</th><th>Comentários</th><th>Shares</th><th>CTR / Eng.</th><th>Status</th></tr></thead>
+  <tbody id="compTableBody"></tbody>
+</table>
+
+<!-- 6. TOP 7 REELS ORGÂNICOS -->
+<div class="section-title">Top 7 Reels Orgânicos (Período)</div>
+<div class="reels-grid" id="reelsGrid"></div>
+
+<!-- 7. OTIMIZAÇÕES PRIORITÁRIAS -->
+<div class="section-title">Otimizações Prioritárias</div>
+<div class="opt-grid" id="optimizationsGrid"></div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span>Gerado por <strong>LBCode.IA</strong> via Claude Code</span>
+  <span>22/05/2026 – 20/06/2026 | Meta Graph API v21.0 | 29 dias</span>
+</div>
+
+<script>
+const DATA = {"generated_at": "2026-06-21T00:09:23.438890", "client": "LBCode.IA", "handle": "@lbcode.ia", "period": {"since": "2026-05-22", "until": "2026-06-20", "days": 29}, "kpis": {"spend": {"value": 0.0, "delta": {"pct": null, "direction": "up", "label": "Novo"}, "sub": "~R$ 0,00/dia"}, "reach": {"value": 0, "delta": {"pct": null, "direction": "up", "label": "Novo"}, "sub": "Freq. 0.0"}, "clicks": {"value": 0, "delta": {"pct": null, "direction": "up", "label": "Novo"}, "sub": "CPC R$ 0,00"}, "ctr": {"value": 0.0, "delta": {"pct": null, "direction": "up", "label": "Novo"}, "sub": "taxa de clique"}, "saves": {"value": 0, "delta": {"pct": null, "direction": "up", "label": "Novo"}, "sub": "salvamentos"}, "dms": {"value": 0, "delta": {"pct": null, "direction": "up", "label": "Novo"}, "sub": "—"}, "video_views": {"value": 0, "delta": {"pct": null, "direction": "up", "label": "Novo"}, "sub": "views de vídeo"}, "followers": {"value": 1107, "delta": {"pct": null, "direction": "neutral", "label": "1.107"}, "sub": "seguidores", "new_followers": 7}}, "ads": [], "daily": {"days": [], "campaigns": {}}, "comparativo": [{"type": "organico", "group": 0, "thumb": "https://scontent.cdninstagram.com/v/t51.75761-15/474323957_17920064208041660_7424536005098583118_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=108&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiQ0xJUFMuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&_nc_ohc=rE4WZTuRv1wQ7kNvwE6U2AZ&_nc_oc=AdoTV9P1WXFrs05LrwNnfacNc3MsNgxmRYiQZ3Y3PaqgW7_2lhmtG1vuU_Z0cgtOP4M&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=AM6HXa8EAAAA&_nc_gid=QMcpkRfXOv7VL7n0fafOSw&_nc_tpa=Q5bMBQHkcCb3u4hK_Lq3N_FVX7HsD5sDwBSQIUoM5qVGLaTUi63uH5LXK0a2_ZjCq19I2TY4HAFRYc9Fkg&oh=00_Af-GFZViaACJyAny_7-8YTCi10kNvow7Qgg32o2YEJF6Xw&oe=6A3D3404", "hierarchy": "Orgânico > Novos modelos de relógios...", "alcance": 300, "saves": 1, "comentarios": 6, "shares": 1, "ctr_eng": 6.0, "badge": "mediano", "link": "https://www.instagram.com/reel/DFDOt5yRf5o/"}, {"type": "organico", "group": 1, "thumb": "https://scontent.cdninstagram.com/v/t51.71878-15/518690194_1295394998895373_2548424107286000612_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=103&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiQ0xJUFMuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&_nc_ohc=HgsbHfcmxb4Q7kNvwFGy6Eg&_nc_oc=AdoXs1H6VKt572MoQIzqx1yzrDbsDkhWYwAurmT2gLWdU3MGmXWqIHfsxrSGOpU8Rpo&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=AM6HXa8EAAAA&_nc_gid=QMcpkRfXOv7VL7n0fafOSw&_nc_tpa=Q5bMBQHq5Sra2Yvp6vZU-oEr2PO4_23k0iCKuKLuMULkvQmuX6Ssayd_ZvaYcfeU1uu-7EcVRAvrKzQEhQ&oh=00_Af-QWZ_kUXtJa-K4DotEXMLFMRcmn-Z3Jj4JuRsWcUerHA&oe=6A3D108F", "hierarchy": "Orgânico > Porta-relogio com 6...", "alcance": 191, "saves": 2, "comentarios": 0, "shares": 0, "ctr_eng": 4.7, "badge": "mediano", "link": "https://www.instagram.com/reel/DL-lLQcJh48/"}, {"type": "organico", "group": 2, "thumb": "https://scontent.cdninstagram.com/v/t51.71878-15/482933149_678248654774256_8343936947078898734_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=109&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiQ0xJUFMuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&_nc_ohc=2FhnxsQk2-wQ7kNvwEZu8z3&_nc_oc=Ado8M1mVL0xUF1E2FZqG7a_NA17j49d8gY8VG3ApdBkuMXvjiizEk_JamBVWqoJfqeU&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=AM6HXa8EAAAA&_nc_gid=QMcpkRfXOv7VL7n0fafOSw&_nc_tpa=Q5bMBQHhcqYMFd7GM4T7vGOdpY7L4OG-4wFKntbp9ZGpD2-AYkeDJRZySmSxAfw-lwKB97jSbOnPp1ZqrA&oh=00_Af_Xi9MAiycInZMDiIS3GnTOx_7e4dxXYkWfknw6tSuiqw&oe=6A3D1B28", "hierarchy": "Orgânico > Vídeo de unboxing pra vocês...", "alcance": 316, "saves": 1, "comentarios": 4, "shares": 0, "ctr_eng": 4.7, "badge": "mediano", "link": "https://www.instagram.com/reel/DG3U7BSJNNA/"}], "reels": [{"rank": 1, "is_viral": false, "caption": "Novos modelos de relógios série 10 2025\n\nComece 2025 com o pé direito e um smart...", "short_title": "Novos modelos de relógios...", "permalink": "https://www.instagram.com/reel/DFDOt5yRf5o/", "thumb": "https://scontent.cdninstagram.com/v/t51.75761-15/474323957_17920064208041660_7424536005098583118_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=108&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiQ0xJUFMuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&_nc_ohc=rE4WZTuRv1wQ7kNvwE6U2AZ&_nc_oc=AdoTV9P1WXFrs05LrwNnfacNc3MsNgxmRYiQZ3Y3PaqgW7_2lhmtG1vuU_Z0cgtOP4M&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=AM6HXa8EAAAA&_nc_gid=QMcpkRfXOv7VL7n0fafOSw&_nc_tpa=Q5bMBQHkcCb3u4hK_Lq3N_FVX7HsD5sDwBSQIUoM5qVGLaTUi63uH5LXK0a2_ZjCq19I2TY4HAFRYc9Fkg&oh=00_Af-GFZViaACJyAny_7-8YTCi10kNvow7Qgg32o2YEJF6Xw&oe=6A3D3404", "eng_rate": 6.0, "metrics": {"reach": 300, "interactions": 18, "comments": 6, "shares": 1, "saves": 1, "plays": 420}}, {"rank": 2, "is_viral": false, "caption": "Porta-relogio com 6 divisórias, disponível a pronta entrega.\n\nIdeal pra vc guard...", "short_title": "Porta-relogio com 6...", "permalink": "https://www.instagram.com/reel/DL-lLQcJh48/", "thumb": "https://scontent.cdninstagram.com/v/t51.71878-15/518690194_1295394998895373_2548424107286000612_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=103&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiQ0xJUFMuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&_nc_ohc=HgsbHfcmxb4Q7kNvwFGy6Eg&_nc_oc=AdoXs1H6VKt572MoQIzqx1yzrDbsDkhWYwAurmT2gLWdU3MGmXWqIHfsxrSGOpU8Rpo&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=AM6HXa8EAAAA&_nc_gid=QMcpkRfXOv7VL7n0fafOSw&_nc_tpa=Q5bMBQHq5Sra2Yvp6vZU-oEr2PO4_23k0iCKuKLuMULkvQmuX6Ssayd_ZvaYcfeU1uu-7EcVRAvrKzQEhQ&oh=00_Af-QWZ_kUXtJa-K4DotEXMLFMRcmn-Z3Jj4JuRsWcUerHA&oe=6A3D108F", "eng_rate": 4.7, "metrics": {"reach": 191, "interactions": 9, "comments": 0, "shares": 0, "saves": 2, "plays": 229}}, {"rank": 3, "is_viral": false, "caption": "Vídeo de unboxing pra vocês do AMAZFIT ACTIVE EDGE\n\nGostou desse modelo?", "short_title": "Vídeo de unboxing pra vocês...", "permalink": "https://www.instagram.com/reel/DG3U7BSJNNA/", "thumb": "https://scontent.cdninstagram.com/v/t51.71878-15/482933149_678248654774256_8343936947078898734_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=109&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiQ0xJUFMuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&_nc_ohc=2FhnxsQk2-wQ7kNvwEZu8z3&_nc_oc=Ado8M1mVL0xUF1E2FZqG7a_NA17j49d8gY8VG3ApdBkuMXvjiizEk_JamBVWqoJfqeU&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=AM6HXa8EAAAA&_nc_gid=QMcpkRfXOv7VL7n0fafOSw&_nc_tpa=Q5bMBQHhcqYMFd7GM4T7vGOdpY7L4OG-4wFKntbp9ZGpD2-AYkeDJRZySmSxAfw-lwKB97jSbOnPp1ZqrA&oh=00_Af_Xi9MAiycInZMDiIS3GnTOx_7e4dxXYkWfknw6tSuiqw&oe=6A3D1B28", "eng_rate": 4.7, "metrics": {"reach": 316, "interactions": 15, "comments": 4, "shares": 0, "saves": 1, "plays": 523}}, {"rank": 4, "is_viral": false, "caption": "2 Anos de Dordrian Store! 🎉✨\n\nAcreditamos que a tecnologia deve acompanhar o seu...", "short_title": "2 Anos de Dordrian Store!", "permalink": "https://www.instagram.com/reel/DPPs3nxDKtd/", "thumb": "https://scontent.cdninstagram.com/v/t51.82787-15/557355941_17948946363041660_2095590060921735676_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=101&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiQ0xJUFMuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&_nc_ohc=QOh_la7P4VQQ7kNvwFOqCvY&_nc_oc=Adp_ZPJT7mATq-NfhA2iF4yNF_ZmMTnqgp8fyWAuE05k-e6hz5FeTEC0EgC9uEufc9I&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=AM6HXa8EAAAA&_nc_gid=QMcpkRfXOv7VL7n0fafOSw&_nc_tpa=Q5bMBQHb5_JeCR83hP3PglG7DBVl4zsBJYeLX3csL1tCLtV2S_gEcUiW93_QteZpckQLKUSkznU74MBFxQ&oh=00_Af9tw4PeudXxS19RQmhdLKnW5d6lHuShbcq4Cooo50ae6A&oe=6A3D2BE6", "eng_rate": 4.5, "metrics": {"reach": 67, "interactions": 3, "comments": 0, "shares": 0, "saves": 0, "plays": 93}}, {"rank": 5, "is_viral": false, "caption": "Mais um pouco das funcionalidades do Amazfit Active Edge ✨", "short_title": "Mais um pouco das...", "permalink": "https://www.instagram.com/reel/DG5yw7VsG0Y/", "thumb": "https://scontent.cdninstagram.com/v/t51.75761-15/482952037_17925583182041660_8709643590127626293_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=100&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiQ0xJUFMuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&_nc_ohc=dJJ1lPHWGFwQ7kNvwFSG1yV&_nc_oc=Adrl1LViCGhYrSfmEBSDTBaMJWMFlfJ7Tuu58UFBOPXYeXWSvyI2sLJsQ9DR-n0zqtk&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=AM6HXa8EAAAA&_nc_gid=QMcpkRfXOv7VL7n0fafOSw&_nc_tpa=Q5bMBQFumhiCkOoZqBdm-npR22-W7s_mplZdYXeqQJK9Lt8pD93NKPxah_2mXAd2MqPmNrnWgRHjHeJQHw&oh=00_Af91vjTodmfhYlW0N4Xyjlrzf4y6e2rJflkRLnnJSGaZew&oe=6A3D0E9C", "eng_rate": 3.9, "metrics": {"reach": 710, "interactions": 28, "comments": 1, "shares": 6, "saves": 3, "plays": 1164}}, {"rank": 6, "is_viral": false, "caption": "Modelos de fones esportivos você encontra aqui na nossa loja✨", "short_title": "Modelos de fones esportivos...", "permalink": "https://www.instagram.com/reel/DFOQRRLRFVm/", "thumb": "https://scontent.cdninstagram.com/v/t51.75761-15/474726531_17920545339041660_5398954912556986642_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=103&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiQ0xJUFMuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&_nc_ohc=TSIQhVlSt9MQ7kNvwHAHq9K&_nc_oc=AdplC_sR7u3hXB-CNGFSCkfjLTPfmrrbOzy_cbRdhTrlAelTrLbZvYgjoDbdsLE7l4s&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=AM6HXa8EAAAA&_nc_gid=QMcpkRfXOv7VL7n0fafOSw&_nc_tpa=Q5bMBQGrmMrHUlJi0EPHoyY0LIldXJr9HXeZO4cgwT_Pp_dVKO2cYyKrPuL4kmt4CKT-kHiF7h7O0UEnmQ&oh=00_Af9H6e_ZdVDYLGWzzI681Wa_izKb4cJE5vqba1kqNm158Q&oe=6A3D1808", "eng_rate": 3.9, "metrics": {"reach": 228, "interactions": 9, "comments": 0, "shares": 1, "saves": 0, "plays": 249}}, {"rank": 7, "is_viral": false, "caption": "ALERTA DE REPOSIÇÃO✨\n\nChegou reposição do Zeblaze Stratos 2\nUma ótima opção de p...", "short_title": "ALERTA DE REPOSIÇÃO", "permalink": "https://www.instagram.com/reel/DM8HaNKsJxt/", "thumb": "https://scontent.cdninstagram.com/v/t51.71878-15/527325613_1075642624756301_7477224999353811544_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=108&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiQ0xJUFMuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&_nc_ohc=2XY2Fcu0JCMQ7kNvwEogG2e&_nc_oc=AdrcwEfGdnIedLSS1kmThcQ7AC9FEL2zIQRRN_rK__ZFD74kRijJxMeO3g5n5isy-w4&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=AM6HXa8EAAAA&_nc_gid=QMcpkRfXOv7VL7n0fafOSw&_nc_tpa=Q5bMBQFPTW32XbjClqRUsFXckc1Kv_HCqdJfNK6X4bpsvbSAc8XDmCgfX-YodDY77p19c4SbGjhMgO5l3A&oh=00_Af8NDKrQk1Yqu3tndtzPwd-zTkkZqZoHi29p91dLeY9puQ&oe=6A3D2133", "eng_rate": 3.3, "metrics": {"reach": 390, "interactions": 13, "comments": 2, "shares": 1, "saves": 3, "plays": 508}}], "optimizations": [], "followers": {"current_total": 1107, "daily": {"days": ["22/05", "23/05", "24/05", "25/05", "26/05", "27/05", "28/05", "29/05", "30/05", "31/05", "01/06", "02/06", "03/06", "04/06", "05/06", "06/06", "07/06", "08/06", "09/06", "10/06", "11/06", "12/06", "13/06", "14/06", "15/06", "16/06", "17/06", "18/06", "19/06", "20/06"], "values": [2, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]}}, "resumo": "Investimento total de R$ 0,00 em 29 dias (R$ 0,00/dia). Top Reel orgânico: 6.0% eng. rate, 300 alcance, 18 interações.", "ig_organic": {"reach": 51}};
+
+// === THEME ===
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('theme-icon').textContent = isDark ? '\u2600\uFE0F' : '\uD83C\uDF19';
+}
+
+// === FORMATTERS ===
+function fBRL(v) { return 'R$ ' + v.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+function fNum(v) { return v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+function fPct(v) { return v.toFixed(2).replace('.', ',') + '%'; }
+
+// === RENDER RESUMO ===
+document.getElementById('resumoText').textContent = DATA.resumo;
+
+// === RENDER KPIs ===
+(function() {
+  const grid = document.getElementById('kpiGrid');
+  const order = ['spend','reach','clicks','ctr','saves','dms','video_views','followers'];
+  const labels = {spend:'Investimento',reach:'Alcance',clicks:'Cliques',ctr:'CTR',saves:'Saves',dms:'Conversas DM',video_views:'Video Views',followers:'Seguidores'};
+  const inverted = ['spend'];
+  grid.innerHTML = order.map(key => {
+    const k = DATA.kpis[key]; if (!k) return '';
+    const isInv = inverted.includes(key);
+    let val = key === 'spend' ? fBRL(k.value) : (key === 'ctr' ? fPct(k.value) : fNum(k.value));
+    let dCls = k.delta ? ('delta ' + (isInv ? (k.delta.direction === 'up' ? 'down' : (k.delta.direction === 'down' ? 'up' : 'neutral')) : k.delta.direction)) : 'delta neutral';
+    let dLabel = k.delta ? k.delta.label : '';
+    const newF = (key === 'followers' && k.new_followers) ? '<div style="color:var(--green);font-weight:700;font-size:13px;margin-top:4px">+' + fNum(k.new_followers) + ' novos</div>' : '';
+    return '<div class="kpi-card' + (isInv ? ' inverted' : '') + '"><div class="kpi-label">' + labels[key] + '</div><div class="kpi-value">' + val + '</div>' +
+      (dLabel ? '<span class="' + dCls + '">' + dLabel + '</span>' : '') +
+      newF + '<div class="kpi-sub">' + (k.sub || '') + '</div></div>';
+  }).join('');
+})();
+
+// === RENDER AD CARDS ===
+(function() {
+  const c = document.getElementById('adCardsContainer');
+  const funnelMap = {tofu:'TOFU',mofu:'MOFU',retarget:'RETARGETING',bofu:'BOFU'};
+  const tagMap = {tofu:'tag-tofu',mofu:'tag-mofu',retarget:'tag-retarget',bofu:'tag-bofu'};
+  c.innerHTML = DATA.ads.map(ad => {
+    const m = ad.metrics;
+    function mHTML(key, label) {
+      const v = m[key]; if (!v) return '';
+      let display = key === 'spend' ? fBRL(v.value) :
+        ['ctr'].includes(key) ? fPct(v.value) :
+        ['cpc','cpm'].includes(key) ? fBRL(v.value) :
+        key === 'frequency' ? v.value.toFixed(2).replace('.',',') :
+        fNum(v.value);
+      const bc = v.badge === 'excelente' ? 'var(--green)' : v.badge === 'bom' ? 'var(--blue)' : v.badge === 'ruim' ? 'var(--red)' : '';
+      const vs = bc ? ' style="color:'+bc+'"' : (key==='saves' && v.value>50 ? ' style="color:var(--amber)"' : '');
+      const dot = bc ? '<span class="am-dot" style="background:'+bc+'" title="'+((v.badge||'')+' '+(v.benchmark||'')).trim()+'"></span>' : '';
+      return '<div class="ad-metric"><div class="am-val"'+vs+'>'+display+'</div><div class="am-label">'+label+'</div>'+dot+'</div>';
+    }
+    return '<div class="ad-card perf-'+ad.overall_badge+'">'+
+      '<div class="ad-hierarchy">'+ad.campaign_name+' &rsaquo; '+ad.adset_name+' &rsaquo; '+ad.ad_name+'</div>'+
+      '<div class="ad-header">'+(ad.thumb?'<img class="ad-thumb" src="'+ad.thumb+'" onerror="this.style.display=\'none\'">':'')+
+      '<div class="ad-info"><span class="funnel-tag '+tagMap[ad.funnel]+'">'+funnelMap[ad.funnel]+'</span>'+
+      '<span class="perf-badge perf-'+ad.overall_badge+'">'+ad.overall_badge.toUpperCase()+'</span>'+
+      '<h3>'+ad.ad_name+'</h3></div></div>'+
+      '<div class="ad-metrics-grid">'+mHTML('spend','Gasto')+mHTML('ctr','CTR')+mHTML('cpc','CPC')+mHTML('cpm','CPM')+
+      mHTML('reach','Alcance')+mHTML('clicks','Cliques')+mHTML('saves','Saves')+mHTML('comments','Comentários')+
+      mHTML('dms','DMs')+mHTML('frequency','Frequência')+'</div>'+
+      '<div style="display:flex;gap:12px;margin-top:12px;padding-top:10px;border-top:1px solid var(--border);font-size:12px">'+
+      '<a href="'+ad.ads_manager_url+'" target="_blank" style="color:var(--meta)">Gerenciador de Anúncios &rarr;</a>'+
+      (ad.fb_permalink ? '<a href="'+ad.fb_permalink+'" target="_blank" style="color:#1877F2">Ver no Facebook &rarr;</a>' : '') +
+      (ad.ig_permalink ? '<a href="'+ad.ig_permalink+'" target="_blank" style="color:var(--ig)">Ver no Instagram &rarr;</a>' : '') +
+      '</div></div>';
+  }).join('');
+})();
+
+// === RENDER DAILY CHARTS ===
+(function() {
+  const d = DATA.daily;
+  const days = d.days;
+  const camps = d.campaigns;
+  const keys = Object.keys(camps);
+
+  // Aggregate
+  const agg = {spend:[], reach:[], clicks:[], saves:[]};
+  for (let i=0; i<days.length; i++) {
+    let s=0,r=0,c=0,sv=0;
+    keys.forEach(k => { s+=(camps[k].spend[i]||0); r+=(camps[k].reach[i]||0); c+=(camps[k].clicks[i]||0); sv+=(camps[k].saves[i]||0); });
+    agg.spend.push(s); agg.reach.push(r); agg.clicks.push(c); agg.saves.push(sv);
+  }
+
+  new Chart(document.getElementById('chartSpend'), {
+    type:'bar', data:{ labels:days, datasets:[
+      {label:'Gasto (R$)',data:agg.spend,backgroundColor:'rgba(108,92,231,0.7)',yAxisID:'y',order:2},
+      {label:'Alcance',data:agg.reach,type:'line',borderColor:'#22c55e',backgroundColor:'transparent',yAxisID:'y1',tension:.3,pointRadius:3,order:1}
+    ]}, options:{responsive:true,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{color:'#5e6a8a'}},tooltip:{callbacks:{
+      label:function(ctx){
+        if(ctx.dataset.label==='Gasto (R$)') return 'Gasto: R$ '+ctx.raw.toFixed(2).replace('.',',');
+        if(ctx.dataset.label==='Alcance') return 'Alcance: '+ctx.raw.toLocaleString('pt-BR');
+        return ctx.dataset.label+': '+ctx.raw;
+      }
+    }}},scales:{
+      x:{ticks:{color:'#5e6a8a'},grid:{color:'#252a3d'}},
+      y:{position:'left',ticks:{color:'#5e6a8a',callback:v=>'R$'+v},grid:{color:'#252a3d'}},
+      y1:{position:'right',ticks:{color:'#22c55e'},grid:{display:false}}
+    }}
+  });
+
+  new Chart(document.getElementById('chartEngagement'), {
+    type:'bar', data:{ labels:days, datasets:[
+      {label:'Saves',data:agg.saves,backgroundColor:'rgba(245,158,11,0.8)'},
+      {label:'Cliques',data:agg.clicks,backgroundColor:'rgba(9,132,227,0.7)'}
+    ]}, options:{responsive:true,plugins:{legend:{labels:{color:'#5e6a8a'}}},scales:{
+      x:{stacked:true,ticks:{color:'#5e6a8a'},grid:{color:'#252a3d'}},
+      y:{stacked:true,ticks:{color:'#5e6a8a'},grid:{color:'#252a3d'}}
+    }}
+  });
+
+  // Pie chart
+  const spendByCamp = keys.map(k => ({label:camps[k].campaign_name, value:camps[k].spend.reduce((a,b)=>a+b,0)}));
+  const colors = ['rgba(108,92,231,0.8)','rgba(9,132,227,0.8)','rgba(232,67,147,0.8)','rgba(34,197,94,0.8)','rgba(245,158,11,0.8)'];
+  new Chart(document.getElementById('chartPie'), {
+    type:'doughnut', data:{
+      labels:spendByCamp.map(d=>d.label+' (R$'+d.value.toFixed(0)+')'),
+      datasets:[{data:spendByCamp.map(d=>d.value),backgroundColor:colors.slice(0,spendByCamp.length),borderColor:'#13161f',borderWidth:3}]
+    }, options:{responsive:true,plugins:{legend:{position:'bottom',labels:{color:'#5e6a8a',font:{size:11}}}}}
+  });
+
+  // Reels chart
+  const reels = DATA.reels.slice(0,6);
+  new Chart(document.getElementById('chartReels'), {
+    type:'bar', data:{
+      labels:reels.map(r=>r.short_title),
+      datasets:[
+        {label:'Alcance',data:reels.map(r=>r.metrics.reach),backgroundColor:'rgba(34,197,94,0.7)'},
+        {label:'Interações',data:reels.map(r=>r.metrics.interactions),backgroundColor:'rgba(245,158,11,0.8)'}
+      ]
+    }, options:{responsive:true,plugins:{legend:{labels:{color:'#5e6a8a'}}},scales:{
+      x:{ticks:{color:'#5e6a8a',font:{size:10}},grid:{color:'#252a3d'}},
+      y:{ticks:{color:'#5e6a8a'},grid:{color:'#252a3d'}}
+    }}
+  });
+})();
+
+// === RENDER FOLLOWERS ===
+(function() {
+  const f = DATA.followers;
+  const fd = f.daily;
+  if (!fd.days.length) return;
+  const totalNovos = fd.values.reduce((a,b)=>a+b,0);
+  document.getElementById('followersTitle').textContent = 'Total atual: ' + fNum(f.current_total) + ' seguidores  |  +' + fNum(totalNovos) + ' no período';
+  // Média móvel 7 dias
+  const ma7 = fd.values.map((v,i) => {
+    const start = Math.max(0, i-6);
+    const window = fd.values.slice(start, i+1);
+    return Math.round(window.reduce((a,b)=>a+b,0)/window.length*10)/10;
+  });
+  new Chart(document.getElementById('chartFollowers'), {
+    type:'bar', data:{ labels:fd.days, datasets:[
+      {label:'Novos/dia',data:fd.values,backgroundColor:'rgba(34,197,94,0.6)',yAxisID:'y',order:2},
+      {label:'Média 7 dias',data:ma7,type:'line',borderColor:'#6c5ce7',backgroundColor:'transparent',yAxisID:'y',tension:.3,pointRadius:3,borderWidth:2.5,order:1}
+    ]}, options:{responsive:true,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{color:'#5e6a8a'}},tooltip:{callbacks:{
+      label:function(ctx){
+        if(ctx.dataset.label==='Novos/dia') return 'Novos no dia: +'+ctx.raw;
+        if(ctx.dataset.label==='Média 7 dias') return 'Média 7 dias: '+ctx.raw;
+        return ctx.dataset.label+': '+ctx.raw;
+      }
+    }}},scales:{
+      x:{ticks:{color:'#5e6a8a',font:{size:9}},grid:{color:'#252a3d'}},
+      y:{ticks:{color:'#5e6a8a'},grid:{color:'#252a3d'}}
+    }}
+  });
+})();
+
+// === RENDER COMPARATIVO ===
+(function() {
+  const tbody = document.getElementById('compTableBody');
+  const rows = DATA.comparativo;
+  tbody.innerHTML = rows.map(r => {
+    const isPago = r.type === 'pago';
+    const tipoTag = isPago ? '<span class="funnel-tag tag-tofu">PAGO</span>' : '<span style="background:rgba(34,197,94,.2);color:var(--green);padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600">ORGÂNICO</span>';
+    const lvl = r.badge || 'mediano';
+    const statusHTML = '<span class="status-badge status-'+lvl+'">'+lvl.charAt(0).toUpperCase()+lvl.slice(1)+'</span>';
+    const ctrStr = isPago ? fPct(r.ctr_eng) : r.ctr_eng.toFixed(1).replace('.',',')+' %';
+    return '<tr>'+
+      '<td>'+(r.thumb?'<img class="comp-thumb" src="'+r.thumb+'" onerror="this.style.display=\'none\'">':'—')+'</td>'+
+      '<td style="font-size:12px">'+r.hierarchy+'</td>'+
+      '<td>'+tipoTag+'</td>'+
+      '<td>'+fNum(r.alcance)+'</td>'+
+      '<td>'+(r.saves>100?'<strong style="color:var(--amber)">'+fNum(r.saves)+'</strong>':fNum(r.saves))+'</td>'+
+      '<td>'+fNum(r.comentarios)+'</td>'+
+      '<td>'+fNum(r.shares)+'</td>'+
+      '<td style="'+(r.ctr_eng>5?'color:var(--green);font-weight:700':'')+'">'+ctrStr+'</td>'+
+      '<td>'+statusHTML+'</td></tr>';
+  }).join('');
+})();
+
+// === RENDER REELS ===
+(function() {
+  const grid = document.getElementById('reelsGrid');
+  grid.innerHTML = DATA.reels.map(r => {
+    const m = r.metrics;
+    return '<div class="reel-card'+(r.is_viral?' viral':'')+'">'+
+      (r.is_viral?'<span class="viral-badge">&#9733; VIRAL</span>':'') +
+      (r.thumb?'<img class="reel-thumb" src="'+r.thumb+'" onerror="this.style.display=\'none\'">':'') +
+      '<div class="reel-caption">#'+r.rank+' '+r.short_title+'</div>'+
+      '<div class="reel-metrics">'+
+        '<div><div class="rm-val">'+fNum(m.reach)+'</div><div class="rm-label">Alcance</div></div>'+
+        '<div><div class="rm-val">'+fNum(m.interactions)+'</div><div class="rm-label">Interações</div></div>'+
+        '<div><div class="rm-val" style="color:var(--green)">'+r.eng_rate+'%</div><div class="rm-label">Eng. Rate</div></div>'+
+        '<div><div class="rm-val">'+fNum(m.saves)+'</div><div class="rm-label">Saves</div></div>'+
+        '<div><div class="rm-val">'+fNum(m.comments)+'</div><div class="rm-label">Comments</div></div>'+
+        '<div><div class="rm-val">'+fNum(m.shares)+'</div><div class="rm-label">Shares</div></div>'+
+      '</div>'+
+      (r.permalink?'<a class="reel-link" href="'+r.permalink+'" target="_blank">Ver no Instagram &rarr;</a>':'')+
+    '</div>';
+  }).join('');
+})();
+
+// === RENDER OPTIMIZATIONS ===
+(function() {
+  const grid = document.getElementById('optimizationsGrid');
+  const prioLabel = {high:'ALTA',medium:'MÉDIA',low:'BAIXA'};
+  const prioIcon = {critical:'⚠',warning:'⚠',positive:'✔',info:'ℹ'};
+  grid.innerHTML = DATA.optimizations.map((o,i) => {
+    return '<div class="insight-card '+o.card_type+'">'+
+      '<div class="opt-header">'+
+        '<span class="priority-tag priority-'+o.priority+'">'+(prioLabel[o.priority]||o.priority)+'</span>'+
+        '<h4>'+(prioIcon[o.card_type]||'')+' '+o.title+'</h4>'+
+      '</div>'+
+      (o.creative ? '<div class="opt-creative">'+o.creative+'</div>' : '')+
+      '<p>'+o.description+'</p></div>';
+  }).join('');
+})();
+</script>
+</body>
+</html>
