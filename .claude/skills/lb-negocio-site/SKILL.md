@@ -17,6 +17,8 @@ Skill de criação de páginas web. Pega um objetivo → entrega site/landing em
 
 **O motor de design é a skill `frontend-design`** (global). Esta skill faz o trabalho de produto: descobre o tipo de site, carrega o contexto do negócio, monta a copy de conversão e delega a construção visual à `frontend-design` pra fugir do "cara de IA genérico".
 
+> **Esta vs `/lb-negocio-site-v2`:** mesma proposta (site/LP com copy de conversão + identidade), motor de design diferente. **v1 (esta)** usa `frontend-design`. **v2** usa `ui-ux-pro-max` (67 estilos/96 paletas/57 font pairings). Use as duas no mesmo briefing pra comparar resultado visual. Na dúvida, comece pela v1.
+
 ## Dependências
 
 - **Skill `frontend-design`** (OBRIGATÓRIO) — invocar via `Skill` antes de escrever qualquer HTML. É o motor de design; garante interface distinta e production-grade. **Auto-instalável:** se não estiver presente, instalar no Passo 3 (skill oficial anthropics/skills).

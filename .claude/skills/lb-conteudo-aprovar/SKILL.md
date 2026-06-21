@@ -1,10 +1,11 @@
 ---
 name: lb-conteudo-aprovar
+allowed-tools: Bash, Read, Edit, Glob, Grep
 description: >
   Aprova + publica pipeline completo: blog draft → published, carrossel PNG → público,
   commit + deploy automático (Netlify/Vercel), posta no IG + FB via Meta API. Uso: /lb-conteudo-aprovar <slug>
   após conteúdo estar pronto em /lb-conteudo-publicar. Tudo é versionado + automatizado.
-  Use quando o usuário disser "aprovar post X", "publicar o tema Y", "/conteudo-aprovar <slug>".
+  Use quando o usuário disser "aprovar post X", "publicar o tema Y", "/lb-conteudo-aprovar <slug>".
 ---
 
 # /lb-conteudo-aprovar — Aprovação + Publicação automática

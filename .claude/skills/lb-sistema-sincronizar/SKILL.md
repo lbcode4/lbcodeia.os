@@ -6,7 +6,7 @@ description: >
   evolução de identidade visual. Atualiza automaticamente os 5 arquivos-chave de memória
   (`_memoria/empresa.md`, `preferencias.md`, `estrategia.md`, `framework-trafego.md` se muda,
   `identidade/design-guide.md`). Use quando o usuário disser "atualizar", "sincronizar contexto",
-  "revisar projeto", "/sistema-atualizar", ou pedir reconciliação geral.
+  "revisar projeto", "/lb-sistema-sincronizar", ou pedir reconciliação geral.
 ---
 
 # /lb-sistema-sincronizar — Auditoria + Reconciliação

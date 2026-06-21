@@ -63,6 +63,7 @@ export const hubs: Hub[] = [
       { id: "lb-google-avaliacoes", name: "Avaliações", description: "Análise e resposta a avaliações do Google.", icon: Star },
       { id: "lb-google-meu-negocio", name: "Google Meu Negócio", description: "Otimização do perfil do Google Meu Negócio.", icon: MapPin },
       { id: "lb-ads-negativas", name: "Negativas (Google)", description: "Termos que drenam orçamento e lista de palavras-chave negativas sugerida.", icon: Ban, route: "/negativas" },
+      { id: "lb-ads-unificado", name: "Relatório Unificado", description: "Funde Google Ads + Meta Ads num HTML só com resumo cross-platform.", icon: Layers },
     ],
   },
   {

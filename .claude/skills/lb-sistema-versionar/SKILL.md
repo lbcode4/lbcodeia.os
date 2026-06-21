@@ -1,11 +1,12 @@
 ---
 name: lb-sistema-versionar
+allowed-tools: Bash, Read, Glob
 description: >
   Publica o trabalho do LBCode.IA no GitHub (commit + push + versionamento).
   Na primeira vez configura repositório remoto e branch main. Depois, sincroniza
   qualquer mudança com mensagem automática ou personalizada. Tudo fica documentado
   e recuperável. Use quando o usuário disser "salvar", "versionar", "commit",
-  "sync github", "/sistema-salvar" ou pedir backup/histórico do trabalho.
+  "sync github", "/lb-sistema-versionar" ou pedir backup/histórico do trabalho.
 ---
 
 # /lb-sistema-versionar — Publicar + Versionamento

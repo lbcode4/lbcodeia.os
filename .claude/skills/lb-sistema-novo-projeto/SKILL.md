@@ -4,7 +4,7 @@ description: >
   Cria workspace isolado pra cliente ou iniciativa nova com contexto dedicado (CLAUDE.md próprio).
   Herda configuração de tom + framework + identidade da raiz, mas permite regras específicas.
   Estrutura pastas conforme tipo de entrega. Use quando disser "novo cliente", "novo projeto",
-  "/sistema-novo-projeto", "começar trabalho pra X", "isolar projeto".
+  "/lb-sistema-novo-projeto", "começar trabalho pra X", "isolar projeto".
 ---
 
 # /lb-sistema-novo-projeto — Workspace isolado

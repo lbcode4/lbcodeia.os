@@ -17,6 +17,7 @@ description: >
 - **Contexto do negócio:** `_memoria/empresa.md`
 - **Tom de voz:** `_memoria/preferencias.md`
 - **Estratégia atual:** `_memoria/estrategia.md`
+- **Framework:** Bolo de Cenoura (consistência termo→anúncio→landing, keyword+bairro no GMB) + 4 Campanhas de Ouro (mix Google Ads) — `_memoria/framework-trafego.md`
 - **Ferramentas:** WebSearch, WebFetch (nativos)
 - **Outputs vão em:** `saidas/marketing/google-seo/`
 

@@ -15,6 +15,7 @@ description: >
 
 - **Contexto:** `_memoria/empresa.md` — ler antes pra calibrar preço e oferta atual
 - **Tom:** `_memoria/preferencias.md`
+- **Framework:** GCC (Gatilhos, Copy, Conversão) — a sequência Validar→Reframing→Prova→Avanço é copy de conversão aplicada à objeção (`_memoria/framework-trafego.md`)
 - **Outputs:** `saidas/marketing/prospeccao/venda-objecoes.md` (arquivo fixo — atualizado a cada uso)
 
 ---

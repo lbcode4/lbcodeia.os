@@ -17,6 +17,7 @@ Transforma dossiê + oferta em proposta de 2 páginas pronta pra enviar.
 - **Dossiê do prospect (se existir):** `saidas/marketing/prospeccao/dossies/<slug>.md` — ler se existir
 - **Contexto do negócio:** `_memoria/empresa.md`
 - **Identidade visual:** `identidade/design-guide.md` + imagens de referência em `identidade/`
+- **Framework:** OPA (estrutura de Oferta e Proposta) — deliverables → condições → ancoragem (à vista vs parcelado) → bônus → CTA (`_memoria/framework-trafego.md`)
 - **Referência de estrutura:** `exemplo/pack-soluccionar (1).pdf` (layout 2 páginas)
 - **Playwright:** pra renderizar HTML→PNG
 - **Outputs:** `saidas/marketing/prospeccao/<slug-prospect>/proposta-<YYYY-MM-DD>/`

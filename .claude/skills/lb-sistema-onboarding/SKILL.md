@@ -5,6 +5,8 @@ description: >
   (negócio + diferencial + tráfego + voz + frequência + gargalo + objetivo+métrica + prioridade).
   Preenche memória completa pronto pra skills específicas (anuncio-google faz briefing,
   seo faz keywords, etc). Sem duplicação. Exemplos inline em cada pergunta.
+  Use quando o usuário disser "onboarding", "instalar LBCode", "configurar do zero",
+  "começar setup", "primeiro uso", "setup inicial", ou /lb-sistema-onboarding.
 ---
 
 # /lb-sistema-onboarding — Setup Rápido do LBCode.IA

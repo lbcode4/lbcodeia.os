@@ -5,7 +5,7 @@ description: >
   + insights + próximos passos. Integra framework Bolo de Cenoura (consistência termo→anúncio→landing).
   Detecta: queima de orçamento, CTR baixo, conversões caindo, oportunidades (criativos quebrando).
   Saída: markdown acionável + recomendações pra semana seguinte. Use quando disser
-  "relatório ads", "performance da semana", "como foram", "/meta-relatorio".
+  "relatório ads", "performance da semana", "como foram", "/lb-meta-relatorio".
 ---
 
 # /lb-meta-relatorio — Executivo semanal (Google + Meta)

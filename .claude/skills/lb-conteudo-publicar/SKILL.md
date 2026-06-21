@@ -5,7 +5,7 @@ description: >
   tudo com RETINA integrado e amarrado. Usa pesquisa SEO + tom de voz + framework GCC.
   Saída: artigo em draft + visual + 3 legendas prontas, aguardando `/lb-conteudo-aprovar` pra publicar.
   Use quando disser "publicar tema X", "cria conteúdo completo", "transforma tema em post",
-  "/conteudo-publicar".
+  "/lb-conteudo-publicar".
 ---
 
 # /lb-conteudo-publicar — Do tema ao contenteúdo pronto

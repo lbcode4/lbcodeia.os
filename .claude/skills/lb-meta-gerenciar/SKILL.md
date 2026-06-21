@@ -1,5 +1,6 @@
 ---
 name: lb-meta-gerenciar
+allowed-tools: Bash, Read, Grep, Glob
 description: >
   Busca, pausa ou ativa anúncios Meta Ads LIVE via Graph API com confirmação obrigatória
   antes de qualquer ação destrutiva. Toda ação é registrada em log de auditoria.

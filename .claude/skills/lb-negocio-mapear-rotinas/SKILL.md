@@ -5,7 +5,7 @@ description: >
   e as transforma em skills personalizadas. Você descreve o padrão, propõe automação
   e aprovada vira skill pronta pra usar. Inclui gerador de workflow estruturado baseado
   em framework RETINA/GCC/OPA conforme o tipo de tarefa. Use quando o usuário disser
-  "/negocio-mapear-rotinas", "automatizar meu trabalho", "criar skill personalizada", "o que dá pra automizar".
+  "/lb-negocio-mapear-rotinas", "automatizar meu trabalho", "criar skill personalizada", "o que dá pra automizar".
 ---
 
 # /lb-negocio-mapear-rotinas — De tarefa repetida pra skill própria

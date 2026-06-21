@@ -68,6 +68,7 @@ todas, cada filho usa o subconjunto do seu modelo.
 | `/lb-venda-precificar` | ✅ | ✅ | ❌ | ❌ | Calcula preço SaaS/serviço com margem e benchmark |
 | `/lb-negocio-plano-mensal` | ✅ | ✅ | ✅ | ✅ | Plano executivo do mês integrando todas as frentes |
 | `/lb-negocio-site` | ✅ | ✅ | ✅ | ✅ | Cria site/LP via frontend-design; pergunta tipo (landing/demo/institucional/campanha) |
+| `/lb-negocio-site-v2` | ✅ | ✅ | ✅ | ✅ | Cria site/LP via ui-ux-pro-max (67 estilos/96 paletas); comparar visual com /lb-negocio-site |
 
 Legenda: ✅ útil · 🟡 dormente (ativar em fase certa) · ⚠️ útil parcial (sub-features inúteis) · ❌ não se aplica
 

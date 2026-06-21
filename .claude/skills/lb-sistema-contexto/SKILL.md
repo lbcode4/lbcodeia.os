@@ -5,7 +5,7 @@ description: >
   (empresa, preferências, estratégia, framework, identidade) e devolve briefing
   em 1 frase — quem você é, o que tá em foco, tom de voz. Pronto pra trabalhar.
   Use no início da sessão, ou quando o usuário disser "abrir", "começar",
-  "carrega contexto", "/sistema-abrir".
+  "carrega contexto", "/lb-sistema-contexto".
 ---
 
 # /lb-sistema-contexto — Sessão de trabalho
