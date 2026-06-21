@@ -21,6 +21,9 @@ Thumbs.db
 # Dependências
 node_modules/
 
+# Worktrees locais de implementação isolada
+.worktrees/
+
 # Arquivos temporários
 *.log
 *.tmp
