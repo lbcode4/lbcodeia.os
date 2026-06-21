@@ -24,7 +24,7 @@ export async function readCarrosselHtml(id: string): Promise<string> {
 }
 
 function countSlides(html: string): number {
-  return (html.match(/class="slide(["\\s])/g) ?? []).length;
+  return (html.match(/class="slide(["\s])/g) ?? []).length;
 }
 
 export async function writeCarrosselHtmlAndRender(id: string, html: string): Promise<{ slides: string[] }> {

@@ -76,4 +76,27 @@ describe("writeCarrosselHtmlAndRender", () => {
     // Deve contar apenas 1 slide (não 2), então unlink deve ser chamado 1 vez (slide-02.png)
     expect(mockUnlink).toHaveBeenCalledTimes(1);
   });
+
+  it("conta slides com segunda classe CSS no mesmo div (formato real dos templates)", async () => {
+    mockWriteFile.mockResolvedValue(undefined);
+    // Mirrors real carrossel.html templates: every slide div carries a second
+    // modifier class (e.g. <div class="slide cyan">). A regex requiring the
+    // character right after "slide" to be a literal backslash-then-s would
+    // never match this and would undercount to 0.
+    const html =
+      '<div class="slide cyan">1</div>' +
+      '<div class="slide dark">2</div>' +
+      '<div class="slide photo">3</div>';
+    mockReaddir
+      .mockResolvedValueOnce(["slide-01.png", "slide-02.png", "slide-03.png", "slide-04.png"] as never)
+      .mockResolvedValueOnce(["slide-01.png", "slide-02.png", "slide-03.png"] as never);
+    mockUnlink.mockResolvedValue(undefined);
+
+    const result = await writeCarrosselHtmlAndRender("teste-2026-06-21", html);
+
+    // newCount deve ser 3 (não 0). Só slide-04.png (índice > 3) é stale.
+    expect(mockUnlink).toHaveBeenCalledTimes(1);
+    expect(mockUnlink).toHaveBeenCalledWith(expect.stringContaining("slide-04.png"));
+    expect(result.slides).toEqual(["slide-01.png", "slide-02.png", "slide-03.png"]);
+  });
 });
