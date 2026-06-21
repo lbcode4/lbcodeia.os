@@ -5,8 +5,6 @@ vi.mock("node:fs/promises", () => ({
   writeFile: vi.fn(),
   readdir: vi.fn(),
   unlink: vi.fn(),
-  mkdtemp: vi.fn(),
-  rm: vi.fn(),
 }));
 vi.mock("node:child_process", () => ({
   execFile: vi.fn((_cmd: unknown, _args: unknown, _opts: unknown, cb: (e: Error | null) => void) => cb(null)),
@@ -62,5 +60,20 @@ describe("writeCarrosselHtmlAndRender", () => {
 
   it("rejeita path traversal", async () => {
     await expect(writeCarrosselHtmlAndRender("../../etc", "<html></html>")).rejects.toThrow("Caminho inválido");
+  });
+
+  it("contagem de slides rejeita false positives como class=\"slide-footer\"", async () => {
+    mockWriteFile.mockResolvedValue(undefined);
+    // HTML com 1 slide real + 1 elemento com classe prefixada que não é um slide
+    const html = '<div class="slide">real</div><div class="slide-footer">footer</div>';
+    mockReaddir
+      .mockResolvedValueOnce(["slide-01.png", "slide-02.png"] as never)
+      .mockResolvedValueOnce(["slide-01.png"] as never);
+    mockUnlink.mockResolvedValue(undefined);
+
+    await writeCarrosselHtmlAndRender("teste-2026-06-21", html);
+
+    // Deve contar apenas 1 slide (não 2), então unlink deve ser chamado 1 vez (slide-02.png)
+    expect(mockUnlink).toHaveBeenCalledTimes(1);
   });
 });
