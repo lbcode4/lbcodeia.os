@@ -36,12 +36,13 @@ Seu negócio documentado, lido antes de cada ação:
 - `_memoria/skills-catalogo.md` — qual skill pra qual modelo
 
 ### 3. EXECUÇÃO (skills)
-43 workflows prontos, cada um framework-first:
-- **Conteúdo:** `/lb-conteudo-carrossel`, `/lb-google-seo`, `/lb-conteudo-publicar`, `/lb-conteudo-reels`
-- **Trafego pago:** `/lb-google-ads`, `/lb-meta-campanha-whatsapp`, `/lb-meta-campanha-seguidores`, `/lb-meta-dashboard`, `/lb-meta-relatorio`
-- **Prospecção:** `/lb-venda-prospectar`, `/lb-venda-dossie`, `/lb-venda-proposta`, `/lb-venda-follow-up`
-- **Operação:** `/lb-negocio-analisar-dados`, `/lb-venda-precificar`, `/lb-venda-diagnostico`
-- **Planejamento:** `/lb-negocio-plano-mensal`, `/lb-conteudo-calendario`, `/lb-negocio-mapear-rotinas`
+44 workflows prontos, cada um framework-first:
+- **Conteúdo:** `/lb-conteudo-carrossel`, `/lb-conteudo-publicar`, `/lb-conteudo-aprovar`, `/lb-conteudo-reels`, `/lb-conteudo-stories`, `/lb-conteudo-calendario`, `/lb-conteudo-auditoria-insta`
+- **Tráfego pago (Google):** `/lb-google-ads`, `/lb-google-seo`, `/lb-google-dashboard`, `/lb-google-meu-negocio`, `/lb-google-avaliacoes`, `/lb-ads-unificado`, `/lb-ads-negativas`, `/lb-ads-conectar`
+- **Tráfego pago (Meta):** `/lb-meta-campanha-whatsapp`, `/lb-meta-campanha-seguidores`, `/lb-meta-dashboard`, `/lb-meta-completo`, `/lb-meta-relatorio`, `/lb-meta-diagnostico`, `/lb-meta-auditoria`, `/lb-meta-copy`, `/lb-meta-gerenciar`, `/lb-meta-analise-reels`, `/lb-meta-analise-reels-organico`
+- **Prospecção/Vendas:** `/lb-venda-prospectar`, `/lb-venda-dossie`, `/lb-venda-diagnostico`, `/lb-venda-proposta`, `/lb-venda-precificar`, `/lb-venda-follow-up`, `/lb-venda-objecoes`, `/lb-venda-email`
+- **Operação/Sites:** `/lb-negocio-analisar-dados`, `/lb-negocio-plano-mensal`, `/lb-negocio-mapear-rotinas`, `/lb-negocio-site`, `/lb-negocio-site-v2`
+- **Sistema:** `/lb-sistema-contexto`, `/lb-sistema-onboarding`, `/lb-sistema-novo-projeto`, `/lb-sistema-sincronizar`, `/lb-sistema-versionar`
 
 ---
 
@@ -96,10 +97,15 @@ Tudo com framework. Pronto pra repetir.
 ```
 _memoria/           → cérebro (empresa, preferências, estratégia, framework)
 identidade/         → visual (cores, fontes, logo)
-.claude/skills/     → 43 workflows prontos
-marketing/          → saídas conteúdo + campanhas
+.claude/skills/     → 44 workflows prontos
+integracoes/        → Meta Ads + Google Ads live (scripts Python, Graph/Ads API)
+frontend/           → dashboard (TanStack/React) que dispara skills via API
+server/             → backend (TS) que orquestra skills + entrega relatórios
+marketing/          → saídas conteúdo + campanhas + prospecção
 dados/              → CSVs, JSONs, insumos
-saidas/             → resultados finais
+saidas/             → relatórios + planos gerados
+prompts/            → prompts reutilizáveis (persona, RETINA, keywords)
+docs/               → specs + planos de implementação das telas
 scripts/            → automações e templates
 ```
 

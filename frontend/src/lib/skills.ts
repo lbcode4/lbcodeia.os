@@ -1,7 +1,7 @@
 import {
   BarChart3, Stethoscope, ClipboardCheck, FileBarChart, Megaphone, Film, Sparkles, Layers,
   Users, MessageCircle,
-  Search, LineChart, Star, MapPin, Globe2,
+  Search, LineChart, Star, MapPin, Globe2, Ban,
   Image as ImageIcon, Calendar, Send, CheckCircle2, Camera, BookOpen, ClipboardList,
   Target, FileSearch, FileText, DollarSign, Shield, Mail, Repeat,
   Globe, ListChecks, CalendarCheck, BarChart,
@@ -62,6 +62,7 @@ export const hubs: Hub[] = [
       { id: "lb-google-seo", name: "SEO On-page", description: "Auditoria de SEO técnico e on-page do site.", icon: Globe2 },
       { id: "lb-google-avaliacoes", name: "Avaliações", description: "Análise e resposta a avaliações do Google.", icon: Star },
       { id: "lb-google-meu-negocio", name: "Google Meu Negócio", description: "Otimização do perfil do Google Meu Negócio.", icon: MapPin },
+      { id: "lb-ads-negativas", name: "Negativas (Google)", description: "Termos que drenam orçamento e lista de palavras-chave negativas sugerida.", icon: Ban, route: "/negativas" },
     ],
   },
   {
@@ -105,6 +106,7 @@ export const hubs: Hub[] = [
     icon: Globe,
     skills: [
       { id: "lb-negocio-site", name: "Criar Site", description: "Cria site institucional / landing do cliente.", icon: Globe, route: "/sites" },
+      { id: "lb-negocio-site-v2", name: "Criar Site (v2)", description: "Site/landing com motor ui-ux-pro-max — 67 estilos, 96 paletas.", icon: Sparkles },
       { id: "lb-negocio-plano-mensal", name: "Plano Mensal", description: "Plano mensal de tráfego + conteúdo + metas.", icon: CalendarCheck },
       { id: "lb-negocio-mapear-rotinas", name: "Mapear Rotinas", description: "Mapeia rotinas operacionais do cliente.", icon: ListChecks },
       { id: "lb-negocio-analisar-dados", name: "Analisar Dados", description: "Análise cruzada de dados de marketing e venda.", icon: BarChart },

@@ -73,7 +73,19 @@ const SKILLS: Record<string, SkillSpec> = {
   },
 
   // ── Ads unificado ─────────────────────────────────────────────────────
-  "lb-ads-unificado": { skillName: "lb-ads-unificado", allowedTools: SCRIPT_TOOLS, mode: "text" },
+  "lb-ads-unificado": {
+    skillName: "lb-ads-unificado", allowedTools: SCRIPT_TOOLS, mode: "data",
+    outputContract: {
+      periodo: "string",
+      meta: { gasto: "number", conversoes: "number", ctr: "number (%)" },
+      google: { gasto: "number", conversoes: "number", ctr: "number (%)" },
+      investimentoTotal: "number",
+      conversoesTotais: "number",
+      cpaBlended: "number",
+      roasBlended: "number (ex: 3.2)",
+      insight: { titulo: "string", texto: "string" },
+    },
+  },
   "lb-ads-conectar": { skillName: "lb-ads-conectar", allowedTools: TEXT_TOOLS, mode: "text" },
   "lb-ads-negativas": {
     skillName: "lb-ads-negativas", allowedTools: SCRIPT_TOOLS, mode: "data",
@@ -160,6 +172,7 @@ const SKILLS: Record<string, SkillSpec> = {
 
   // ── Negócio do Cliente ────────────────────────────────────────────────
   "lb-negocio-site": { skillName: "lb-negocio-site", allowedTools: TEXT_TOOLS, mode: "text" },
+  "lb-negocio-site-v2": { skillName: "lb-negocio-site-v2", allowedTools: TEXT_TOOLS, mode: "text" },
   "lb-negocio-plano-mensal": { skillName: "lb-negocio-plano-mensal", allowedTools: TEXT_TOOLS, mode: "text" },
   "lb-negocio-mapear-rotinas": { skillName: "lb-negocio-mapear-rotinas", allowedTools: TEXT_TOOLS, mode: "text" },
   "lb-negocio-analisar-dados": { skillName: "lb-negocio-analisar-dados", allowedTools: SCRIPT_TOOLS, mode: "text" },

@@ -1,8 +1,10 @@
-# LBCode.IA — Máquina de Tráfego Pago + Framework
+# LBCode.IA — Hub de Skills Claude Code
 
-Seu negócio roda nesse arquivo. LBCode.IA é **framework executado por IA** 
-que integra tráfego pago, conteúdo, prospecção e operação. Tudo versionado, 
-mensurado, repetível.
+Seu projeto/negócio roda nesse arquivo. LBCode.IA é **hub de skills Claude Code**
+voltado a facilitar desenvolvimento de projetos e automações sob medida com
+IA pra empresas (ERPs, CRMs, agentes, painéis internos) — e a rodar a
+operação completa de quem entrega isso: tráfego pago, conteúdo, prospecção
+e gestão de cliente. Tudo versionado, mensurado, repetível.
 
 Aqui moram as regras — como Claude carrega contexto, aprende de feedback, 
 mantém framework vivo, calibra execução conforme negócio evolui.
@@ -11,16 +13,22 @@ Editável. `/lb-sistema-onboarding` complementa fim do arquivo com regras do seu
 
 ---
 
-## DNA: Framework First
+## DNA: Skills com Framework, Não Acaso
 
-LBCode.IA não é coleção solta de skills. É **máquina que executa framework**
-(RETINA + GCC + OPA + Bolo de Cenoura + 4 Campanhas).
+LBCode.IA não é coleção solta de skills. Cada skill tira força de método:
 
-Cada skill tira força do framework, não do acaso.
+- **Marketing/tráfego/prospecção** roda o framework RETINA + GCC + OPA +
+  Bolo de Cenoura + 4 Campanhas (`_memoria/framework-trafego.md`)
+- **Entrega de projeto/automação pro cliente** roda via
+  `/lb-sistema-novo-projeto` (workspace isolado por cliente) +
+  `_memoria/skills-catalogo.md` (mapa qual skill serve qual modelo de negócio)
 
+Exemplos:
 - `/lb-conteudo-carrossel` executa RETINA + GCC em visual
 - `/lb-google-ads` executa 4 Campanhas + GCC em CSV
 - `/lb-venda-prospectar` executa OPA + RETINA em lead pesquisado
+- `/lb-negocio-site` / `/lb-negocio-site-v2` entrega site/landing real pro cliente
+- `/lb-negocio-mapear-rotinas` transforma rotina repetitiva do cliente em skill nova
 - `/lb-meta-relatorio` fecha loop feedback do framework
 
 Framework documentado em `_memoria/framework-trafego.md`. Skills carregam sob demanda.
