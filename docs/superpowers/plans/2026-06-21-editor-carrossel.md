@@ -108,10 +108,12 @@ Expected: FAIL — `Cannot find module './carrossel-editor.js'`
 
 - [ ] **Step 3: Write minimal implementation**
 
+**Note (post-review):** the original version of this block had two bugs caught by task review and fixed in the shipped code — a bypassable path guard (`startsWith` with no trailing separator let `id=".."` slip through) and an over-matching slide-count regex (`/class="slide/g` matched `class="slide-footer"` too). The block below is the corrected version actually shipped — see `server/src/carrossel-editor.ts` for the real source of truth.
+
 ```ts
 // server/src/carrossel-editor.ts
 import { readFile, writeFile, readdir, unlink } from "node:fs/promises";
-import { join, resolve } from "node:path";
+import { join, resolve, sep } from "node:path";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 
@@ -120,10 +122,14 @@ const execFileAsync = promisify(execFile);
 const REPO_ROOT = join(import.meta.dirname, "..", "..");
 const CARROSSEIS_ROOT = join(REPO_ROOT, "saidas", "marketing", "conteudo", "carrossel");
 
+function isPathSafeUnder(absolutePath: string): string {
+  const root = resolve(CARROSSEIS_ROOT) + sep;
+  if (!absolutePath.startsWith(root)) throw new Error("Caminho inválido");
+  return absolutePath;
+}
+
 function safeHtmlPath(id: string): string {
-  const safe = resolve(join(CARROSSEIS_ROOT, id, "carrossel.html"));
-  if (!safe.startsWith(resolve(CARROSSEIS_ROOT))) throw new Error("Caminho inválido");
-  return safe;
+  return isPathSafeUnder(resolve(join(CARROSSEIS_ROOT, id, "carrossel.html")));
 }
 
 export async function readCarrosselHtml(id: string): Promise<string> {
@@ -131,14 +137,13 @@ export async function readCarrosselHtml(id: string): Promise<string> {
 }
 
 function countSlides(html: string): number {
-  return (html.match(/class="slide/g) ?? []).length;
+  return (html.match(/class="slide(["\s])/g) ?? []).length;
 }
 
 export async function writeCarrosselHtmlAndRender(id: string, html: string): Promise<{ slides: string[] }> {
   const htmlPath = safeHtmlPath(id);
   const carrosselDir = join(CARROSSEIS_ROOT, id);
-  const renderPath = resolve(join(carrosselDir, "render.js"));
-  if (!renderPath.startsWith(resolve(CARROSSEIS_ROOT))) throw new Error("Caminho inválido");
+  const renderPath = isPathSafeUnder(resolve(join(carrosselDir, "render.js")));
 
   await writeFile(htmlPath, html, "utf-8");
   await execFileAsync("node", [renderPath], { cwd: carrosselDir, timeout: 30000 });
@@ -482,14 +487,20 @@ export const Route = createFileRoute("/carrosseis/$id")({
   component: CarrosselEditor,
 });
 
+// Note (post-review): the over-matching regex and the `:nth-of-type` selector below
+// (which counts position among same-tag siblings, not among `.slide`-classed elements)
+// were both bugs caught by task review, inherited verbatim from an earlier draft of this
+// block. Fixed version below — see `frontend/src/routes/carrosseis.$id.tsx` for the
+// shipped source of truth. `:nth-child(N of .slide)` is CSS Selectors Level 4 syntax,
+// supported by the Chromium versions both Playwright and modern browsers use.
 function slideCount(html: string): number {
-  return (html.match(/class="slide/g) ?? []).length;
+  return (html.match(/class="slide(["\s])/g) ?? []).length;
 }
 
 function injectPagination(html: string, activeIndex: number): string {
   const style = `<style id="__lbcode-pagination-style">
     .slide { display: none !important; }
-    .slide:nth-of-type(${activeIndex + 1}) { display: flex !important; }
+    .slide:nth-child(${activeIndex + 1} of .slide) { display: flex !important; }
     html, body { margin: 0; height: 100%; display: flex; justify-content: center; align-items: center; background: #1a1a1a; }
   </style>`;
   const idx = html.indexOf("</head>");
