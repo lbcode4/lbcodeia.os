@@ -126,9 +126,18 @@ const EDITOR_SCRIPT = `<script id="__lbcode-editor-script">
     var editable = anchorEl ? anchorEl.closest('[contenteditable="true"]') : null;
     if (!editable) { toolbar.style.display = 'none'; return; }
     var rect = sel.getRangeAt(0).getBoundingClientRect();
-    toolbar.style.left = Math.max(4, rect.left) + 'px';
-    toolbar.style.top = Math.max(4, rect.top - 100) + 'px';
+    // mede a toolbar antes de posicionar, pra poder grudar nas bordas do slide
+    // (a iframe corta qualquer coisa fora de 0..1080 / 0..1350, "sair pra fora" não existe aqui)
+    toolbar.style.left = '0px';
+    toolbar.style.top = '0px';
     toolbar.style.display = 'flex';
+    var tw = toolbar.offsetWidth;
+    var th = toolbar.offsetHeight;
+    var left = Math.min(Math.max(4, rect.left), document.documentElement.clientWidth - tw - 4);
+    var top = rect.top - th - 10;
+    if (top < 4) top = rect.bottom + 10;
+    toolbar.style.left = Math.max(4, left) + 'px';
+    toolbar.style.top = top + 'px';
   });
 })();
 </script>`;
