@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, ChevronLeft, ChevronRight, Loader2, Send, Sparkles, User, RotateCcw } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Loader2, Send, Sparkles, User, RotateCcw, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/app-shell";
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8787";
@@ -161,6 +161,10 @@ function CarrosselEditor() {
   const [chatError, setChatError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [saved, setSaved] = useState(false);
+
   useEffect(() => {
     setLoadingHtml(true);
     fetch(`${BACKEND}/api/carrosseis/html?id=${encodeURIComponent(id)}`)
@@ -302,6 +306,28 @@ function CarrosselEditor() {
     }
   }
 
+  async function salvar() {
+    setSaving(true);
+    setSaveError(null);
+    try {
+      const res = await fetch(`${BACKEND}/api/carrosseis/html?id=${encodeURIComponent(id)}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ html }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({ error: "Erro desconhecido" }));
+        throw new Error((body as { error?: string }).error ?? `HTTP ${res.status}`);
+      }
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch (e) {
+      setSaveError(e instanceof Error ? e.message : "Erro desconhecido");
+    } finally {
+      setSaving(false);
+    }
+  }
+
   return (
     <div className="-m-4 md:-m-8 h-[calc(100vh-64px)] flex flex-col">
       <div className="h-14 border-b border-border bg-card flex items-center justify-between px-4 md:px-6 shrink-0">
@@ -312,6 +338,13 @@ function CarrosselEditor() {
           <div className="font-semibold text-[14px] truncate capitalize">
             {id.replace(/-\d{4}-\d{2}-\d{2}$/, "").replace(/-/g, " ")}
           </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {saveError && <span className="text-[12px] text-destructive max-w-[240px] truncate" title={saveError}>{saveError}</span>}
+          <Button onClick={salvar} disabled={saving} className="!px-4 !py-2">
+            {saving ? <Loader2 className="animate-spin" size={16} /> : <CheckCircle2 size={16} />}
+            <span className="hidden sm:inline">{saved ? "Salvo" : "Salvar"}</span>
+          </Button>
         </div>
       </div>
 

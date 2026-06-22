@@ -1,7 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { PageHeader, Card } from "@/components/app-shell";
-import { ChevronLeft, ChevronRight, Copy, Check } from "lucide-react";
+import { ChevronLeft, ChevronRight, Copy, Check, Sparkles } from "lucide-react";
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8787";
 
@@ -18,8 +18,8 @@ async function fetchCarrosseis(): Promise<CarrosselMeta[]> {
   return res.json();
 }
 
-function slideUrl(id: string, slide: string) {
-  return `${BACKEND}/api/carrosseis/slide?id=${encodeURIComponent(id)}&slide=${encodeURIComponent(slide)}`;
+function slideUrl(id: string, slide: string, v: number) {
+  return `${BACKEND}/api/carrosseis/slide?id=${encodeURIComponent(id)}&slide=${encodeURIComponent(slide)}&v=${v}`;
 }
 
 export const Route = createFileRoute("/carrosseis/")({
@@ -27,15 +27,20 @@ export const Route = createFileRoute("/carrosseis/")({
 });
 
 function CarrosseisPagina() {
+  const navigate = useNavigate();
   const [carrosseis, setCarrosseis] = useState<CarrosselMeta[]>([]);
   const [erro, setErro] = useState("");
   const [aberto, setAberto] = useState<CarrosselMeta | null>(null);
   const [slideIdx, setSlideIdx] = useState(0);
   const [copiado, setCopiado] = useState(false);
+  const [loadedAt, setLoadedAt] = useState(0);
 
   useEffect(() => {
     fetchCarrosseis()
-      .then(setCarrosseis)
+      .then((list) => {
+        setCarrosseis(list);
+        setLoadedAt(Date.now());
+      })
       .catch(() => setErro("Backend offline ou sem carrosseis"));
   }, []);
 
@@ -73,7 +78,7 @@ function CarrosseisPagina() {
                 {/* Preview primeiro slide */}
                 {c.slides[0] ? (
                   <img
-                    src={slideUrl(c.id, c.slides[0])}
+                    src={slideUrl(c.id, c.slides[0], loadedAt)}
                     alt={c.titulo}
                     className="w-full aspect-square object-cover"
                     loading="lazy"
@@ -99,12 +104,17 @@ function CarrosseisPagina() {
       {/* Viewer de carrossel aberto */}
       {aberto && (
         <div>
-          <button
-            onClick={fechar}
-            className="flex items-center gap-1 text-[13px] text-muted-foreground hover:text-foreground mb-4"
-          >
-            <ChevronLeft size={14} /> Voltar à galeria
-          </button>
+          <div className="flex items-center justify-between mb-4">
+            <button onClick={fechar} className="flex items-center gap-1 text-[13px] text-muted-foreground hover:text-foreground">
+              <ChevronLeft size={14} /> Voltar à galeria
+            </button>
+            <button
+              onClick={() => navigate({ to: "/carrosseis/$id", params: { id: aberto.id } })}
+              className="flex items-center gap-1.5 text-[13px] bg-primary text-primary-foreground px-3 py-1.5 rounded-md hover:opacity-90"
+            >
+              <Sparkles size={14} /> Editar com IA
+            </button>
+          </div>
 
           <h2 className="text-lg font-semibold capitalize mb-4">{aberto.titulo}</h2>
 
@@ -113,7 +123,7 @@ function CarrosseisPagina() {
             <div className="flex-1 max-w-lg">
               <div className="relative aspect-square rounded-xl overflow-hidden bg-muted/20 border border-border">
                 <img
-                  src={slideUrl(aberto.id, aberto.slides[slideIdx])}
+                  src={slideUrl(aberto.id, aberto.slides[slideIdx], loadedAt)}
                   alt={`Slide ${slideIdx + 1}`}
                   className="w-full h-full object-contain"
                 />
@@ -159,7 +169,7 @@ function CarrosseisPagina() {
                       i === slideIdx ? "border-primary" : "border-transparent"
                     }`}
                   >
-                    <img src={slideUrl(aberto.id, s)} alt={`thumb ${i + 1}`} className="w-full h-full object-cover" />
+                    <img src={slideUrl(aberto.id, s, loadedAt)} alt={`thumb ${i + 1}`} className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>
