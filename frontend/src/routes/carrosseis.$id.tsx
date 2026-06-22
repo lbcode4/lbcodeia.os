@@ -138,7 +138,7 @@ function injectEditor(html: string): string {
   return idx !== -1 ? html.slice(0, idx) + EDITOR_SCRIPT + html.slice(idx) : html + EDITOR_SCRIPT;
 }
 
-const MAIN_SCALE = 1 / 3;
+const MAIN_SCALE = 0.5;
 const THUMB_SCALE = 56 / 1080;
 
 type Msg = { role: "user" | "assistant"; content: string };
