@@ -69,10 +69,15 @@ function CarrosseisPagina() {
       {!aberto && (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {carrosseis.map((c) => (
-            <button
+            <div
               key={c.id}
+              role="button"
+              tabIndex={0}
               onClick={() => abrir(c)}
-              className="text-left group"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") abrir(c);
+              }}
+              className="text-left group relative cursor-pointer"
             >
               <Card className="hover:border-primary/50 hover:shadow-md transition-all p-0 overflow-hidden">
                 {/* Preview primeiro slide */}
@@ -93,7 +98,17 @@ function CarrosseisPagina() {
                   <p className="text-[11px] text-muted-foreground mt-0.5">{c.slides.length} slides</p>
                 </div>
               </Card>
-            </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate({ to: "/carrosseis/$id", params: { id: c.id } });
+                }}
+                title="Editar com IA"
+                className="absolute top-2 right-2 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <Sparkles size={14} />
+              </button>
+            </div>
           ))}
           {carrosseis.length === 0 && !erro && (
             <p className="text-[13px] text-muted-foreground col-span-3">Nenhum carrossel encontrado.</p>
