@@ -9,13 +9,13 @@ export const Route = createFileRoute("/carrosseis/$id")({
 });
 
 function slideCount(html: string): number {
-  return (html.match(/class="slide/g) ?? []).length;
+  return (html.match(/class="slide(["\s])/g) ?? []).length;
 }
 
 function injectPagination(html: string, activeIndex: number): string {
   const style = `<style id="__lbcode-pagination-style">
     .slide { display: none !important; }
-    .slide:nth-of-type(${activeIndex + 1}) { display: flex !important; }
+    .slide:nth-child(${activeIndex + 1} of .slide) { display: flex !important; }
     html, body { margin: 0; height: 100%; display: flex; justify-content: center; align-items: center; background: #1a1a1a; }
   </style>`;
   const idx = html.indexOf("</head>");
