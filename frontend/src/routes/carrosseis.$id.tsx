@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Loader2, Send, Sparkles, User, RotateCcw } from "lucide-react";
+import { Button } from "@/components/app-shell";
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8787";
 
@@ -30,6 +31,8 @@ function makeBlobUrl(html: string): string {
 const MAIN_SCALE = 1 / 3;
 const THUMB_SCALE = 56 / 1080;
 
+type Msg = { role: "user" | "assistant"; content: string };
+
 function CarrosselEditor() {
   const { id } = Route.useParams();
   const [html, setHtml] = useState("");
@@ -40,6 +43,15 @@ function CarrosselEditor() {
   const [thumbBlobUrls, setThumbBlobUrls] = useState<string[]>([]);
   const mainIframeRef = useRef<HTMLIFrameElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
+
+  const [htmlHistory, setHtmlHistory] = useState<string[]>([]);
+  const [messages, setMessages] = useState<Msg[]>([
+    { role: "assistant", content: "Olá! Me diga o que quer mudar nesse carrossel — texto, cor, slides. Ou clique direto no texto do preview pra editar sem IA." },
+  ]);
+  const [input, setInput] = useState("");
+  const [chatLoading, setChatLoading] = useState(false);
+  const [chatError, setChatError] = useState<string | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setLoadingHtml(true);
@@ -88,6 +100,90 @@ function CarrosselEditor() {
     return () => node?.removeEventListener("keydown", onKeyDown);
   }, [total]);
 
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+  }, [messages, chatLoading]);
+
+  function applyHtml(newHtml: string) {
+    setHtmlHistory((h) => [...h, html]);
+    setHtml(newHtml);
+    setActiveSlide((i) => Math.min(i, Math.max(0, slideCount(newHtml) - 1)));
+  }
+
+  function undo() {
+    setHtmlHistory((h) => {
+      if (h.length === 0) return h;
+      const prev = h[h.length - 1];
+      setHtml(prev);
+      setActiveSlide((i) => Math.min(i, Math.max(0, slideCount(prev) - 1)));
+      return h.slice(0, -1);
+    });
+  }
+
+  async function send() {
+    const t = input.trim();
+    if (!t || chatLoading) return;
+    setChatError(null);
+    setMessages((m) => [...m, { role: "user", content: t }, { role: "assistant", content: "" }]);
+    setInput("");
+    setChatLoading(true);
+
+    try {
+      const resp = await fetch(`${BACKEND}/api/carrosseis/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          html,
+          instruction: t,
+          history: messages.filter((m) => m.content.trim()).map((m) => ({ role: m.role, content: m.content })),
+        }),
+      });
+      if (!resp.ok || !resp.body) throw new Error(`HTTP ${resp.status}`);
+
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      const appendChunk = (text: string) =>
+        setMessages((m) => {
+          const copy = [...m];
+          copy[copy.length - 1] = { ...copy[copy.length - 1], content: copy[copy.length - 1].content + text };
+          return copy;
+        });
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const parts = buffer.split("\n\n");
+        buffer = parts.pop() ?? "";
+        for (const part of parts) {
+          const dataLine = part.split("\n").find((l) => l.startsWith("data:"));
+          if (!dataLine) continue;
+          try {
+            const ev = JSON.parse(dataLine.slice(5).trim()) as { type: string; text?: string; html?: string };
+            if (ev.type === "chunk" && ev.text) appendChunk(ev.text);
+            else if (ev.type === "html" && ev.html) applyHtml(ev.html);
+            else if (ev.type === "error" && ev.text) {
+              setChatError(ev.text);
+              appendChunk(`\n\n⚠️ ${ev.text}`);
+            }
+          } catch { /* ignora frame malformado */ }
+        }
+      }
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Erro desconhecido";
+      setChatError(msg);
+      setMessages((m) => {
+        const copy = [...m];
+        copy[copy.length - 1] = { ...copy[copy.length - 1], content: `Erro: ${msg}` };
+        return copy;
+      });
+    } finally {
+      setChatLoading(false);
+    }
+  }
+
   return (
     <div className="-m-4 md:-m-8 h-[calc(100vh-64px)] flex flex-col">
       <div className="h-14 border-b border-border bg-card flex items-center justify-between px-4 md:px-6 shrink-0">
@@ -102,8 +198,62 @@ function CarrosselEditor() {
       </div>
 
       <div className="flex-1 flex flex-col lg:flex-row min-h-0">
-        <div className="lg:w-[400px] lg:border-r border-b lg:border-b-0 border-border bg-card flex items-center justify-center text-muted-foreground text-[13px] p-4">
-          Chat chega na próxima task.
+        <div className="lg:w-[400px] lg:border-r border-b lg:border-b-0 border-border bg-card flex flex-col min-h-0">
+          <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4">
+            {messages.map((m, i) => (
+              <div key={i} className={`flex gap-2 ${m.role === "user" ? "flex-row-reverse" : ""}`}>
+                <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${m.role === "user" ? "bg-accent" : "bg-primary text-primary-foreground"}`}>
+                  {m.role === "user" ? <User size={13} /> : <Sparkles size={13} />}
+                </div>
+                {m.content && (
+                  <div className={`max-w-[85%] rounded-lg px-3 py-2 text-[13px] leading-relaxed whitespace-pre-wrap ${m.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"}`}>
+                    {m.content}
+                  </div>
+                )}
+              </div>
+            ))}
+            {chatLoading && (
+              <div className="flex gap-2">
+                <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
+                  <Sparkles size={13} />
+                </div>
+                <div className="bg-muted rounded-lg px-3 py-2 text-[13px] flex items-center gap-2">
+                  <Loader2 className="animate-spin" size={13} /> Aplicando mudança…
+                </div>
+              </div>
+            )}
+            {chatError && (
+              <div className="text-[12px] text-destructive bg-destructive/10 border border-destructive/30 rounded-md p-2">{chatError}</div>
+            )}
+          </div>
+
+          <div className="border-t border-border p-3 flex gap-2">
+            <button
+              onClick={undo}
+              disabled={htmlHistory.length === 0}
+              title="Desfazer"
+              className="h-9 w-9 shrink-0 rounded-md border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent disabled:opacity-30"
+            >
+              <RotateCcw size={15} />
+            </button>
+            <textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  send();
+                }
+              }}
+              rows={3}
+              placeholder="Peça uma alteração…"
+              disabled={chatLoading}
+              className="flex-1 resize-none rounded-md border border-border bg-background px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-primary/30 max-h-48"
+            />
+            <Button onClick={send} disabled={chatLoading || !input.trim()} className="!px-3 !py-2 shrink-0">
+              {chatLoading ? <Loader2 className="animate-spin" size={15} /> : <Send size={15} />}
+            </Button>
+          </div>
         </div>
 
         <div
