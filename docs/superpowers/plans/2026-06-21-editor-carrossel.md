@@ -458,6 +458,9 @@ git commit -m "feat(server): expõe rotas GET/PUT html e POST chat do editor de 
 
 **Files:**
 - Create: `frontend/src/routes/carrosseis.$id.tsx`
+- Rename: `frontend/src/routes/carrosseis.tsx` → `frontend/src/routes/carrosseis.index.tsx` (content unchanged — see note below)
+
+**Why the rename:** TanStack Router treats a file `carrosseis.tsx` alongside a new sibling `carrosseis.$id.tsx` as a layout route (parent route requiring an `<Outlet/>` to render children). Since `carrosseis.tsx` is written as a leaf page (the full gallery, no `<Outlet/>`), the child route `/carrosseis/$id` would silently never render — the parent's own content would show instead, even though the URL matches and returns 200. This codebase already has the correct convention for this exact shape: `sites.index.tsx` + `sites.$siteId.tsx` (no plain `sites.tsx`). Apply the same fix here: `git mv frontend/src/routes/carrosseis.tsx frontend/src/routes/carrosseis.index.tsx`, no content changes. (Discovered during Task 4 implementation — this note documents the fix, applied as part of this task since Task 4's own deliverable doesn't work without it.)
 
 **Interfaces:**
 - Consumes: `GET /api/carrosseis/html?id=` (Task 3).
@@ -646,16 +649,27 @@ function CarrosselEditor() {
 }
 ```
 
-- [ ] **Step 2: Run the dev server and verify manually**
+- [ ] **Step 2: Apply the rename and verify with the dev server**
 
-Run: `cd frontend && npm run dev` (background — leave it running)
-Open `http://localhost:3000/carrosseis/dor-processo-manual-2026-06-21` in a browser (requires the backend dev server running too — Task 9 covers starting both together; for this task it's fine to run `cd server && npm run dev` in a second terminal).
-Expected: page shows the header with "dor processo manual", a single scaled-down slide in the preview, the counter "1 / 1", and no thumbnails row issue (single thumbnail, since this fixture has 1 slide — confirms pagination math works for `total = 1`).
+`git mv frontend/src/routes/carrosseis.tsx frontend/src/routes/carrosseis.index.tsx` (no content changes — see the "Why the rename" note above).
+
+Run: `cd server && npm run dev` (background) and `cd frontend && npm run dev` (background) — both are required, the route fetches from the backend.
+
+No browser-automation tool is assumed to exist for this verification — use `curl`, but a bare 200 status is **not sufficient evidence**: TanStack Router's layout-route trap this step's rename fixes returns 200 on the parent's content too, silently. Verify by diffing the response *body*, not just the status:
+
+```bash
+curl -s http://localhost:3000/carrosseis/dor-processo-manual-2026-06-21 | grep -o "dor processo manual"
+curl -s http://localhost:3000/carrosseis/dor-processo-manual-2026-06-21 | grep -c "Chat chega na próxima task"
+```
+
+Expected: the first command prints the derived title (proves the `$id` route rendered, not the parent gallery); the second prints `1` (the chat placeholder text from this task's own JSX, proving this is genuinely the new component's markup in the response, not the gallery's). If the second command prints `0`, the layout-route trap is still active — stop and re-check the rename.
+
+If a browser is available to you in this environment, also open the URL directly and confirm visually: a single scaled-down slide preview, counter "1 / 1", one thumbnail. State explicitly in your report whether you had browser access or relied on the curl content-diff method.
 
 - [ ] **Step 3: Commit**
 
 ```bash
-git add frontend/src/routes/carrosseis.\$id.tsx
+git add frontend/src/routes/carrosseis.\$id.tsx frontend/src/routes/carrosseis.index.tsx
 git commit -m "feat(frontend): preview multi-slide paginado e somente leitura do editor de carrossel"
 ```
 
@@ -1076,7 +1090,7 @@ git commit -m "feat(frontend): toolbar flutuante de cor/B/I/U no editor de carro
 
 **Files:**
 - Modify: `frontend/src/routes/carrosseis.$id.tsx`
-- Modify: `frontend/src/routes/carrosseis.tsx`
+- Modify: `frontend/src/routes/carrosseis.index.tsx`
 
 **Interfaces:**
 - Consumes: `PUT /api/carrosseis/html?id=` (Task 3).
@@ -1132,7 +1146,7 @@ Add the button to the header bar (inside the existing `<div className="h-14 ..."
 
 - [ ] **Step 2: Add the entry point + cache-bust in the gallery**
 
-In `frontend/src/routes/carrosseis.tsx`, change the import line:
+In `frontend/src/routes/carrosseis.index.tsx`, change the import line:
 
 ```tsx
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
@@ -1196,7 +1210,7 @@ Click the back arrow (`Link to="/carrosseis"`), confirm the gallery's thumbnail 
 - [ ] **Step 4: Commit**
 
 ```bash
-git add frontend/src/routes/carrosseis.\$id.tsx frontend/src/routes/carrosseis.tsx
+git add frontend/src/routes/carrosseis.\$id.tsx frontend/src/routes/carrosseis.index.tsx
 git commit -m "feat(frontend): botão Salvar no editor + entrada 'Editar com IA' na galeria"
 ```
 
