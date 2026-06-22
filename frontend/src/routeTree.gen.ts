@@ -26,15 +26,16 @@ import { Route as DashboardConteudoRouteImport } from './routes/dashboard-conteu
 import { Route as ConteudoRouteImport } from './routes/conteudo'
 import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
 import { Route as ConectarContasRouteImport } from './routes/conectar-contas'
-import { Route as CarrosseisRouteImport } from './routes/carrosseis'
 import { Route as BibliotecaRouteImport } from './routes/biblioteca'
 import { Route as AuditoriaMetaRouteImport } from './routes/auditoria-meta'
 import { Route as AssistenteRouteImport } from './routes/assistente'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SitesIndexRouteImport } from './routes/sites.index'
+import { Route as CarrosseisIndexRouteImport } from './routes/carrosseis.index'
 import { Route as SkillSkillIdRouteImport } from './routes/skill.$skillId'
 import { Route as SitesSiteIdRouteImport } from './routes/sites.$siteId'
 import { Route as HubHubIdRouteImport } from './routes/hub.$hubId'
+import { Route as CarrosseisIdRouteImport } from './routes/carrosseis.$id'
 import { Route as ApiPublicSiteEditRouteImport } from './routes/api/public/site-edit'
 import { Route as ApiPublicChatRouteImport } from './routes/api/public/chat'
 
@@ -123,11 +124,6 @@ const ConectarContasRoute = ConectarContasRouteImport.update({
   path: '/conectar-contas',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CarrosseisRoute = CarrosseisRouteImport.update({
-  id: '/carrosseis',
-  path: '/carrosseis',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const BibliotecaRoute = BibliotecaRouteImport.update({
   id: '/biblioteca',
   path: '/biblioteca',
@@ -153,6 +149,11 @@ const SitesIndexRoute = SitesIndexRouteImport.update({
   path: '/sites/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CarrosseisIndexRoute = CarrosseisIndexRouteImport.update({
+  id: '/carrosseis/',
+  path: '/carrosseis/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SkillSkillIdRoute = SkillSkillIdRouteImport.update({
   id: '/skill/$skillId',
   path: '/skill/$skillId',
@@ -166,6 +167,11 @@ const SitesSiteIdRoute = SitesSiteIdRouteImport.update({
 const HubHubIdRoute = HubHubIdRouteImport.update({
   id: '/hub/$hubId',
   path: '/hub/$hubId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CarrosseisIdRoute = CarrosseisIdRouteImport.update({
+  id: '/carrosseis/$id',
+  path: '/carrosseis/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicSiteEditRoute = ApiPublicSiteEditRouteImport.update({
@@ -184,7 +190,6 @@ export interface FileRoutesByFullPath {
   '/assistente': typeof AssistenteRoute
   '/auditoria-meta': typeof AuditoriaMetaRoute
   '/biblioteca': typeof BibliotecaRoute
-  '/carrosseis': typeof CarrosseisRoute
   '/conectar-contas': typeof ConectarContasRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/conteudo': typeof ConteudoRoute
@@ -202,9 +207,11 @@ export interface FileRoutesByFullPath {
   '/reels': typeof ReelsRoute
   '/reels-organico': typeof ReelsOrganicoRoute
   '/relatorio-unificado': typeof RelatorioUnificadoRoute
+  '/carrosseis/$id': typeof CarrosseisIdRoute
   '/hub/$hubId': typeof HubHubIdRoute
   '/sites/$siteId': typeof SitesSiteIdRoute
   '/skill/$skillId': typeof SkillSkillIdRoute
+  '/carrosseis/': typeof CarrosseisIndexRoute
   '/sites/': typeof SitesIndexRoute
   '/api/public/chat': typeof ApiPublicChatRoute
   '/api/public/site-edit': typeof ApiPublicSiteEditRoute
@@ -214,7 +221,6 @@ export interface FileRoutesByTo {
   '/assistente': typeof AssistenteRoute
   '/auditoria-meta': typeof AuditoriaMetaRoute
   '/biblioteca': typeof BibliotecaRoute
-  '/carrosseis': typeof CarrosseisRoute
   '/conectar-contas': typeof ConectarContasRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/conteudo': typeof ConteudoRoute
@@ -232,9 +238,11 @@ export interface FileRoutesByTo {
   '/reels': typeof ReelsRoute
   '/reels-organico': typeof ReelsOrganicoRoute
   '/relatorio-unificado': typeof RelatorioUnificadoRoute
+  '/carrosseis/$id': typeof CarrosseisIdRoute
   '/hub/$hubId': typeof HubHubIdRoute
   '/sites/$siteId': typeof SitesSiteIdRoute
   '/skill/$skillId': typeof SkillSkillIdRoute
+  '/carrosseis': typeof CarrosseisIndexRoute
   '/sites': typeof SitesIndexRoute
   '/api/public/chat': typeof ApiPublicChatRoute
   '/api/public/site-edit': typeof ApiPublicSiteEditRoute
@@ -245,7 +253,6 @@ export interface FileRoutesById {
   '/assistente': typeof AssistenteRoute
   '/auditoria-meta': typeof AuditoriaMetaRoute
   '/biblioteca': typeof BibliotecaRoute
-  '/carrosseis': typeof CarrosseisRoute
   '/conectar-contas': typeof ConectarContasRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/conteudo': typeof ConteudoRoute
@@ -263,9 +270,11 @@ export interface FileRoutesById {
   '/reels': typeof ReelsRoute
   '/reels-organico': typeof ReelsOrganicoRoute
   '/relatorio-unificado': typeof RelatorioUnificadoRoute
+  '/carrosseis/$id': typeof CarrosseisIdRoute
   '/hub/$hubId': typeof HubHubIdRoute
   '/sites/$siteId': typeof SitesSiteIdRoute
   '/skill/$skillId': typeof SkillSkillIdRoute
+  '/carrosseis/': typeof CarrosseisIndexRoute
   '/sites/': typeof SitesIndexRoute
   '/api/public/chat': typeof ApiPublicChatRoute
   '/api/public/site-edit': typeof ApiPublicSiteEditRoute
@@ -277,7 +286,6 @@ export interface FileRouteTypes {
     | '/assistente'
     | '/auditoria-meta'
     | '/biblioteca'
-    | '/carrosseis'
     | '/conectar-contas'
     | '/configuracoes'
     | '/conteudo'
@@ -295,9 +303,11 @@ export interface FileRouteTypes {
     | '/reels'
     | '/reels-organico'
     | '/relatorio-unificado'
+    | '/carrosseis/$id'
     | '/hub/$hubId'
     | '/sites/$siteId'
     | '/skill/$skillId'
+    | '/carrosseis/'
     | '/sites/'
     | '/api/public/chat'
     | '/api/public/site-edit'
@@ -307,7 +317,6 @@ export interface FileRouteTypes {
     | '/assistente'
     | '/auditoria-meta'
     | '/biblioteca'
-    | '/carrosseis'
     | '/conectar-contas'
     | '/configuracoes'
     | '/conteudo'
@@ -325,9 +334,11 @@ export interface FileRouteTypes {
     | '/reels'
     | '/reels-organico'
     | '/relatorio-unificado'
+    | '/carrosseis/$id'
     | '/hub/$hubId'
     | '/sites/$siteId'
     | '/skill/$skillId'
+    | '/carrosseis'
     | '/sites'
     | '/api/public/chat'
     | '/api/public/site-edit'
@@ -337,7 +348,6 @@ export interface FileRouteTypes {
     | '/assistente'
     | '/auditoria-meta'
     | '/biblioteca'
-    | '/carrosseis'
     | '/conectar-contas'
     | '/configuracoes'
     | '/conteudo'
@@ -355,9 +365,11 @@ export interface FileRouteTypes {
     | '/reels'
     | '/reels-organico'
     | '/relatorio-unificado'
+    | '/carrosseis/$id'
     | '/hub/$hubId'
     | '/sites/$siteId'
     | '/skill/$skillId'
+    | '/carrosseis/'
     | '/sites/'
     | '/api/public/chat'
     | '/api/public/site-edit'
@@ -368,7 +380,6 @@ export interface RootRouteChildren {
   AssistenteRoute: typeof AssistenteRoute
   AuditoriaMetaRoute: typeof AuditoriaMetaRoute
   BibliotecaRoute: typeof BibliotecaRoute
-  CarrosseisRoute: typeof CarrosseisRoute
   ConectarContasRoute: typeof ConectarContasRoute
   ConfiguracoesRoute: typeof ConfiguracoesRoute
   ConteudoRoute: typeof ConteudoRoute
@@ -386,9 +397,11 @@ export interface RootRouteChildren {
   ReelsRoute: typeof ReelsRoute
   ReelsOrganicoRoute: typeof ReelsOrganicoRoute
   RelatorioUnificadoRoute: typeof RelatorioUnificadoRoute
+  CarrosseisIdRoute: typeof CarrosseisIdRoute
   HubHubIdRoute: typeof HubHubIdRoute
   SitesSiteIdRoute: typeof SitesSiteIdRoute
   SkillSkillIdRoute: typeof SkillSkillIdRoute
+  CarrosseisIndexRoute: typeof CarrosseisIndexRoute
   SitesIndexRoute: typeof SitesIndexRoute
   ApiPublicChatRoute: typeof ApiPublicChatRoute
   ApiPublicSiteEditRoute: typeof ApiPublicSiteEditRoute
@@ -515,13 +528,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConectarContasRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/carrosseis': {
-      id: '/carrosseis'
-      path: '/carrosseis'
-      fullPath: '/carrosseis'
-      preLoaderRoute: typeof CarrosseisRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/biblioteca': {
       id: '/biblioteca'
       path: '/biblioteca'
@@ -557,6 +563,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/carrosseis/': {
+      id: '/carrosseis/'
+      path: '/carrosseis'
+      fullPath: '/carrosseis/'
+      preLoaderRoute: typeof CarrosseisIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/skill/$skillId': {
       id: '/skill/$skillId'
       path: '/skill/$skillId'
@@ -576,6 +589,13 @@ declare module '@tanstack/react-router' {
       path: '/hub/$hubId'
       fullPath: '/hub/$hubId'
       preLoaderRoute: typeof HubHubIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/carrosseis/$id': {
+      id: '/carrosseis/$id'
+      path: '/carrosseis/$id'
+      fullPath: '/carrosseis/$id'
+      preLoaderRoute: typeof CarrosseisIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/site-edit': {
@@ -600,7 +620,6 @@ const rootRouteChildren: RootRouteChildren = {
   AssistenteRoute: AssistenteRoute,
   AuditoriaMetaRoute: AuditoriaMetaRoute,
   BibliotecaRoute: BibliotecaRoute,
-  CarrosseisRoute: CarrosseisRoute,
   ConectarContasRoute: ConectarContasRoute,
   ConfiguracoesRoute: ConfiguracoesRoute,
   ConteudoRoute: ConteudoRoute,
@@ -618,9 +637,11 @@ const rootRouteChildren: RootRouteChildren = {
   ReelsRoute: ReelsRoute,
   ReelsOrganicoRoute: ReelsOrganicoRoute,
   RelatorioUnificadoRoute: RelatorioUnificadoRoute,
+  CarrosseisIdRoute: CarrosseisIdRoute,
   HubHubIdRoute: HubHubIdRoute,
   SitesSiteIdRoute: SitesSiteIdRoute,
   SkillSkillIdRoute: SkillSkillIdRoute,
+  CarrosseisIndexRoute: CarrosseisIndexRoute,
   SitesIndexRoute: SitesIndexRoute,
   ApiPublicChatRoute: ApiPublicChatRoute,
   ApiPublicSiteEditRoute: ApiPublicSiteEditRoute,

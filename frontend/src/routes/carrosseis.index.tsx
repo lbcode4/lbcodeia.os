@@ -22,7 +22,7 @@ function slideUrl(id: string, slide: string) {
   return `${BACKEND}/api/carrosseis/slide?id=${encodeURIComponent(id)}&slide=${encodeURIComponent(slide)}`;
 }
 
-export const Route = createFileRoute("/carrosseis")({
+export const Route = createFileRoute("/carrosseis/")({
   component: CarrosseisPagina,
 });
 
