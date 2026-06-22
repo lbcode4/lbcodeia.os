@@ -28,6 +28,63 @@ function makeBlobUrl(html: string): string {
   return URL.createObjectURL(blob);
 }
 
+const EDITOR_SCRIPT = `<script id="__lbcode-editor-script">
+(function(){
+  document.addEventListener('click', function(e){
+    var t = e.target;
+    while (t && t.tagName !== 'A') t = t.parentElement;
+    if (!t) return;
+    var h = t.getAttribute('href') || '';
+    if (!h || h.startsWith('#') || h.startsWith('javascript:')) return;
+    e.preventDefault();
+    e.stopPropagation();
+  }, true);
+
+  function markEditable(){
+    var sel = '.slide h1,.slide h2,.slide h3,.slide h4,.slide p,.slide span,.slide li,.slide a,.slide strong,.slide em,.slide blockquote';
+    document.querySelectorAll(sel).forEach(function(el){
+      if (el.closest('[contenteditable="true"]')) return;
+      if (!el.textContent || !el.textContent.trim()) return;
+      var hasBlockChild = Array.prototype.some.call(el.children, function(c){
+        return ['DIV','SECTION','UL','OL'].indexOf(c.tagName) !== -1;
+      });
+      if (hasBlockChild) return;
+      el.setAttribute('contenteditable', 'true');
+      el.classList.add('__lbcode-editable');
+    });
+  }
+  markEditable();
+
+  var style = document.createElement('style');
+  style.id = '__lbcode-editor-style';
+  style.textContent = '.__lbcode-editable:hover{outline:2px dashed rgba(41,197,255,.6);outline-offset:2px;cursor:text}.__lbcode-editable:focus{outline:2px solid #29C5FF}';
+  document.head.appendChild(style);
+
+  function serializeAndNotify(){
+    var clone = document.documentElement.cloneNode(true);
+    clone.querySelectorAll('#__lbcode-pagination-style,#__lbcode-editor-style,#__lbcode-editor-script,#__lbcode-toolbar').forEach(function(el){ el.remove(); });
+    clone.querySelectorAll('.__lbcode-editable').forEach(function(el){ el.classList.remove('__lbcode-editable'); el.removeAttribute('contenteditable'); });
+    parent.postMessage({ type: 'lbcode-edit', html: '<!doctype html>' + clone.outerHTML }, '*');
+  }
+
+  document.addEventListener('blur', function(e){
+    if (e.target && e.target.classList && e.target.classList.contains('__lbcode-editable')) serializeAndNotify();
+  }, true);
+
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Enter' && e.target && e.target.classList && e.target.classList.contains('__lbcode-editable')) {
+      e.preventDefault();
+      e.target.blur();
+    }
+  }, true);
+})();
+</script>`;
+
+function injectEditor(html: string): string {
+  const idx = html.indexOf("</body>");
+  return idx !== -1 ? html.slice(0, idx) + EDITOR_SCRIPT + html.slice(idx) : html + EDITOR_SCRIPT;
+}
+
 const MAIN_SCALE = 1 / 3;
 const THUMB_SCALE = 56 / 1080;
 
@@ -77,7 +134,7 @@ function CarrosselEditor() {
     if (!html) return;
     setMainBlobUrl((old) => {
       if (old) URL.revokeObjectURL(old);
-      return makeBlobUrl(injectPagination(html, activeSlide));
+      return makeBlobUrl(injectEditor(injectPagination(html, activeSlide)));
     });
   }, [html, activeSlide]);
 
@@ -103,6 +160,16 @@ function CarrosselEditor() {
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, chatLoading]);
+
+  useEffect(() => {
+    function onMessage(e: MessageEvent) {
+      if (e.data?.type !== "lbcode-edit") return;
+      if (e.source !== mainIframeRef.current?.contentWindow) return;
+      applyHtml(e.data.html as string);
+    }
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, [html]);
 
   function applyHtml(newHtml: string) {
     setHtmlHistory((h) => [...h, html]);
