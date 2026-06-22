@@ -1,9 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { PageHeader, Card, Button } from "@/components/app-shell";
 import {
   Calendar, LayoutTemplate, Video, Images,
-  ChevronLeft, ChevronRight, Copy, Check, X, Upload,
+  ChevronLeft, ChevronRight, Copy, Check, X, Upload, Sparkles,
 } from "lucide-react";
 import { MarkdownViewer } from "@/components/ui/markdown-viewer";
 
@@ -157,6 +157,7 @@ function TabCalendario() {
 // ── Carrossel ───────────────────────────────────────────────────────────────
 
 function TabCarrossel() {
+  const navigate = useNavigate();
   const [carrosseis, setCarrosseis] = useState<CarrosselMeta[]>([]);
   const [erro, setErro] = useState("");
   const [aberto, setAberto] = useState<CarrosselMeta | null>(null);
@@ -184,12 +185,20 @@ function TabCarrossel() {
   if (aberto) {
     return (
       <div>
-        <button
-          onClick={() => setAberto(null)}
-          className="flex items-center gap-1 text-[13px] text-muted-foreground hover:text-foreground mb-4"
-        >
-          <ChevronLeft size={14} /> Voltar à galeria
-        </button>
+        <div className="flex items-center justify-between mb-4">
+          <button
+            onClick={() => setAberto(null)}
+            className="flex items-center gap-1 text-[13px] text-muted-foreground hover:text-foreground"
+          >
+            <ChevronLeft size={14} /> Voltar à galeria
+          </button>
+          <button
+            onClick={() => navigate({ to: "/carrosseis/$id", params: { id: aberto.id } })}
+            className="flex items-center gap-1.5 text-[13px] bg-primary text-primary-foreground px-3 py-1.5 rounded-md hover:opacity-90"
+          >
+            <Sparkles size={14} /> Editar com IA
+          </button>
+        </div>
         <h2 className="text-lg font-semibold capitalize mb-4">{aberto.titulo}</h2>
         <div className="flex gap-6 flex-col lg:flex-row">
           <div className="flex-1 max-w-lg">
@@ -283,7 +292,14 @@ function TabCarrossel() {
       {erro && <p className="text-[13px] text-red-500 mb-4">{erro}</p>}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {carrosseis.map((c) => (
-          <button key={c.id} onClick={() => abrir(c)} className="text-left group">
+          <div
+            key={c.id}
+            role="button"
+            tabIndex={0}
+            onClick={() => abrir(c)}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") abrir(c); }}
+            className="text-left group relative cursor-pointer"
+          >
             <Card className="hover:border-primary/50 hover:shadow-md transition-all p-0 overflow-hidden">
               {c.slides[0] ? (
                 <img
@@ -309,7 +325,17 @@ function TabCarrossel() {
                 </div>
               </div>
             </Card>
-          </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate({ to: "/carrosseis/$id", params: { id: c.id } });
+              }}
+              title="Editar com IA"
+              className="absolute top-2 right-2 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+              <Sparkles size={14} />
+            </button>
+          </div>
         ))}
         {carrosseis.length === 0 && !erro && (
           <EmptyState icon={LayoutTemplate} msg="Nenhum carrossel encontrado." skill="lb-conteudo-carrossel" />
