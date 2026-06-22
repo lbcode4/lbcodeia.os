@@ -77,6 +77,57 @@ const EDITOR_SCRIPT = `<script id="__lbcode-editor-script">
       e.target.blur();
     }
   }, true);
+
+  var brandColors = [];
+  document.querySelectorAll('style').forEach(function(styleEl){
+    var matches = styleEl.textContent.match(/--[\\w-]+:\\s*#[0-9a-fA-F]{3,8}/g) || [];
+    matches.forEach(function(m){
+      var hex = m.split(':')[1].trim();
+      if (brandColors.indexOf(hex) === -1) brandColors.push(hex);
+    });
+  });
+
+  var toolbar = document.createElement('div');
+  toolbar.id = '__lbcode-toolbar';
+  toolbar.style.cssText = 'position:fixed;display:none;gap:4px;align-items:center;background:#1f1f1f;border-radius:8px;padding:6px;box-shadow:0 4px 12px rgba(0,0,0,.3);z-index:999999;';
+
+  brandColors.slice(0, 6).forEach(function(hex){
+    var sw = document.createElement('button');
+    sw.style.cssText = 'width:18px;height:18px;border-radius:4px;border:1px solid rgba(255,255,255,.3);cursor:pointer;background:' + hex;
+    sw.addEventListener('mousedown', function(e){ e.preventDefault(); });
+    sw.addEventListener('click', function(){ document.execCommand('foreColor', false, hex); serializeAndNotify(); });
+    toolbar.appendChild(sw);
+  });
+
+  var customColor = document.createElement('input');
+  customColor.type = 'color';
+  customColor.style.cssText = 'width:20px;height:20px;border:none;cursor:pointer;background:none;padding:0;';
+  customColor.addEventListener('mousedown', function(e){ e.preventDefault(); });
+  customColor.addEventListener('input', function(){ document.execCommand('foreColor', false, customColor.value); serializeAndNotify(); });
+  toolbar.appendChild(customColor);
+
+  [['B','bold'],['I','italic'],['U','underline']].forEach(function(pair){
+    var btn = document.createElement('button');
+    btn.textContent = pair[0];
+    btn.style.cssText = 'width:22px;height:22px;border-radius:4px;border:none;background:#3a3a3a;color:#fff;font-size:12px;cursor:pointer;';
+    btn.addEventListener('mousedown', function(e){ e.preventDefault(); });
+    btn.addEventListener('click', function(){ document.execCommand(pair[1]); serializeAndNotify(); });
+    toolbar.appendChild(btn);
+  });
+
+  document.body.appendChild(toolbar);
+
+  document.addEventListener('selectionchange', function(){
+    var sel = document.getSelection();
+    if (!sel || sel.isCollapsed || !sel.anchorNode) { toolbar.style.display = 'none'; return; }
+    var anchorEl = sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentElement;
+    var editable = anchorEl ? anchorEl.closest('[contenteditable="true"]') : null;
+    if (!editable) { toolbar.style.display = 'none'; return; }
+    var rect = sel.getRangeAt(0).getBoundingClientRect();
+    toolbar.style.left = Math.max(4, rect.left) + 'px';
+    toolbar.style.top = Math.max(4, rect.top - 36) + 'px';
+    toolbar.style.display = 'flex';
+  });
 })();
 </script>`;
 
