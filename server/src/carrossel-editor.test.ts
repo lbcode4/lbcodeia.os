@@ -5,12 +5,13 @@ vi.mock("node:fs/promises", () => ({
   writeFile: vi.fn(),
   readdir: vi.fn(),
   unlink: vi.fn(),
+  access: vi.fn(),
 }));
 vi.mock("node:child_process", () => ({
   execFile: vi.fn((_cmd: unknown, _args: unknown, _opts: unknown, cb: (e: Error | null) => void) => cb(null)),
 }));
 
-import { readFile, writeFile, readdir, unlink } from "node:fs/promises";
+import { readFile, writeFile, readdir, unlink, access } from "node:fs/promises";
 import { execFile } from "node:child_process";
 import { readCarrosselHtml, writeCarrosselHtmlAndRender } from "./carrossel-editor.js";
 import { app } from "./server.js";
@@ -19,9 +20,15 @@ const mockReadFile = vi.mocked(readFile);
 const mockWriteFile = vi.mocked(writeFile);
 const mockReaddir = vi.mocked(readdir);
 const mockUnlink = vi.mocked(unlink);
+const mockAccess = vi.mocked(access);
 const mockExecFile = vi.mocked(execFile);
 
-beforeEach(() => vi.clearAllMocks());
+beforeEach(() => {
+  vi.clearAllMocks();
+  // por padrão simula que o package.json local já existe, pra não escrever de novo
+  // a cada teste (testes específicos de package.json sobrescrevem isso).
+  mockAccess.mockResolvedValue(undefined);
+});
 
 describe("readCarrosselHtml", () => {
   it("lê o html do carrossel", async () => {
@@ -61,6 +68,32 @@ describe("writeCarrosselHtmlAndRender", () => {
 
   it("rejeita path traversal", async () => {
     await expect(writeCarrosselHtmlAndRender("../../etc", "<html></html>")).rejects.toThrow("Caminho inválido");
+  });
+
+  it("cria package.json local com type:module quando ainda não existe (render.js usa ESM, mas a raiz do repo é commonjs)", async () => {
+    mockWriteFile.mockResolvedValue(undefined);
+    mockReaddir.mockResolvedValue(["slide-01.png"] as never);
+    mockAccess.mockRejectedValue(Object.assign(new Error("not found"), { code: "ENOENT" }));
+
+    await writeCarrosselHtmlAndRender("teste-2026-06-21", '<div class="slide">a</div>');
+
+    expect(mockWriteFile).toHaveBeenCalledTimes(2);
+    expect(mockWriteFile).toHaveBeenCalledWith(
+      expect.stringContaining("package.json"),
+      expect.stringContaining('"type": "module"'),
+      "utf-8",
+    );
+  });
+
+  it("não sobrescreve package.json quando já existe na pasta do carrossel", async () => {
+    mockWriteFile.mockResolvedValue(undefined);
+    mockReaddir.mockResolvedValue(["slide-01.png"] as never);
+    mockAccess.mockResolvedValue(undefined);
+
+    await writeCarrosselHtmlAndRender("teste-2026-06-21", '<div class="slide">a</div>');
+
+    expect(mockWriteFile).toHaveBeenCalledTimes(1);
+    expect(mockWriteFile).not.toHaveBeenCalledWith(expect.stringContaining("package.json"), expect.anything(), expect.anything());
   });
 
   it("contagem de slides rejeita false positives como class=\"slide-footer\"", async () => {
