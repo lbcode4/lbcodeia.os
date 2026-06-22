@@ -87,6 +87,8 @@ const EDITOR_SCRIPT = `<script id="__lbcode-editor-script">
     });
   });
 
+  // execCommand is deprecated but remains the only API for inline formatting
+  // inside contenteditable across browsers — intentional, not a TODO.
   var toolbar = document.createElement('div');
   toolbar.id = '__lbcode-toolbar';
   toolbar.style.cssText = 'position:fixed;display:none;gap:4px;align-items:center;background:#1f1f1f;border-radius:8px;padding:6px;box-shadow:0 4px 12px rgba(0,0,0,.3);z-index:999999;';
