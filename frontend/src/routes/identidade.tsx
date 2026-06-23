@@ -1,20 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/app-shell";
-import { Check, X } from "lucide-react";
+import { Check, X, Plus } from "lucide-react";
+import { sugerirCoresRelacionadas, type CorMarca } from "@/lib/cor-sugestoes";
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8787";
 
 type IdentidadeArquivo = { nome: string; label: string };
-type IdentidadeData = { logo: IdentidadeArquivo | null; refs: IdentidadeArquivo[] };
-
-const BRAND_COLORS = [
-  { hex: "#07070F", label: "Fundo" },
-  { hex: "#A24BFF", label: "Roxo neon" },
-  { hex: "#29C5FF", label: "Ciano neon" },
-  { hex: "#FFFFFF", label: "Texto principal" },
-  { hex: "#C9C9D6", label: "Texto secundário" },
-];
+type Tipografia = { titulo: string | null; corpo: string | null };
+type IdentidadeData = {
+  logo: IdentidadeArquivo | null;
+  refs: IdentidadeArquivo[];
+  paleta: CorMarca[];
+  tipografia: Tipografia;
+};
 
 function identidadeUrl(file: string) {
   return `${BACKEND}/api/identidade/arquivo?file=${encodeURIComponent(file)}`;
@@ -28,13 +27,51 @@ function IdentidadePage() {
   const [data, setData] = useState<IdentidadeData | null>(null);
   const [lightbox, setLightbox] = useState<string | null>(null);
   const [copiado, setCopiado] = useState<string | null>(null);
+  const [paleta, setPaleta] = useState<CorMarca[]>([]);
+  const [mostrarAddCor, setMostrarAddCor] = useState(false);
+  const [novaCor, setNovaCor] = useState({ hex: "#000000", label: "" });
+  const [sugestoes, setSugestoes] = useState<string[]>([]);
 
   useEffect(() => {
     fetch(`${BACKEND}/api/identidade`)
       .then((r) => r.json() as Promise<IdentidadeData>)
-      .then(setData)
+      .then((d) => {
+        setData(d);
+        setPaleta(d.paleta);
+      })
       .catch(() => {});
   }, []);
+
+  async function persistirPaleta(nova: CorMarca[]) {
+    setPaleta(nova);
+    setSugestoes((s) => s.filter((hex) => !nova.some((c) => c.hex.toUpperCase() === hex.toUpperCase())));
+    try {
+      await fetch(`${BACKEND}/api/identidade/paleta`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ paleta: nova }),
+      });
+    } catch { /* mantém em memória; próxima ação do usuário tenta salvar de novo */ }
+  }
+
+  function removerCor(hex: string) {
+    persistirPaleta(paleta.filter((c) => c.hex !== hex));
+  }
+
+  function confirmarAddCor() {
+    if (!novaCor.label.trim()) return;
+    persistirPaleta([...paleta, { hex: novaCor.hex, label: novaCor.label.trim() }]);
+    setNovaCor({ hex: "#000000", label: "" });
+    setMostrarAddCor(false);
+  }
+
+  function gerarSugestoes() {
+    setSugestoes(sugerirCoresRelacionadas(paleta));
+  }
+
+  function adicionarSugestao(hex: string) {
+    persistirPaleta([...paleta, { hex, label: "Sugestão" }]);
+  }
 
   const copiarHex = (hex: string) => {
     navigator.clipboard?.writeText(hex).catch(() => {});
@@ -77,24 +114,88 @@ function IdentidadePage() {
             Paleta de cores
           </h3>
           <div className="flex flex-wrap gap-3">
-            {BRAND_COLORS.map((cor) => (
-              <button
-                key={cor.hex}
-                onClick={() => copiarHex(cor.hex)}
-                className="flex flex-col items-center gap-1.5 group"
-                title={`Copiar ${cor.hex}`}
-              >
-                <div
-                  className="w-14 h-14 rounded-lg border border-border shadow-sm group-hover:scale-105 transition-transform"
-                  style={{ backgroundColor: cor.hex }}
-                />
-                <span className="text-[11px] text-muted-foreground">{cor.label}</span>
-                <span className="text-[10px] font-mono text-muted-foreground/70 flex items-center gap-0.5">
-                  {copiado === cor.hex ? <Check size={9} className="text-green-500" /> : null}
-                  {copiado === cor.hex ? "Copiado" : cor.hex}
-                </span>
-              </button>
+            {paleta.map((cor) => (
+              <div key={cor.hex} className="relative flex flex-col items-center gap-1.5 group">
+                <button
+                  onClick={() => copiarHex(cor.hex)}
+                  className="flex flex-col items-center gap-1.5"
+                  title={`Copiar ${cor.hex}`}
+                >
+                  <div
+                    className="w-14 h-14 rounded-lg border border-border shadow-sm group-hover:scale-105 transition-transform"
+                    style={{ backgroundColor: cor.hex }}
+                  />
+                  <span className="text-[11px] text-muted-foreground">{cor.label}</span>
+                  <span className="text-[10px] font-mono text-muted-foreground/70 flex items-center gap-0.5">
+                    {copiado === cor.hex ? <Check size={9} className="text-green-500" /> : null}
+                    {copiado === cor.hex ? "Copiado" : cor.hex}
+                  </span>
+                </button>
+                <button
+                  onClick={() => removerCor(cor.hex)}
+                  title="Remover cor"
+                  className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-destructive text-destructive-foreground items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hidden group-hover:flex"
+                >
+                  <X size={11} />
+                </button>
+              </div>
             ))}
+
+            {mostrarAddCor ? (
+              <div className="flex flex-col items-center gap-1.5">
+                <input
+                  type="color"
+                  value={novaCor.hex}
+                  onChange={(e) => setNovaCor((c) => ({ ...c, hex: e.target.value }))}
+                  className="w-14 h-14 rounded-lg border border-border cursor-pointer"
+                />
+                <input
+                  type="text"
+                  placeholder="Nome da cor"
+                  value={novaCor.label}
+                  onChange={(e) => setNovaCor((c) => ({ ...c, label: e.target.value }))}
+                  className="w-20 text-[11px] text-center bg-background border border-border rounded px-1"
+                />
+                <div className="flex gap-2">
+                  <button onClick={confirmarAddCor} className="text-[10px] text-primary">Add</button>
+                  <button onClick={() => setMostrarAddCor(false)} className="text-[10px] text-muted-foreground">Cancelar</button>
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={() => setMostrarAddCor(true)}
+                className="w-14 h-14 rounded-lg border border-dashed border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-foreground/50 transition-colors"
+                title="Adicionar cor"
+              >
+                <Plus size={18} />
+              </button>
+            )}
+          </div>
+
+          <div className="mt-3">
+            <button onClick={gerarSugestoes} className="text-[12px] text-primary hover:underline">
+              Sugerir cores relacionadas
+            </button>
+            {sugestoes.length > 0 && (
+              <div className="flex flex-wrap gap-3 mt-2">
+                {sugestoes.map((hex) => (
+                  <button
+                    key={hex}
+                    onClick={() => adicionarSugestao(hex)}
+                    className="flex flex-col items-center gap-1 group"
+                    title={`Adicionar ${hex} à paleta`}
+                  >
+                    <div
+                      className="w-12 h-12 rounded-lg border-2 border-dashed border-border group-hover:border-primary transition-colors flex items-center justify-center"
+                      style={{ backgroundColor: hex }}
+                    >
+                      <Plus size={14} className="opacity-0 group-hover:opacity-90 text-white drop-shadow" />
+                    </div>
+                    <span className="text-[10px] font-mono text-muted-foreground/70">{hex}</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 
