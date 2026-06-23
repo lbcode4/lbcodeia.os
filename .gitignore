@@ -48,3 +48,6 @@ __pycache__/
 .venv/
 
 saidas/marketing/
+
+# Scratch de execução do subagent-driven-development (efêmero, não versiona)
+.superpowers/
