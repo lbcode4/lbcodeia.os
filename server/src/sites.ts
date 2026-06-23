@@ -89,6 +89,19 @@ export async function writeSiteHtml(id: string, html: string): Promise<void> {
   await writeFile(safe, html, "utf-8");
 }
 
+export function replaceImagePathsWithDataUris(
+  html: string,
+  imagePaths: string[],
+  images: { mediaType: string; data: string }[],
+): string {
+  let result = html;
+  for (let i = 0; i < imagePaths.length; i++) {
+    const dataUri = `data:${images[i].mediaType};base64,${images[i].data}`;
+    result = result.split(imagePaths[i]).join(dataUri);
+  }
+  return result;
+}
+
 export type SiteChatEvent =
   | { type: "chunk"; text: string }
   | { type: "html"; html: string }
@@ -170,7 +183,10 @@ Regras:
       } else if (msg.type === "result") {
         // Verifica se o HTML foi modificado
         try {
-          const modified = await readFile(htmlPath, "utf-8");
+          const raw = await readFile(htmlPath, "utf-8");
+          // tmpDir é apagado no finally — qualquer referência direta ao caminho
+          // morreria junto; troca por data URI pra sobreviver no HTML salvo.
+          const modified = replaceImagePathsWithDataUris(raw, imagePaths, images);
           if (modified !== html) yield { type: "html", html: modified };
         } catch { /* arquivo pode não existir se algo falhou */ }
         break;

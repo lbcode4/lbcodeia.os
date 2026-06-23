@@ -5,6 +5,7 @@ import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { query } from "@anthropic-ai/claude-agent-sdk";
 import type { ChatMessage } from "./sites.js";
+import { replaceImagePathsWithDataUris } from "./sites.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -136,7 +137,10 @@ Regras:
         }
       } else if (msg.type === "result") {
         try {
-          const modified = await readFile(htmlPath, "utf-8");
+          const raw = await readFile(htmlPath, "utf-8");
+          // tmpDir é apagado no finally — qualquer referência direta ao caminho
+          // morreria junto; troca por data URI pra sobreviver no HTML salvo.
+          const modified = replaceImagePathsWithDataUris(raw, imagePaths, images);
           if (modified !== html) yield { type: "html", html: modified };
         } catch { /* arquivo pode não existir se algo falhou */ }
         break;

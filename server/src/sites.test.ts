@@ -1,5 +1,42 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { createSite } from "./sites.js";
+import { createSite, replaceImagePathsWithDataUris } from "./sites.js";
+
+describe("replaceImagePathsWithDataUris", () => {
+  it("troca uma referência ao caminho temporário por um data URI", () => {
+    const html = "<div style=\"background: url('/tmp/lbsite-abc/ref-0.png') center/cover;\"></div>";
+    const result = replaceImagePathsWithDataUris(
+      html,
+      ["/tmp/lbsite-abc/ref-0.png"],
+      [{ mediaType: "image/png", data: "QUJD" }],
+    );
+    expect(result).toBe("<div style=\"background: url('data:image/png;base64,QUJD') center/cover;\"></div>");
+  });
+
+  it("troca todas as ocorrências do mesmo caminho", () => {
+    const html = "a /tmp/x/ref-0.png b /tmp/x/ref-0.png c";
+    const result = replaceImagePathsWithDataUris(
+      html,
+      ["/tmp/x/ref-0.png"],
+      [{ mediaType: "image/png", data: "ZGF0YQ==" }],
+    );
+    expect(result).toBe("a data:image/png;base64,ZGF0YQ== b data:image/png;base64,ZGF0YQ== c");
+  });
+
+  it("não muda nada quando não há imagens", () => {
+    const html = "<div>sem imagem</div>";
+    expect(replaceImagePathsWithDataUris(html, [], [])).toBe(html);
+  });
+
+  it("não muda nada quando a IA não referenciou o caminho temporário", () => {
+    const html = "<div>tudo normal, sem path</div>";
+    const result = replaceImagePathsWithDataUris(
+      html,
+      ["/tmp/x/ref-0.png"],
+      [{ mediaType: "image/png", data: "ZGF0YQ==" }],
+    );
+    expect(result).toBe(html);
+  });
+});
 
 vi.mock("node:fs/promises", () => ({
   readdir: vi.fn(),
