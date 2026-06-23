@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ChevronLeft, ChevronRight, Loader2, Send, Sparkles, User, RotateCcw, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/app-shell";
+import { FONTES_GOOGLE } from "@/lib/fontes-google";
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8787";
 
@@ -153,6 +154,23 @@ const EDITOR_SCRIPT = `<script id="__lbcode-editor-script">
       var ativo = slides[window.__lbcodeActiveSlide || 0];
       if (ativo) { ativo.style.background = e.data.hex; serializeAndNotify(); }
     }
+    if (e.data.type === 'lbcode-set-font') {
+      var fonte = e.data.fonte;
+      var link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'https://fonts.googleapis.com/css2?family=' + encodeURIComponent(fonte) + ':wght@400;500;600;700;800&display=swap';
+      document.head.appendChild(link);
+
+      var override = document.getElementById('__lbcode-font-override');
+      if (!override) {
+        override = document.createElement('style');
+        override.id = '__lbcode-font-override';
+        document.head.appendChild(override);
+      }
+      override.textContent = ".slide{font-family:'" + fonte + "','Inter',Arial,sans-serif}";
+
+      serializeAndNotify();
+    }
   });
 })();
 </script>`;
@@ -196,6 +214,10 @@ function CarrosselEditor() {
   function aplicarFundo(hex: string) {
     mainIframeRef.current?.contentWindow?.postMessage({ type: "lbcode-set-background", hex }, "*");
     setMostrarFundo(false);
+  }
+
+  function aplicarFonte(fonte: string) {
+    mainIframeRef.current?.contentWindow?.postMessage({ type: "lbcode-set-font", fonte }, "*");
   }
 
   useEffect(() => {
@@ -460,6 +482,14 @@ function CarrosselEditor() {
                 >
                   Fundo
                 </button>
+                <select
+                  defaultValue=""
+                  onChange={(e) => { if (e.target.value) aplicarFonte(e.target.value); }}
+                  className="text-[12px] px-2 py-1.5 rounded-md border border-border bg-card"
+                >
+                  <option value="">Fonte…</option>
+                  {FONTES_GOOGLE.map((f) => <option key={f} value={f}>{f}</option>)}
+                </select>
                 {mostrarFundo && (
                   <div className="absolute top-full left-0 mt-1 z-10 flex items-center gap-2 p-2 rounded-md border border-border bg-card shadow-lg">
                     {extrairCoresMarca(html).map((hex) => (
