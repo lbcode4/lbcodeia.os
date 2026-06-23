@@ -113,6 +113,7 @@ function IdentidadePage() {
   const [evitar, setEvitar] = useState("");
   const [tomStatus, setTomStatus] = useState<TomStatus>("loading");
   const [tomErro, setTomErro] = useState("");
+  const [carregou, setCarregou] = useState(false);
 
   useEffect(() => {
     fetch(`${BACKEND}/api/identidade/tom-de-voz`)
@@ -121,6 +122,7 @@ function IdentidadePage() {
         setTomDeVoz(d.tomDeVoz);
         setEvitar(d.evitar);
         setTomStatus("idle");
+        setCarregou(true);
       })
       .catch(() => {
         setTomStatus("error");
@@ -324,7 +326,7 @@ function IdentidadePage() {
             <div className="flex items-center gap-3">
               <button
                 onClick={salvarTomDeVoz}
-                disabled={tomStatus === "saving"}
+                disabled={tomStatus === "saving" || !carregou}
                 className="text-[13px] font-semibold px-4 py-2 rounded-md bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50 inline-flex items-center gap-2"
               >
                 {tomStatus === "saving" && <Loader2 size={14} className="animate-spin" />}
