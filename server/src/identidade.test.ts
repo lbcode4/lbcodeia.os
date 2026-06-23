@@ -6,7 +6,7 @@ vi.mock("node:fs/promises", async () => {
 });
 
 import { readFile, writeFile } from "node:fs/promises";
-import { getSection, replaceSection, parsePaleta, serializePaleta, readPaleta, writePaleta, type CorMarca } from "./identidade.js";
+import { getSection, replaceSection, parsePaleta, serializePaleta, readPaleta, writePaleta, type CorMarca, parseTipografia, serializeTipografia, readTipografia, writeTipografia, type Tipografia } from "./identidade.js";
 
 const mockReadFile = vi.mocked(readFile);
 const mockWriteFile = vi.mocked(writeFile);
@@ -143,5 +143,57 @@ describe("writePaleta", () => {
     const written = mockWriteFile.mock.calls[0][1] as string;
     expect(written).toContain("- Nova: #112233");
     expect(written).toContain("## Tipografia\nA definir.");
+  });
+});
+
+const DESIGN_GUIDE_COM_FONTES = `## Cores
+- Fundo: #07070F
+
+## Tipografia
+- Título: Poppins
+- Corpo: Inter
+
+## Elementos
+- x
+`;
+
+describe("parseTipografia", () => {
+  it("lê título e corpo quando ambos definidos", () => {
+    expect(parseTipografia(DESIGN_GUIDE_COM_FONTES)).toEqual({ titulo: "Poppins", corpo: "Inter" });
+  });
+
+  it("retorna null pros dois quando a seção está em texto livre legado", () => {
+    expect(parseTipografia(DESIGN_GUIDE_SEM_PALETA)).toEqual({ titulo: null, corpo: null });
+  });
+});
+
+describe("serializeTipografia", () => {
+  it("round-trip com parseTipografia quando ambos definidos", () => {
+    const t: Tipografia = { titulo: "Sora", corpo: "Manrope" };
+    expect(parseTipografia(`## Cores\nx\n\n## Tipografia\n${serializeTipografia(t)}\n\n## Y\nz`)).toEqual(t);
+  });
+
+  it("round-trip quando um campo é null (não inventa o outro de volta)", () => {
+    const t: Tipografia = { titulo: "Sora", corpo: null };
+    expect(parseTipografia(`## Cores\nx\n\n## Tipografia\n${serializeTipografia(t)}\n\n## Y\nz`)).toEqual(t);
+  });
+});
+
+describe("readTipografia / writeTipografia", () => {
+  it("readTipografia lê do design-guide.md", async () => {
+    mockReadFile.mockResolvedValue(DESIGN_GUIDE_COM_FONTES as never);
+    expect(await readTipografia()).toEqual({ titulo: "Poppins", corpo: "Inter" });
+  });
+
+  it("writeTipografia regrava só a seção Tipografia", async () => {
+    mockReadFile.mockResolvedValue(DESIGN_GUIDE_COM_FONTES as never);
+    mockWriteFile.mockResolvedValue(undefined);
+
+    await writeTipografia({ titulo: "Outfit", corpo: "Lexend" });
+
+    const written = mockWriteFile.mock.calls[0][1] as string;
+    expect(written).toContain("- Título: Outfit");
+    expect(written).toContain("- Corpo: Lexend");
+    expect(written).toContain("- Fundo: #07070F");
   });
 });

@@ -67,6 +67,35 @@ export async function writePaleta(paleta: CorMarca[]): Promise<void> {
   await writeFile(DESIGN_GUIDE_PATH, replaceSection(md, "Cores", serializePaleta(paleta)), "utf-8");
 }
 
+export type Tipografia = { titulo: string | null; corpo: string | null };
+
+export function parseTipografia(md: string): Tipografia {
+  const body = getSection(md, "Tipografia");
+  return {
+    titulo: body.match(/^- Título: (.+)$/m)?.[1]?.trim() ?? null,
+    corpo: body.match(/^- Corpo: (.+)$/m)?.[1]?.trim() ?? null,
+  };
+}
+
+export function serializeTipografia(t: Tipografia): string {
+  const lines: string[] = [];
+  if (t.titulo) lines.push(`- Título: ${t.titulo}`);
+  if (t.corpo) lines.push(`- Corpo: ${t.corpo}`);
+  return lines.length > 0
+    ? lines.join("\n")
+    : "A definir — confirmar com material de identidade quando disponível.";
+}
+
+export async function readTipografia(): Promise<Tipografia> {
+  const md = await readFile(DESIGN_GUIDE_PATH, "utf-8");
+  return parseTipografia(md);
+}
+
+export async function writeTipografia(t: Tipografia): Promise<void> {
+  const md = await readFile(DESIGN_GUIDE_PATH, "utf-8");
+  await writeFile(DESIGN_GUIDE_PATH, replaceSection(md, "Tipografia", serializeTipografia(t)), "utf-8");
+}
+
 export type IdentidadeArquivo = { nome: string; label: string };
 
 export type IdentidadeData = {
