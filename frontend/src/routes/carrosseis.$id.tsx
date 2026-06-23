@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, ChevronLeft, ChevronRight, Loader2, Send, Sparkles, User, RotateCcw, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Loader2, Send, Sparkles, User, RotateCcw, CheckCircle2, ImagePlus, X as XIcon } from "lucide-react";
 import { Button } from "@/components/app-shell";
 import { FONTES_GOOGLE } from "@/lib/fontes-google";
 
@@ -183,7 +183,21 @@ function injectEditor(html: string): string {
 const MAIN_SCALE = 0.5;
 const THUMB_SCALE = 56 / 1080;
 
-type Msg = { role: "user" | "assistant"; content: string };
+type CarrosselImage = { dataUrl: string; mediaType: string; data: string };
+type Msg = { role: "user" | "assistant"; content: string; images?: CarrosselImage[] };
+
+async function fileToCarrosselImage(file: File): Promise<CarrosselImage | null> {
+  if (!file.type.startsWith("image/")) return null;
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const dataUrl = e.target?.result as string;
+      const data = dataUrl.split(",")[1];
+      resolve({ dataUrl, mediaType: file.type, data });
+    };
+    reader.readAsDataURL(file);
+  });
+}
 
 function CarrosselEditor() {
   const { id } = Route.useParams();
@@ -205,7 +219,9 @@ function CarrosselEditor() {
   const [input, setInput] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
   const [chatError, setChatError] = useState<string | null>(null);
+  const [images, setImages] = useState<CarrosselImage[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -300,12 +316,38 @@ function CarrosselEditor() {
     });
   }
 
+  async function handlePaste(e: React.ClipboardEvent) {
+    const items = Array.from(e.clipboardData.items);
+    const imageItems = items.filter((i) => i.type.startsWith("image/"));
+    if (!imageItems.length) return;
+    e.preventDefault();
+    const results = await Promise.all(
+      imageItems.map((item) => {
+        const file = item.getAsFile();
+        return file ? fileToCarrosselImage(file) : Promise.resolve(null);
+      }),
+    );
+    setImages((prev) => [...prev, ...results.filter((r): r is CarrosselImage => r !== null)]);
+  }
+
+  async function handleFiles(files: FileList | null) {
+    if (!files) return;
+    const results = await Promise.all(Array.from(files).map(fileToCarrosselImage));
+    setImages((prev) => [...prev, ...results.filter((r): r is CarrosselImage => r !== null)]);
+  }
+
   async function send() {
     const t = input.trim();
-    if (!t || chatLoading) return;
+    if ((!t && !images.length) || chatLoading) return;
     setChatError(null);
-    setMessages((m) => [...m, { role: "user", content: t }, { role: "assistant", content: "" }]);
+    const sentImages = [...images];
+    setMessages((m) => [
+      ...m,
+      { role: "user", content: t, images: sentImages.length ? sentImages : undefined },
+      { role: "assistant", content: "" },
+    ]);
     setInput("");
+    setImages([]);
     setChatLoading(true);
 
     try {
@@ -315,6 +357,7 @@ function CarrosselEditor() {
         body: JSON.stringify({
           html,
           instruction: t,
+          images: sentImages.map((img) => ({ mediaType: img.mediaType, data: img.data })),
           history: messages.filter((m) => m.content.trim()).map((m) => ({ role: m.role, content: m.content })),
         }),
       });
@@ -426,11 +469,21 @@ function CarrosselEditor() {
                 <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${m.role === "user" ? "bg-accent" : "bg-primary text-primary-foreground"}`}>
                   {m.role === "user" ? <User size={13} /> : <Sparkles size={13} />}
                 </div>
-                {m.content && (
-                  <div className={`max-w-[85%] rounded-lg px-3 py-2 text-[13px] leading-relaxed whitespace-pre-wrap ${m.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"}`}>
-                    {m.content}
-                  </div>
-                )}
+                <div className="max-w-[85%] space-y-1.5">
+                  {m.images?.map((img, j) => (
+                    <img
+                      key={j}
+                      src={img.dataUrl}
+                      alt="referência"
+                      className="rounded-md max-h-40 object-contain border border-border"
+                    />
+                  ))}
+                  {m.content && (
+                    <div className={`rounded-lg px-3 py-2 text-[13px] leading-relaxed whitespace-pre-wrap ${m.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"}`}>
+                      {m.content}
+                    </div>
+                  )}
+                </div>
               </div>
             ))}
             {chatLoading && (
@@ -448,32 +501,70 @@ function CarrosselEditor() {
             )}
           </div>
 
-          <div className="border-t border-border p-3 flex gap-2">
-            <button
-              onClick={undo}
-              disabled={htmlHistory.length === 0}
-              title="Desfazer"
-              className="h-9 w-9 shrink-0 rounded-md border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent disabled:opacity-30"
-            >
-              <RotateCcw size={15} />
-            </button>
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  send();
-                }
-              }}
-              rows={3}
-              placeholder="Peça uma alteração…"
-              disabled={chatLoading}
-              className="flex-1 resize-none rounded-md border border-border bg-background px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-primary/30 max-h-48"
-            />
-            <Button onClick={send} disabled={chatLoading || !input.trim()} className="!px-3 !py-2 shrink-0">
-              {chatLoading ? <Loader2 className="animate-spin" size={15} /> : <Send size={15} />}
-            </Button>
+          <div className="border-t border-border p-3 space-y-2">
+            {images.length > 0 && (
+              <div className="flex gap-2 flex-wrap">
+                {images.map((img, i) => (
+                  <div key={i} className="relative group">
+                    <img
+                      src={img.dataUrl}
+                      alt="anexo"
+                      className="h-16 w-16 object-cover rounded-md border border-border"
+                    />
+                    <button
+                      onClick={() => setImages((prev) => prev.filter((_, j) => j !== i))}
+                      className="absolute -top-1 -right-1 w-4 h-4 bg-destructive text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <XIcon size={9} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="flex gap-2">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={(e) => handleFiles(e.target.files)}
+              />
+              <button
+                onClick={undo}
+                disabled={htmlHistory.length === 0}
+                title="Desfazer"
+                className="h-9 w-9 shrink-0 rounded-md border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent disabled:opacity-30"
+              >
+                <RotateCcw size={15} />
+              </button>
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                title="Anexar imagem"
+                className="h-9 w-9 shrink-0 rounded-md border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent"
+              >
+                <ImagePlus size={15} />
+              </button>
+              <textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    send();
+                  }
+                }}
+                onPaste={handlePaste}
+                rows={3}
+                placeholder="Peça uma alteração… ou cole uma imagem de referência"
+                disabled={chatLoading}
+                className="flex-1 resize-none rounded-md border border-border bg-background px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-primary/30 max-h-48"
+              />
+              <Button onClick={send} disabled={chatLoading || (!input.trim() && !images.length)} className="!px-3 !py-2 shrink-0">
+                {chatLoading ? <Loader2 className="animate-spin" size={15} /> : <Send size={15} />}
+              </Button>
+            </div>
           </div>
         </div>
 
