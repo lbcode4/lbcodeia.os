@@ -67,6 +67,10 @@ function IdentidadePage() {
 
   function confirmarAddCor() {
     if (!novaCor.label.trim()) return;
+    if (paleta.some((c) => c.hex.toUpperCase() === novaCor.hex.toUpperCase())) {
+      setMostrarAddCor(false);
+      return;
+    }
     persistirPaleta([...paleta, { hex: novaCor.hex, label: novaCor.label.trim() }]);
     setNovaCor({ hex: "#000000", label: "" });
     setMostrarAddCor(false);
@@ -77,6 +81,7 @@ function IdentidadePage() {
   }
 
   function adicionarSugestao(hex: string) {
+    if (paleta.some((c) => c.hex.toUpperCase() === hex.toUpperCase())) return;
     persistirPaleta([...paleta, { hex, label: "Sugestão" }]);
   }
 
