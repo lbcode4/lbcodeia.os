@@ -21,9 +21,12 @@ export function getSection(md: string, heading: string): string {
 }
 
 export function replaceSection(md: string, heading: string, newBody: string): string {
-  const re = new RegExp(`(^## ${heading}[ \\t]*\\n)([\\s\\S]*?)(\\n\\n(?=##)|(?!\\n)$)`, "m");
+  const re = new RegExp(`(^## ${heading}[ \\t]*\\n)([\\s\\S]*?)(?=\\n\\n##|(?!\\n)$)`, "m");
   if (!re.test(md)) throw new Error(`Seção "${heading}" não encontrada`);
-  return md.replace(re, (_m, headingLine: string, _body: string, trailing: string) => `${headingLine}${newBody.trim()}${trailing}`);
+  return md.replace(re, (_m, headingLine: string, body: string) => {
+    const gap = body.startsWith("\n") ? "\n" : "";
+    return `${headingLine}${gap}${newBody.trim()}`;
+  });
 }
 
 export type IdentidadeArquivo = { nome: string; label: string };

@@ -51,4 +51,10 @@ describe("replaceSection", () => {
   it("lança erro quando a seção não existe", () => {
     expect(() => replaceSection(SAMPLE, "Não Existe", "x")).toThrow('Seção "Não Existe" não encontrada');
   });
+
+  it("preserva a linha em branco entre heading e corpo quando o original já tinha uma", () => {
+    const md = "## Tom de voz\n\nDireto, objetivo, focado em ROI.\n\n## O que evitar\n- x\n";
+    const updated = replaceSection(md, "Tom de voz", "Novo tom.");
+    expect(updated).toContain("## Tom de voz\n\nNovo tom.\n\n## O que evitar");
+  });
 });
