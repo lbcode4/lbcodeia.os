@@ -19,6 +19,13 @@ function identidadeUrl(file: string) {
   return `${BACKEND}/api/identidade/arquivo?file=${encodeURIComponent(file)}`;
 }
 
+const FONTES_GOOGLE = [
+  "Inter", "Poppins", "Montserrat", "Roboto", "Sora", "Manrope",
+  "Work Sans", "Playfair Display", "Space Grotesk", "DM Sans", "Outfit", "Lexend",
+];
+
+const fontesCarregadas = new Set<string>();
+
 export const Route = createFileRoute("/identidade")({
   component: IdentidadePage,
 });
@@ -71,6 +78,34 @@ function IdentidadePage() {
 
   function adicionarSugestao(hex: string) {
     persistirPaleta([...paleta, { hex, label: "Sugestão" }]);
+  }
+
+  const [tipografia, setTipografia] = useState<Tipografia>({ titulo: null, corpo: null });
+
+  useEffect(() => {
+    if (data) setTipografia(data.tipografia);
+  }, [data]);
+
+  useEffect(() => {
+    [tipografia.titulo, tipografia.corpo].forEach((fonte) => {
+      if (!fonte || fontesCarregadas.has(fonte)) return;
+      fontesCarregadas.add(fonte);
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(fonte)}:wght@400;700&display=swap`;
+      document.head.appendChild(link);
+    });
+  }, [tipografia.titulo, tipografia.corpo]);
+
+  async function salvarTipografia(next: Tipografia) {
+    setTipografia(next);
+    try {
+      await fetch(`${BACKEND}/api/identidade/tipografia`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(next),
+      });
+    } catch { /* mantém em memória; próxima troca tenta salvar de novo */ }
   }
 
   const copiarHex = (hex: string) => {
@@ -203,9 +238,26 @@ function IdentidadePage() {
           <h3 className="text-[13px] font-semibold mb-3 text-muted-foreground uppercase tracking-wide">
             Tipografia
           </h3>
-          <p className="text-[13px] text-muted-foreground">
-            Em breve — defina aqui as fontes da marca (título, corpo, destaque).
-          </p>
+          <div className="flex flex-wrap gap-8">
+            {([["titulo", "Título"], ["corpo", "Corpo"]] as const).map(([campo, rotulo]) => (
+              <div key={campo}>
+                <label className="text-[11px] text-muted-foreground block mb-1">{rotulo}</label>
+                <select
+                  value={tipografia[campo] ?? ""}
+                  onChange={(e) => salvarTipografia({ ...tipografia, [campo]: e.target.value || null })}
+                  className="text-[13px] bg-background border border-border rounded-md px-2 py-1.5"
+                >
+                  <option value="">Escolher fonte…</option>
+                  {FONTES_GOOGLE.map((f) => <option key={f} value={f}>{f}</option>)}
+                </select>
+                {tipografia[campo] && (
+                  <p className="text-xl mt-2" style={{ fontFamily: tipografia[campo] as string }}>
+                    Aa Bb Cc 123
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
         </section>
 
         <section>
