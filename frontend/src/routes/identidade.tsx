@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/app-shell";
 import { Check, X, Plus, Loader2 } from "lucide-react";
 import { sugerirCoresRelacionadas, type CorMarca } from "@/lib/cor-sugestoes";
+import { FONTES_GOOGLE } from "@/lib/fontes-google";
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8787";
 
@@ -18,11 +19,6 @@ type IdentidadeData = {
 function identidadeUrl(file: string) {
   return `${BACKEND}/api/identidade/arquivo?file=${encodeURIComponent(file)}`;
 }
-
-const FONTES_GOOGLE = [
-  "Inter", "Poppins", "Montserrat", "Roboto", "Sora", "Manrope",
-  "Work Sans", "Playfair Display", "Space Grotesk", "DM Sans", "Outfit", "Lexend",
-];
 
 const fontesCarregadas = new Set<string>();
 
