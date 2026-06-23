@@ -172,17 +172,17 @@ app.put("/api/carrosseis/html", async (c) => {
 });
 
 app.post("/api/carrosseis/chat", async (c) => {
-  let body: { html: string; instruction: string; history?: ChatMessage[] };
+  let body: { html: string; instruction: string; images?: { mediaType: string; data: string }[]; history?: ChatMessage[] };
   try {
     body = await c.req.json();
   } catch {
     return c.json({ error: "JSON inválido" }, 400);
   }
-  const { html, instruction, history = [] } = body;
+  const { html, instruction, images = [], history = [] } = body;
   if (!html || !instruction) return c.json({ error: "html e instruction obrigatórios" }, 400);
 
   return streamSSE(c, async (stream) => {
-    for await (const ev of streamCarrosselChat(html, instruction, history)) {
+    for await (const ev of streamCarrosselChat(html, instruction, images, history)) {
       await stream.writeSSE({ event: ev.type, data: JSON.stringify(ev) });
       if (ev.type === "done" || ev.type === "error") break;
     }
