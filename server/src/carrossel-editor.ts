@@ -71,11 +71,25 @@ export type CarrosselChatEvent =
 export async function* streamCarrosselChat(
   html: string,
   instruction: string,
+  images: { mediaType: string; data: string }[],
   history: ChatMessage[] = [],
 ): AsyncGenerator<CarrosselChatEvent> {
   const tmpDir = await mkdtemp(join(tmpdir(), "lbcarrossel-"));
   const htmlPath = join(tmpDir, "carrossel.html");
   await writeFile(htmlPath, html, "utf-8");
+
+  const imagePaths: string[] = [];
+  for (let i = 0; i < images.length; i++) {
+    const img = images[i];
+    const ext = img.mediaType.split("/")[1] ?? "png";
+    const imgPath = join(tmpDir, `ref-${i}.${ext}`);
+    await writeFile(imgPath, Buffer.from(img.data, "base64"));
+    imagePaths.push(imgPath);
+  }
+
+  const imageContext = imagePaths.length
+    ? `\nImagens de referência salvas em:\n${imagePaths.map((p) => `- ${p}`).join("\n")}\nUse a ferramenta Read para visualizá-las.`
+    : "";
 
   const historyContext = history.length > 0
     ? `\n\nHISTÓRICO DA CONVERSA:\n${history.map((m) => `${m.role === "user" ? "Usuário" : "Assistente"}: ${m.content}`).join("\n")}\n`
@@ -83,7 +97,7 @@ export async function* streamCarrosselChat(
 
   const prompt = `Você é um assistente especialista em carrosséis de Instagram (HTML).
 
-O arquivo HTML do carrossel está em: ${htmlPath}${historyContext}
+O arquivo HTML do carrossel está em: ${htmlPath}${imageContext}${historyContext}
 
 MENSAGEM ATUAL DO USUÁRIO: ${instruction}
 
@@ -91,6 +105,7 @@ Regras:
 - Cada slide é um <div class="slide ..."> de 1080x1350px. NÃO mude essas dimensões.
 - Se adicionar ou remover slides, confirme ao final quantos slides o carrossel ficou.
 - Pode ler identidade/design-guide.md (na raiz do projeto) se precisar de contexto de cor/fonte da marca.
+- Pode ler imagens de referência anexadas com a ferramenta Read para analisá-las.
 - Se for pergunta ou dúvida → responda conversacionalmente, NÃO modifique o arquivo.
 - Se for instrução de mudança concreta → leia o arquivo, aplique, salve em ${htmlPath}. Confirme brevemente o que fez.
 - Respostas curtas e diretas.`;
