@@ -13,6 +13,19 @@ const MIME_MAP: Record<string, string> = {
   ".webp": "image/webp",
 };
 
+export function getSection(md: string, heading: string): string {
+  const re = new RegExp(`^## ${heading}[ \\t]*\\n([\\s\\S]*?)(?=\\n\\n##|(?!\\n)$)`, "m");
+  const match = md.match(re);
+  if (!match) throw new Error(`Seção "${heading}" não encontrada`);
+  return match[1].trim();
+}
+
+export function replaceSection(md: string, heading: string, newBody: string): string {
+  const re = new RegExp(`(^## ${heading}[ \\t]*\\n)([\\s\\S]*?)(\\n\\n(?=##)|(?!\\n)$)`, "m");
+  if (!re.test(md)) throw new Error(`Seção "${heading}" não encontrada`);
+  return md.replace(re, (_m, headingLine: string, _body: string, trailing: string) => `${headingLine}${newBody.trim()}${trailing}`);
+}
+
 export type IdentidadeArquivo = { nome: string; label: string };
 
 export type IdentidadeData = {
