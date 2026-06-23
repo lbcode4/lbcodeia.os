@@ -18,7 +18,8 @@ function injectPagination(html: string, activeIndex: number): string {
     .slide { display: none !important; }
     .slide:nth-child(${activeIndex + 1} of .slide) { display: flex !important; }
     html, body { margin: 0; height: 100%; display: flex; justify-content: center; align-items: center; background: #1a1a1a; }
-  </style>`;
+  </style>
+  <script id="__lbcode-active-slide">window.__lbcodeActiveSlide = ${activeIndex};</script>`;
   const idx = html.indexOf("</head>");
   return idx !== -1 ? html.slice(0, idx) + style + html.slice(idx) : style + html;
 }
@@ -26,6 +27,11 @@ function injectPagination(html: string, activeIndex: number): string {
 function makeBlobUrl(html: string): string {
   const blob = new Blob([html], { type: "text/html" });
   return URL.createObjectURL(blob);
+}
+
+function extrairCoresMarca(html: string): string[] {
+  const matches = html.match(/--[\w-]+:\s*(#[0-9a-fA-F]{3,8})/g) ?? [];
+  return [...new Set(matches.map((m) => m.split(":")[1].trim()))].slice(0, 6);
 }
 
 const EDITOR_SCRIPT = `<script id="__lbcode-editor-script">
@@ -62,7 +68,7 @@ const EDITOR_SCRIPT = `<script id="__lbcode-editor-script">
 
   function serializeAndNotify(){
     var clone = document.documentElement.cloneNode(true);
-    clone.querySelectorAll('#__lbcode-pagination-style,#__lbcode-editor-style,#__lbcode-editor-script,#__lbcode-toolbar').forEach(function(el){ el.remove(); });
+    clone.querySelectorAll('#__lbcode-pagination-style,#__lbcode-active-slide,#__lbcode-editor-style,#__lbcode-editor-script,#__lbcode-toolbar').forEach(function(el){ el.remove(); });
     clone.querySelectorAll('.__lbcode-editable').forEach(function(el){ el.classList.remove('__lbcode-editable'); el.removeAttribute('contenteditable'); });
     parent.postMessage({ type: 'lbcode-edit', html: '<!doctype html>' + clone.outerHTML }, '*');
   }
@@ -139,6 +145,15 @@ const EDITOR_SCRIPT = `<script id="__lbcode-editor-script">
     toolbar.style.left = Math.max(4, left) + 'px';
     toolbar.style.top = top + 'px';
   });
+
+  window.addEventListener('message', function(e){
+    if (!e.data || !e.data.type) return;
+    if (e.data.type === 'lbcode-set-background') {
+      var slides = document.querySelectorAll('.slide');
+      var ativo = slides[window.__lbcodeActiveSlide || 0];
+      if (ativo) { ativo.style.background = e.data.hex; serializeAndNotify(); }
+    }
+  });
 })();
 </script>`;
 
@@ -175,6 +190,13 @@ function CarrosselEditor() {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+
+  const [mostrarFundo, setMostrarFundo] = useState(false);
+
+  function aplicarFundo(hex: string) {
+    mainIframeRef.current?.contentWindow?.postMessage({ type: "lbcode-set-background", hex }, "*");
+    setMostrarFundo(false);
+  }
 
   useEffect(() => {
     setLoadingHtml(true);
@@ -431,6 +453,32 @@ function CarrosselEditor() {
             <div className="text-red-500 text-[13px]">Erro ao carregar: {loadErro}</div>
           ) : (
             <>
+              <div className="flex items-center gap-2 relative">
+                <button
+                  onClick={() => setMostrarFundo((v) => !v)}
+                  className="text-[12px] font-medium px-3 py-1.5 rounded-md border border-border bg-card hover:bg-accent"
+                >
+                  Fundo
+                </button>
+                {mostrarFundo && (
+                  <div className="absolute top-full left-0 mt-1 z-10 flex items-center gap-2 p-2 rounded-md border border-border bg-card shadow-lg">
+                    {extrairCoresMarca(html).map((hex) => (
+                      <button
+                        key={hex}
+                        onClick={() => aplicarFundo(hex)}
+                        title={hex}
+                        className="w-7 h-7 rounded-md border border-border"
+                        style={{ backgroundColor: hex }}
+                      />
+                    ))}
+                    <input
+                      type="color"
+                      onChange={(e) => aplicarFundo(e.target.value)}
+                      className="w-7 h-7 rounded-md border border-border cursor-pointer"
+                    />
+                  </div>
+                )}
+              </div>
               <div className="relative bg-white shadow-lg overflow-hidden" style={{ width: 1080 * MAIN_SCALE, height: 1350 * MAIN_SCALE }}>
                 <iframe
                   ref={mainIframeRef}
