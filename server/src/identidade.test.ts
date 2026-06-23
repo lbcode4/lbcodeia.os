@@ -1,5 +1,17 @@
-import { describe, it, expect } from "vitest";
-import { getSection, replaceSection } from "./identidade.js";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+
+vi.mock("node:fs/promises", async () => {
+  const actual = await vi.importActual<typeof import("node:fs/promises")>("node:fs/promises");
+  return { ...actual, readFile: vi.fn(), writeFile: vi.fn() };
+});
+
+import { readFile, writeFile } from "node:fs/promises";
+import { getSection, replaceSection, parsePaleta, serializePaleta, readPaleta, writePaleta, type CorMarca } from "./identidade.js";
+
+const mockReadFile = vi.mocked(readFile);
+const mockWriteFile = vi.mocked(writeFile);
+
+beforeEach(() => vi.clearAllMocks());
 
 const SAMPLE = `# Doc
 
@@ -56,5 +68,80 @@ describe("replaceSection", () => {
     const md = "## Tom de voz\n\nDireto, objetivo, focado em ROI.\n\n## O que evitar\n- x\n";
     const updated = replaceSection(md, "Tom de voz", "Novo tom.");
     expect(updated).toContain("## Tom de voz\n\nNovo tom.\n\n## O que evitar");
+  });
+});
+
+const DESIGN_GUIDE_COM_PALETA = `# Identidade Visual
+
+## Cores
+- Fundo: #07070F
+- Roxo neon: #A24BFF
+- Ciano neon: #29C5FF
+
+## Tipografia
+A definir.
+`;
+
+const DESIGN_GUIDE_SEM_PALETA = `# Identidade Visual
+
+## Cores
+- Primária: Azul — confirmar hex exato
+- Fundo: escuro ou branco clean (minimalista)
+
+## Tipografia
+A definir.
+`;
+
+describe("parsePaleta", () => {
+  it("lê linhas no formato '- Label: #hex'", () => {
+    expect(parsePaleta(DESIGN_GUIDE_COM_PALETA)).toEqual([
+      { label: "Fundo", hex: "#07070F" },
+      { label: "Roxo neon", hex: "#A24BFF" },
+      { label: "Ciano neon", hex: "#29C5FF" },
+    ]);
+  });
+
+  it("ignora linhas fora do formato (texto legado)", () => {
+    expect(parsePaleta(DESIGN_GUIDE_SEM_PALETA)).toEqual([]);
+  });
+});
+
+describe("serializePaleta", () => {
+  it("round-trip com parsePaleta", () => {
+    const paleta: CorMarca[] = [{ label: "Fundo", hex: "#07070F" }, { label: "Acento", hex: "#FF00AA" }];
+    expect(parsePaleta(`## Cores\n${serializePaleta(paleta)}\n\n## Tipografia\nx`)).toEqual(paleta);
+  });
+});
+
+describe("readPaleta", () => {
+  it("retorna a paleta parseada quando o arquivo já está no formato novo", async () => {
+    mockReadFile.mockResolvedValue(DESIGN_GUIDE_COM_PALETA as never);
+    const paleta = await readPaleta();
+    expect(paleta).toEqual([
+      { label: "Fundo", hex: "#07070F" },
+      { label: "Roxo neon", hex: "#A24BFF" },
+      { label: "Ciano neon", hex: "#29C5FF" },
+    ]);
+  });
+
+  it("retorna o fallback hardcoded quando a seção ainda está no formato legado", async () => {
+    mockReadFile.mockResolvedValue(DESIGN_GUIDE_SEM_PALETA as never);
+    const paleta = await readPaleta();
+    expect(paleta.length).toBe(5);
+    expect(paleta[0]).toEqual({ hex: "#07070F", label: "Fundo" });
+  });
+});
+
+describe("writePaleta", () => {
+  it("regrava a seção Cores preservando o resto do arquivo", async () => {
+    mockReadFile.mockResolvedValue(DESIGN_GUIDE_COM_PALETA as never);
+    mockWriteFile.mockResolvedValue(undefined);
+
+    await writePaleta([{ label: "Nova", hex: "#112233" }]);
+
+    expect(mockWriteFile).toHaveBeenCalledTimes(1);
+    const written = mockWriteFile.mock.calls[0][1] as string;
+    expect(written).toContain("- Nova: #112233");
+    expect(written).toContain("## Tipografia\nA definir.");
   });
 });
