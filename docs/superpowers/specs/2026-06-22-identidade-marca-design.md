@@ -60,6 +60,13 @@ decomposto — é só texto editável como bloco.
 Seções vizinhas no mesmo arquivo (`## Frequência de conteúdo`, `## Objetivo principal com
 tráfego pago`) não são tocadas.
 
+**Limitação conhecida:** `/configuracoes` já edita `preferencias.md` inteiro (textarea com
+o arquivo raw, sobrescreve tudo no Salvar). Se o usuário tiver as duas telas abertas e
+salvar em ambas, a última a salvar vence (sem lock, sem merge) — a edição de tom de voz
+feita em `/identidade` pode ser sobrescrita por um save desatualizado em `/configuracoes`,
+ou vice-versa. Aceitável pra uso solo em uma aba por vez (perfil real de uso do LBCode.IA);
+não implementado lock/merge por ser over-engineering pra esse cenário.
+
 ---
 
 ## Backend
