@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ChevronLeft, ChevronRight, Loader2, Send, Sparkles, User, RotateCcw, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/app-shell";
@@ -187,7 +187,9 @@ type Msg = { role: "user" | "assistant"; content: string };
 
 function CarrosselEditor() {
   const { id } = Route.useParams();
+  const navigate = useNavigate();
   const [html, setHtml] = useState("");
+  const [htmlSalvo, setHtmlSalvo] = useState("");
   const [loadingHtml, setLoadingHtml] = useState(true);
   const [loadErro, setLoadErro] = useState("");
   const [activeSlide, setActiveSlide] = useState(0);
@@ -229,6 +231,7 @@ function CarrosselEditor() {
       })
       .then((h) => {
         setHtml(h);
+        setHtmlSalvo(h);
         setActiveSlide(0);
         setLoadingHtml(false);
       })
@@ -374,6 +377,7 @@ function CarrosselEditor() {
         const body = await res.json().catch(() => ({ error: "Erro desconhecido" }));
         throw new Error((body as { error?: string }).error ?? `HTTP ${res.status}`);
       }
+      setHtmlSalvo(html);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch (e) {
@@ -381,6 +385,11 @@ function CarrosselEditor() {
     } finally {
       setSaving(false);
     }
+  }
+
+  function cancelar() {
+    if (html !== htmlSalvo && !window.confirm("Descartar alterações não salvas?")) return;
+    navigate({ to: "/carrosseis" });
   }
 
   return (
@@ -396,6 +405,12 @@ function CarrosselEditor() {
         </div>
         <div className="flex items-center gap-2">
           {saveError && <span className="text-[12px] text-destructive max-w-[240px] truncate" title={saveError}>{saveError}</span>}
+          <button
+            onClick={cancelar}
+            className="text-[14px] font-medium px-3 py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent"
+          >
+            Cancelar
+          </button>
           <Button onClick={salvar} disabled={saving} className="!px-4 !py-2">
             {saving ? <Loader2 className="animate-spin" size={16} /> : <CheckCircle2 size={16} />}
             <span className="hidden sm:inline">{saved ? "Salvo" : "Salvar"}</span>
