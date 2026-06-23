@@ -96,6 +96,22 @@ export async function writeTipografia(t: Tipografia): Promise<void> {
   await writeFile(DESIGN_GUIDE_PATH, replaceSection(md, "Tipografia", serializeTipografia(t)), "utf-8");
 }
 
+const PREFERENCIAS_PATH = join(REPO_ROOT, "_memoria", "preferencias.md");
+
+export type TomDeVoz = { tomDeVoz: string; evitar: string };
+
+export async function readTomDeVoz(): Promise<TomDeVoz> {
+  const md = await readFile(PREFERENCIAS_PATH, "utf-8");
+  return { tomDeVoz: getSection(md, "Tom de voz"), evitar: getSection(md, "O que evitar") };
+}
+
+export async function writeTomDeVoz(data: TomDeVoz): Promise<void> {
+  const md = await readFile(PREFERENCIAS_PATH, "utf-8");
+  const withTom = replaceSection(md, "Tom de voz", data.tomDeVoz);
+  const withEvitar = replaceSection(withTom, "O que evitar", data.evitar);
+  await writeFile(PREFERENCIAS_PATH, withEvitar, "utf-8");
+}
+
 export type IdentidadeArquivo = { nome: string; label: string };
 
 export type IdentidadeData = {

@@ -6,7 +6,7 @@ vi.mock("node:fs/promises", async () => {
 });
 
 import { readFile, writeFile } from "node:fs/promises";
-import { getSection, replaceSection, parsePaleta, serializePaleta, readPaleta, writePaleta, type CorMarca, parseTipografia, serializeTipografia, readTipografia, writeTipografia, type Tipografia } from "./identidade.js";
+import { getSection, replaceSection, parsePaleta, serializePaleta, readPaleta, writePaleta, type CorMarca, parseTipografia, serializeTipografia, readTipografia, writeTipografia, type Tipografia, readTomDeVoz, writeTomDeVoz, type TomDeVoz } from "./identidade.js";
 
 const mockReadFile = vi.mocked(readFile);
 const mockWriteFile = vi.mocked(writeFile);
@@ -195,5 +195,45 @@ describe("readTipografia / writeTipografia", () => {
     expect(written).toContain("- Título: Outfit");
     expect(written).toContain("- Corpo: Lexend");
     expect(written).toContain("- Fundo: #07070F");
+  });
+});
+
+const PREFERENCIAS_SAMPLE = `# Preferências
+
+## Tom de voz
+
+Direto, objetivo, focado em ROI.
+
+**Exemplo real (P11):**
+> "Sua empresa não precisa trabalhar mais."
+
+## O que evitar
+- "vamos juntos"
+- "sinergia"
+
+## Frequência de conteúdo
+- 3 posts/semana
+`;
+
+describe("readTomDeVoz / writeTomDeVoz", () => {
+  it("lê as duas seções como markdown raw", async () => {
+    mockReadFile.mockResolvedValue(PREFERENCIAS_SAMPLE as never);
+    const data = await readTomDeVoz();
+    expect(data.tomDeVoz).toContain("Direto, objetivo, focado em ROI.");
+    expect(data.tomDeVoz).toContain("Exemplo real (P11)");
+    expect(data.evitar).toBe('- "vamos juntos"\n- "sinergia"');
+  });
+
+  it("escreve as duas seções preservando Frequência de conteúdo intacta", async () => {
+    mockReadFile.mockResolvedValue(PREFERENCIAS_SAMPLE as never);
+    mockWriteFile.mockResolvedValue(undefined);
+
+    await writeTomDeVoz({ tomDeVoz: "Novo tom.", evitar: '- "buzzword"' });
+
+    expect(mockWriteFile).toHaveBeenCalledTimes(1);
+    const written = mockWriteFile.mock.calls[0][1] as string;
+    expect(written).toContain("## Tom de voz\n\nNovo tom.\n");
+    expect(written).toContain('## O que evitar\n- "buzzword"\n');
+    expect(written).toContain("## Frequência de conteúdo\n- 3 posts/semana");
   });
 });
