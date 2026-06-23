@@ -10,7 +10,11 @@ import { listConteudo, readConteudoArquivo, updateConteudoStatus } from "./conte
 import { createSite, listSites, readSiteHtml, writeSiteHtml, streamSiteChat, type ChatMessage } from "./sites.js";
 import { listCarrosseis, readSlide } from "./carrosseis.js";
 import { readCarrosselHtml, writeCarrosselHtmlAndRender, streamCarrosselChat } from "./carrossel-editor.js";
-import { listIdentidade, readIdentidadeArquivo, listInspiracoes, saveInspiracao, readInspiracao } from "./identidade.js";
+import {
+  listIdentidade, readIdentidadeArquivo, listInspiracoes, saveInspiracao, readInspiracao,
+  writePaleta, writeTipografia, readTomDeVoz, writeTomDeVoz,
+  type CorMarca, type Tipografia,
+} from "./identidade.js";
 import { saveReferencia, readReferencia, deleteReferencias } from "./referencias-temp.js";
 import { getBiblioteca, readBibliotecaFile } from "./biblioteca.js";
 import { getDashboardData } from "./dashboard.js";
@@ -207,6 +211,44 @@ app.get("/api/identidade/arquivo", async (c) => {
     const code = (e as NodeJS.ErrnoException).code;
     if (code === "ENOENT") return c.json({ error: "Arquivo não encontrado" }, 404);
     return c.json({ error: "Erro ao ler arquivo" }, 500);
+  }
+});
+
+app.put("/api/identidade/paleta", async (c) => {
+  try {
+    const { paleta } = await c.req.json<{ paleta: CorMarca[] }>();
+    await writePaleta(paleta);
+    return c.json({ ok: true });
+  } catch (e) {
+    return c.json({ error: (e as Error).message }, 500);
+  }
+});
+
+app.put("/api/identidade/tipografia", async (c) => {
+  try {
+    const tipografia = await c.req.json<Tipografia>();
+    await writeTipografia(tipografia);
+    return c.json({ ok: true });
+  } catch (e) {
+    return c.json({ error: (e as Error).message }, 500);
+  }
+});
+
+app.get("/api/identidade/tom-de-voz", async (c) => {
+  try {
+    return c.json(await readTomDeVoz());
+  } catch (e) {
+    return c.json({ error: (e as Error).message }, 500);
+  }
+});
+
+app.put("/api/identidade/tom-de-voz", async (c) => {
+  try {
+    const data = await c.req.json<{ tomDeVoz: string; evitar: string }>();
+    await writeTomDeVoz(data);
+    return c.json({ ok: true });
+  } catch (e) {
+    return c.json({ error: (e as Error).message }, 500);
   }
 });
 

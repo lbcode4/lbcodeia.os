@@ -117,6 +117,8 @@ export type IdentidadeArquivo = { nome: string; label: string };
 export type IdentidadeData = {
   logo: IdentidadeArquivo | null;
   refs: IdentidadeArquivo[];
+  paleta: CorMarca[];
+  tipografia: Tipografia;
 };
 
 function labelFromFilename(nome: string): string {
@@ -137,14 +139,26 @@ export async function listIdentidade(): Promise<IdentidadeData> {
   try {
     files = await readdir(IDENTIDADE_ROOT);
   } catch {
-    return { logo: null, refs: [] };
+    return { logo: null, refs: [], paleta: PALETA_FALLBACK, tipografia: { titulo: null, corpo: null } };
   }
   const imageFiles = files.filter((f) => IMAGE_EXTS.includes(extname(f).toLowerCase()));
   const logo = imageFiles.find((f) => /^logo/i.test(f));
   const refs = imageFiles.filter((f) => !/^logo/i.test(f));
+
+  let paleta = PALETA_FALLBACK;
+  let tipografia: Tipografia = { titulo: null, corpo: null };
+  try {
+    const designGuide = await readFile(DESIGN_GUIDE_PATH, "utf-8");
+    const parsedPaleta = parsePaleta(designGuide);
+    paleta = parsedPaleta.length > 0 ? parsedPaleta : PALETA_FALLBACK;
+    tipografia = parseTipografia(designGuide);
+  } catch { /* design-guide.md ausente — usa defaults */ }
+
   return {
     logo: logo ? { nome: logo, label: "Logo" } : null,
     refs: refs.map((f) => ({ nome: f, label: labelFromFilename(f) })),
+    paleta,
+    tipografia,
   };
 }
 

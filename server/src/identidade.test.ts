@@ -7,6 +7,7 @@ vi.mock("node:fs/promises", async () => {
 
 import { readFile, writeFile } from "node:fs/promises";
 import { getSection, replaceSection, parsePaleta, serializePaleta, readPaleta, writePaleta, type CorMarca, parseTipografia, serializeTipografia, readTipografia, writeTipografia, type Tipografia, readTomDeVoz, writeTomDeVoz, type TomDeVoz } from "./identidade.js";
+import { app } from "./server.js";
 
 const mockReadFile = vi.mocked(readFile);
 const mockWriteFile = vi.mocked(writeFile);
@@ -235,5 +236,84 @@ describe("readTomDeVoz / writeTomDeVoz", () => {
     expect(written).toContain("## Tom de voz\n\nNovo tom.\n");
     expect(written).toContain('## O que evitar\n- "buzzword"\n');
     expect(written).toContain("## Frequência de conteúdo\n- 3 posts/semana");
+  });
+});
+
+describe("GET /api/identidade (estendido)", () => {
+  it("inclui paleta e tipografia no payload", async () => {
+    mockReadFile.mockResolvedValue(DESIGN_GUIDE_COM_FONTES as never);
+    const res = await app.request("/api/identidade");
+    expect(res.status).toBe(200);
+    const body = await res.json() as { paleta: CorMarca[]; tipografia: Tipografia };
+    expect(body.paleta).toEqual([{ label: "Fundo", hex: "#07070F" }]);
+    expect(body.tipografia).toEqual({ titulo: "Poppins", corpo: "Inter" });
+  });
+});
+
+describe("PUT /api/identidade/paleta", () => {
+  it("salva e retorna ok", async () => {
+    mockReadFile.mockResolvedValue(DESIGN_GUIDE_COM_FONTES as never);
+    mockWriteFile.mockResolvedValue(undefined);
+
+    const res = await app.request("/api/identidade/paleta", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ paleta: [{ label: "X", hex: "#000000" }] }),
+    });
+
+    expect(res.status).toBe(200);
+    expect((await res.json()).ok).toBe(true);
+  });
+
+  it("500 quando a escrita falha", async () => {
+    mockReadFile.mockRejectedValue(new Error("disco cheio"));
+
+    const res = await app.request("/api/identidade/paleta", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ paleta: [] }),
+    });
+
+    expect(res.status).toBe(500);
+  });
+});
+
+describe("PUT /api/identidade/tipografia", () => {
+  it("salva e retorna ok", async () => {
+    mockReadFile.mockResolvedValue(DESIGN_GUIDE_COM_FONTES as never);
+    mockWriteFile.mockResolvedValue(undefined);
+
+    const res = await app.request("/api/identidade/tipografia", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ titulo: "Sora", corpo: null }),
+    });
+
+    expect(res.status).toBe(200);
+    expect((await res.json()).ok).toBe(true);
+  });
+});
+
+describe("GET/PUT /api/identidade/tom-de-voz", () => {
+  it("GET retorna as duas seções", async () => {
+    mockReadFile.mockResolvedValue(PREFERENCIAS_SAMPLE as never);
+    const res = await app.request("/api/identidade/tom-de-voz");
+    expect(res.status).toBe(200);
+    const body = await res.json() as { tomDeVoz: string; evitar: string };
+    expect(body.evitar).toBe('- "vamos juntos"\n- "sinergia"');
+  });
+
+  it("PUT salva e retorna ok", async () => {
+    mockReadFile.mockResolvedValue(PREFERENCIAS_SAMPLE as never);
+    mockWriteFile.mockResolvedValue(undefined);
+
+    const res = await app.request("/api/identidade/tom-de-voz", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tomDeVoz: "Novo.", evitar: "- x" }),
+    });
+
+    expect(res.status).toBe(200);
+    expect((await res.json()).ok).toBe(true);
   });
 });
