@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/app-shell";
-import { Check, X, Plus } from "lucide-react";
+import { Check, X, Plus, Loader2 } from "lucide-react";
 import { sugerirCoresRelacionadas, type CorMarca } from "@/lib/cor-sugestoes";
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8787";
@@ -106,6 +106,44 @@ function IdentidadePage() {
         body: JSON.stringify(next),
       });
     } catch { /* mantém em memória; próxima troca tenta salvar de novo */ }
+  }
+
+  type TomStatus = "loading" | "idle" | "saving" | "saved" | "error";
+  const [tomDeVoz, setTomDeVoz] = useState("");
+  const [evitar, setEvitar] = useState("");
+  const [tomStatus, setTomStatus] = useState<TomStatus>("loading");
+  const [tomErro, setTomErro] = useState("");
+
+  useEffect(() => {
+    fetch(`${BACKEND}/api/identidade/tom-de-voz`)
+      .then((r) => r.json() as Promise<{ tomDeVoz: string; evitar: string }>)
+      .then((d) => {
+        setTomDeVoz(d.tomDeVoz);
+        setEvitar(d.evitar);
+        setTomStatus("idle");
+      })
+      .catch(() => {
+        setTomStatus("error");
+        setTomErro("Não foi possível carregar.");
+      });
+  }, []);
+
+  async function salvarTomDeVoz() {
+    setTomStatus("saving");
+    setTomErro("");
+    try {
+      const res = await fetch(`${BACKEND}/api/identidade/tom-de-voz`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tomDeVoz, evitar }),
+      });
+      if (!res.ok) throw new Error("Erro ao salvar");
+      setTomStatus("saved");
+      setTimeout(() => setTomStatus("idle"), 2000);
+    } catch (e) {
+      setTomStatus("error");
+      setTomErro(e instanceof Error ? e.message : "Erro desconhecido");
+    }
   }
 
   const copiarHex = (hex: string) => {
@@ -264,9 +302,42 @@ function IdentidadePage() {
           <h3 className="text-[13px] font-semibold mb-3 text-muted-foreground uppercase tracking-wide">
             Tom de voz
           </h3>
-          <p className="text-[13px] text-muted-foreground">
-            Em breve — descreva aqui o tom de voz, palavras-chave e o que evitar.
-          </p>
+          <div className="flex flex-col gap-3 max-w-2xl">
+            <div>
+              <label className="text-[11px] text-muted-foreground block mb-1">Tom de voz</label>
+              <textarea
+                className="w-full bg-background border border-border rounded-md px-3 py-2 text-[13px] font-mono resize-y min-h-[140px]"
+                value={tomDeVoz}
+                onChange={(e) => setTomDeVoz(e.target.value)}
+                spellCheck={false}
+              />
+            </div>
+            <div>
+              <label className="text-[11px] text-muted-foreground block mb-1">O que evitar</label>
+              <textarea
+                className="w-full bg-background border border-border rounded-md px-3 py-2 text-[13px] font-mono resize-y min-h-[100px]"
+                value={evitar}
+                onChange={(e) => setEvitar(e.target.value)}
+                spellCheck={false}
+              />
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={salvarTomDeVoz}
+                disabled={tomStatus === "saving"}
+                className="text-[13px] font-semibold px-4 py-2 rounded-md bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50 inline-flex items-center gap-2"
+              >
+                {tomStatus === "saving" && <Loader2 size={14} className="animate-spin" />}
+                Salvar
+              </button>
+              {tomStatus === "saved" && (
+                <span className="text-[12px] text-green-600 inline-flex items-center gap-1">
+                  <Check size={13} /> Salvo
+                </span>
+              )}
+              {tomStatus === "error" && <span className="text-[12px] text-destructive">{tomErro}</span>}
+            </div>
+          </div>
         </section>
 
         {data && data.refs.length > 0 && (
