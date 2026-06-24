@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { createSite, replaceImagePathsWithDataUris, formatSdkExecutionError, createWriteSandboxHook } from "./sites.js";
+import { createSite, replaceImagePathsWithDataUris, formatSdkExecutionError, createWriteSandboxHook, fetchCompanyContext } from "./sites.js";
 
 describe("createWriteSandboxHook", () => {
   const hook = createWriteSandboxHook("/tmp/allowed-dir");
@@ -128,11 +128,49 @@ vi.mock("node:fs/promises", () => ({
   mkdir: vi.fn(),
 }));
 
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, writeFile, readFile } from "node:fs/promises";
 const mockMkdir = vi.mocked(mkdir);
 const mockWriteFile = vi.mocked(writeFile);
+const mockReadFile = vi.mocked(readFile);
 
 beforeEach(() => vi.clearAllMocks());
+
+describe("fetchCompanyContext", () => {
+  it("inclui empresa.md e preferencias.md quando os dois existem", async () => {
+    mockReadFile.mockImplementation((path) => {
+      const p = String(path);
+      if (p.includes("empresa.md")) return Promise.resolve("Nome: Loja Beta") as never;
+      if (p.includes("preferencias.md")) return Promise.resolve("Tom: direto") as never;
+      return Promise.reject(new Error("ENOENT"));
+    });
+
+    const result = await fetchCompanyContext();
+
+    expect(result).toContain("Nome: Loja Beta");
+    expect(result).toContain("Tom: direto");
+  });
+
+  it("inclui só o que existir quando um dos arquivos falta", async () => {
+    mockReadFile.mockImplementation((path) => {
+      const p = String(path);
+      if (p.includes("empresa.md")) return Promise.resolve("Nome: Loja Beta") as never;
+      return Promise.reject(Object.assign(new Error("not found"), { code: "ENOENT" }));
+    });
+
+    const result = await fetchCompanyContext();
+
+    expect(result).toContain("Nome: Loja Beta");
+    expect(result).not.toContain("preferencias.md");
+  });
+
+  it("retorna string vazia quando nenhum arquivo existe", async () => {
+    mockReadFile.mockRejectedValue(Object.assign(new Error("not found"), { code: "ENOENT" }));
+
+    const result = await fetchCompanyContext();
+
+    expect(result).toBe("");
+  });
+});
 
 describe("createSite", () => {
   it("creates directory and writes index.html, returns id", async () => {

@@ -23,6 +23,21 @@ async function fetchDesignSystem(keywords: string): Promise<string> {
 const REPO_ROOT = join(import.meta.dirname, "..", "..");
 const SITES_ROOT = join(REPO_ROOT, "saidas", "marketing", "sites");
 
+// O sub-processo da SDK não herda a memória da conversa principal — sem isso,
+// pedir "criar uma landing page" faz a IA perguntar nome da empresa, cliente
+// ideal etc., mesmo já estando tudo documentado em _memoria/. Carregado só na
+// primeira mensagem (criação) — edições iterativas já têm o HTML existente
+// como contexto suficiente, igual ao designSystemContext abaixo.
+export async function fetchCompanyContext(): Promise<string> {
+  const files = ["_memoria/empresa.md", "_memoria/preferencias.md"];
+  const results = await Promise.allSettled(files.map((f) => readFile(join(REPO_ROOT, f), "utf-8")));
+  const loaded = results
+    .map((r, i) => (r.status === "fulfilled" ? `## ${files[i]}\n${r.value}` : null))
+    .filter((s): s is string => s !== null);
+  if (!loaded.length) return "";
+  return `\n\nCONTEXTO DA EMPRESA E TOM DE VOZ (já levantado — use isso em vez de perguntar de novo):\n${loaded.join("\n\n")}`;
+}
+
 export type SiteInfo = {
   id: string;
   name: string;
@@ -182,19 +197,23 @@ export async function* streamSiteChat(
     ? `\n\nHISTÓRICO DA CONVERSA:\n${history.map((m) => `${m.role === "user" ? "Usuário" : "Assistente"}: ${m.content}`).join("\n")}\n`
     : "";
 
-  // Fetch design system only on first message (initial build) — skip for iterative edits
+  // Fetch design system and company context only on first message (initial build) — skip for iterative edits
   const designSystemContext = history.length === 0
     ? await fetchDesignSystem(instruction)
+    : "";
+  const empresaContext = history.length === 0
+    ? await fetchCompanyContext()
     : "";
 
   const prompt = `Você é um assistente especialista em landing pages HTML. Seja conversacional e direto.
 
-O arquivo HTML do site está em: ${htmlPath}${imageContext}${designSystemContext}${historyContext}
+O arquivo HTML do site está em: ${htmlPath}${imageContext}${empresaContext}${designSystemContext}${historyContext}
 
 MENSAGEM ATUAL DO USUÁRIO: ${instruction}
 
 Regras:
 - Use o histórico da conversa para manter contexto entre mensagens.
+- Se receber o CONTEXTO DA EMPRESA acima, use-o pra criar/editar com propósito real (nome, cliente ideal, oferta, tom de voz) — NÃO pergunte de novo o que já está documentado ali. Só pergunte o que genuinamente faltar (ex: paleta de cor específica) ou for ambíguo.
 - Se for pergunta, dúvida ou pedido de esclarecimento → responda conversacionalmente. NÃO modifique o arquivo.
 - Se for instrução de mudança concreta → leia o arquivo, aplique o necessário seguindo o design system acima, salve em ${htmlPath}. Confirme brevemente o que fez.
 - Pode ler imagens de referência com a ferramenta Read para analisá-las.
