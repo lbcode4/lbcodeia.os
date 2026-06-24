@@ -1,4 +1,4 @@
-import { readFile, writeFile, readdir, unlink, mkdtemp, rm, access } from "node:fs/promises";
+import { readFile, writeFile, readdir, unlink, mkdtemp, rm } from "node:fs/promises";
 import { join, resolve, sep } from "node:path";
 import { tmpdir } from "node:os";
 import { execFile } from "node:child_process";
@@ -38,16 +38,12 @@ export async function writeCarrosselHtmlAndRender(id: string, html: string): Pro
   if (!isPathSafeUnder(renderPath)) throw new Error("Caminho inválido");
 
   await writeFile(htmlPath, html, "utf-8");
-  // render.js usa `import` (ESM), mas o package.json da raiz do repo é "type":"commonjs",
-  // e Node resolve a extensão .js pelo package.json mais próximo (sem isso, `node render.js`
-  // falha com "Cannot use import statement outside a module"). Garante um package.json local
-  // declarando ESM só pra essa pasta, sem sobrescrever se já existir um por algum motivo.
-  const pkgPath = join(carrosselDir, "package.json");
-  try {
-    await access(pkgPath);
-  } catch {
-    await writeFile(pkgPath, JSON.stringify({ type: "module" }, null, 2) + "\n", "utf-8");
-  }
+  // render.js gerado pela skill usa require() (CommonJS) — compatível nativamente
+  // com o "type":"commonjs" da raiz do repo (Node resolve pelo package.json mais
+  // próximo; sem um local, usa o da raiz). Não criar package.json aqui — um
+  // "type":"module" local quebraria o require() com "require is not defined in
+  // ES module scope" (bug real: PNGs ficavam desatualizados em todo Salvar desde
+  // que os templates da skill passaram a usar require() em vez de import).
   await execFileAsync("node", [renderPath], { cwd: carrosselDir, timeout: 30000 });
 
   const outDir = join(carrosselDir, "instagram");
