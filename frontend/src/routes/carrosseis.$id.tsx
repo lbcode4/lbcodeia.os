@@ -358,6 +358,7 @@ function CarrosselEditor() {
           html,
           instruction: t,
           images: sentImages.map((img) => ({ mediaType: img.mediaType, data: img.data })),
+          activeSlide,
           history: messages.filter((m) => m.content.trim()).map((m) => ({ role: m.role, content: m.content })),
         }),
       });

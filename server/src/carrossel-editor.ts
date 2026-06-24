@@ -73,6 +73,7 @@ export async function* streamCarrosselChat(
   html: string,
   instruction: string,
   images: { mediaType: string; data: string }[],
+  activeSlide: number,
   history: ChatMessage[] = [],
 ): AsyncGenerator<CarrosselChatEvent> {
   const tmpDir = await mkdtemp(join(tmpdir(), "lbcarrossel-"));
@@ -96,14 +97,19 @@ export async function* streamCarrosselChat(
     ? `\n\nHISTÓRICO DA CONVERSA:\n${history.map((m) => `${m.role === "user" ? "Usuário" : "Assistente"}: ${m.content}`).join("\n")}\n`
     : "";
 
+  const totalSlides = countSlides(html);
+
   const prompt = `Você é um assistente especialista em carrosséis de Instagram (HTML).
 
 O arquivo HTML do carrossel está em: ${htmlPath}${imageContext}${historyContext}
+
+O usuário está editando o slide ${activeSlide + 1} de ${totalSlides} no momento.
 
 MENSAGEM ATUAL DO USUÁRIO: ${instruction}
 
 Regras:
 - Cada slide é um <div class="slide ..."> de 1080x1350px. NÃO mude essas dimensões.
+- Se a instrução não disser explicitamente quais slides afetar (ex: "todos os slides", "do slide 2 ao 5", "no slide 3"), aplique a mudança SÓ no slide que o usuário está editando agora (informado acima) — não nos outros.
 - Se adicionar ou remover slides, confirme ao final quantos slides o carrossel ficou.
 - Pode ler identidade/design-guide.md (na raiz do projeto) se precisar de contexto de cor/fonte da marca.
 - Pode ler imagens de referência anexadas com a ferramenta Read para analisá-las.
