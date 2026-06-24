@@ -1,5 +1,67 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { createSite, replaceImagePathsWithDataUris, formatSdkExecutionError } from "./sites.js";
+import { createSite, replaceImagePathsWithDataUris, formatSdkExecutionError, createWriteSandboxHook } from "./sites.js";
+
+describe("createWriteSandboxHook", () => {
+  const hook = createWriteSandboxHook("/tmp/allowed-dir");
+
+  it("permite Write dentro do diretório permitido", async () => {
+    const result = await hook({
+      hook_event_name: "PreToolUse",
+      tool_name: "Write",
+      tool_input: { file_path: "/tmp/allowed-dir/arquivo.html" },
+    });
+    expect(result.hookSpecificOutput).toBeUndefined();
+  });
+
+  it("nega Write fora do diretório permitido", async () => {
+    const result = await hook({
+      hook_event_name: "PreToolUse",
+      tool_name: "Write",
+      tool_input: { file_path: "/tmp/outro-lugar/arquivo.html" },
+    });
+    expect(result.hookSpecificOutput).toEqual({
+      hookEventName: "PreToolUse",
+      permissionDecision: "deny",
+      permissionDecisionReason: "Só é permitido escrever dentro de /tmp/allowed-dir. Caminho recebido: /tmp/outro-lugar/arquivo.html",
+    });
+  });
+
+  it("nega Edit fora do diretório permitido", async () => {
+    const result = await hook({
+      hook_event_name: "PreToolUse",
+      tool_name: "Edit",
+      tool_input: { file_path: "/tmp/outro-lugar/arquivo.html" },
+    });
+    expect(result.hookSpecificOutput?.permissionDecision).toBe("deny");
+  });
+
+  it("não nega caminho que só começa com o mesmo prefixo de texto (sem ser subdiretório real)", async () => {
+    const result = await hook({
+      hook_event_name: "PreToolUse",
+      tool_name: "Write",
+      tool_input: { file_path: "/tmp/allowed-dir-outro/arquivo.html" },
+    });
+    expect(result.hookSpecificOutput?.permissionDecision).toBe("deny");
+  });
+
+  it("ignora ferramentas que não são Write/Edit (ex: Read)", async () => {
+    const result = await hook({
+      hook_event_name: "PreToolUse",
+      tool_name: "Read",
+      tool_input: { file_path: "/tmp/outro-lugar/arquivo.html" },
+    });
+    expect(result.hookSpecificOutput).toBeUndefined();
+  });
+
+  it("ignora eventos que não são PreToolUse", async () => {
+    const result = await hook({
+      hook_event_name: "PostToolUse",
+      tool_name: "Write",
+      tool_input: { file_path: "/tmp/outro-lugar/arquivo.html" },
+    });
+    expect(result.hookSpecificOutput).toBeUndefined();
+  });
+});
 
 describe("formatSdkExecutionError", () => {
   it("usa as mensagens de erro quando existem", () => {

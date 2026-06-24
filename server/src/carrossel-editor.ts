@@ -5,7 +5,7 @@ import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { query } from "@anthropic-ai/claude-agent-sdk";
 import type { ChatMessage } from "./sites.js";
-import { replaceImagePathsWithDataUris, formatSdkExecutionError } from "./sites.js";
+import { replaceImagePathsWithDataUris, formatSdkExecutionError, createWriteSandboxHook } from "./sites.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -124,6 +124,9 @@ Regras:
         allowedTools: ["Read", "Write", "Edit"],
         settingSources: ["project"],
         systemPrompt: { type: "preset", preset: "claude_code" },
+        hooks: {
+          PreToolUse: [{ hooks: [createWriteSandboxHook(tmpDir)] }],
+        },
       },
     });
 

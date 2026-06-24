@@ -1,5 +1,5 @@
 import { readdir, readFile, stat, writeFile, unlink, mkdtemp, rmdir, mkdir } from "node:fs/promises";
-import { join, resolve } from "node:path";
+import { join, resolve, sep } from "node:path";
 import { tmpdir, homedir } from "node:os";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
@@ -89,6 +89,45 @@ export async function writeSiteHtml(id: string, html: string): Promise<void> {
   await writeFile(safe, html, "utf-8");
 }
 
+type PreToolUseHookInput = {
+  hook_event_name: string;
+  tool_name?: string;
+  tool_input?: unknown;
+};
+type HookResult = {
+  continue: true;
+  hookSpecificOutput?: {
+    hookEventName: "PreToolUse";
+    permissionDecision: "deny";
+    permissionDecisionReason: string;
+  };
+};
+
+// A SDK roda com Write/Edit liberados e cwd na raiz do repo, sem sandbox de
+// path imposto — só a instrução em texto do prompt diz "salve em X", o que
+// numa conversa longa pode ser perdido/confundido, fazendo a IA escrever no
+// arquivo real de OUTRO carrossel/site. Esse hook é a barreira de fato:
+// nega qualquer Write/Edit fora do diretório temporário da própria sessão,
+// mesmo com permissionMode "bypassPermissions" (validado empiricamente —
+// o hook intercepta e bloqueia antes do bypass entrar em jogo).
+export function createWriteSandboxHook(allowedDir: string) {
+  const root = resolve(allowedDir) + sep;
+  return async (input: PreToolUseHookInput): Promise<HookResult> => {
+    if (input.hook_event_name !== "PreToolUse") return { continue: true };
+    if (input.tool_name !== "Write" && input.tool_name !== "Edit") return { continue: true };
+    const filePath = (input.tool_input as { file_path?: string } | undefined)?.file_path ?? "";
+    if (resolve(filePath).startsWith(root)) return { continue: true };
+    return {
+      continue: true,
+      hookSpecificOutput: {
+        hookEventName: "PreToolUse",
+        permissionDecision: "deny",
+        permissionDecisionReason: `Só é permitido escrever dentro de ${allowedDir}. Caminho recebido: ${filePath}`,
+      },
+    };
+  };
+}
+
 export function formatSdkExecutionError(subtype: string, errors: string[]): string {
   const detail = errors.length ? errors.join("; ") : subtype;
   return `Execução interrompida (${detail}) — nenhuma mudança foi salva.`;
@@ -174,6 +213,9 @@ Regras:
         allowedTools: ["Read", "Write", "Edit"],
         settingSources: ["project"],
         systemPrompt: { type: "preset", preset: "claude_code" },
+        hooks: {
+          PreToolUse: [{ hooks: [createWriteSandboxHook(tmpDir)] }],
+        },
       },
     });
 
