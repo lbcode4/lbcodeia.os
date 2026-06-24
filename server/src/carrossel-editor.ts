@@ -5,7 +5,7 @@ import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { query } from "@anthropic-ai/claude-agent-sdk";
 import type { ChatMessage } from "./sites.js";
-import { replaceImagePathsWithDataUris } from "./sites.js";
+import { replaceImagePathsWithDataUris, formatSdkExecutionError } from "./sites.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -136,6 +136,10 @@ Regras:
           }
         }
       } else if (msg.type === "result") {
+        if (msg.subtype !== "success") {
+          yield { type: "error", text: formatSdkExecutionError(msg.subtype, msg.errors) };
+          break;
+        }
         try {
           const raw = await readFile(htmlPath, "utf-8");
           // tmpDir é apagado no finally — qualquer referência direta ao caminho

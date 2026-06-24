@@ -1,5 +1,22 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { createSite, replaceImagePathsWithDataUris } from "./sites.js";
+import { createSite, replaceImagePathsWithDataUris, formatSdkExecutionError } from "./sites.js";
+
+describe("formatSdkExecutionError", () => {
+  it("usa as mensagens de erro quando existem", () => {
+    const result = formatSdkExecutionError("error_max_turns", ["limite de turnos atingido"]);
+    expect(result).toBe("Execução interrompida (limite de turnos atingido) — nenhuma mudança foi salva.");
+  });
+
+  it("junta múltiplas mensagens de erro", () => {
+    const result = formatSdkExecutionError("error_during_execution", ["erro A", "erro B"]);
+    expect(result).toBe("Execução interrompida (erro A; erro B) — nenhuma mudança foi salva.");
+  });
+
+  it("usa o subtype como fallback quando não há mensagens de erro", () => {
+    const result = formatSdkExecutionError("error_max_budget_usd", []);
+    expect(result).toBe("Execução interrompida (error_max_budget_usd) — nenhuma mudança foi salva.");
+  });
+});
 
 describe("replaceImagePathsWithDataUris", () => {
   it("troca uma referência ao caminho temporário por um data URI", () => {

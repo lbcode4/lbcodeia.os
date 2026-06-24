@@ -89,6 +89,11 @@ export async function writeSiteHtml(id: string, html: string): Promise<void> {
   await writeFile(safe, html, "utf-8");
 }
 
+export function formatSdkExecutionError(subtype: string, errors: string[]): string {
+  const detail = errors.length ? errors.join("; ") : subtype;
+  return `Execução interrompida (${detail}) — nenhuma mudança foi salva.`;
+}
+
 export function replaceImagePathsWithDataUris(
   html: string,
   imagePaths: string[],
@@ -181,6 +186,10 @@ Regras:
           }
         }
       } else if (msg.type === "result") {
+        if (msg.subtype !== "success") {
+          yield { type: "error", text: formatSdkExecutionError(msg.subtype, msg.errors) };
+          break;
+        }
         // Verifica se o HTML foi modificado
         try {
           const raw = await readFile(htmlPath, "utf-8");
