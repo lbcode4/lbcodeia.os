@@ -15,12 +15,15 @@ Transmite precisão, competência técnica e clareza — sem exageros.
 Azul como cor principal (referência do site oferta.lbcodeia.com.br).
 
 ## Cores
-- Primária: Azul (referência site) — confirmar hex exato
-- Fundo: escuro ou branco clean (minimalista)
-- Acento: a definir
+- Fundo: #07070F
+- Roxo neon: #A24BFF
+- Ciano neon: #29C5FF
+- Texto principal: #FFFFFF
+- Texto secundário: #C9C9D6
 
 ## Tipografia
-A definir — confirmar com material de identidade quando disponível.
+- Título: Playfair Display
+- Corpo: Poppins
 
 ## Elementos
 - Minimalismo
