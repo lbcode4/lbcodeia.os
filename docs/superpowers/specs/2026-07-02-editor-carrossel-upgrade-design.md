@@ -20,8 +20,11 @@ Pediu pra atualizar nossa edição pra "ficar igual" — decisão tomada em brai
 1. Editor continua rodando sobre o HTML real (Playwright/PNG/histórico já existentes) — não migra pro
    modelo `Slide[]` tipado do protótipo.
 2. Substitui a página `/carrosseis/$id` atual (não cria fluxo paralelo).
-3. "Exportar PNG" é implementado de verdade (reaproveita a receita do `render.js` da skill: Playwright,
-   viewport 1080×1350 @2x, screenshot por `.slide`).
+3. "Exportar PNG" é implementado de verdade — **sem backend novo**: `writeCarrosselHtmlAndRender`
+   (`server/src/carrossel-editor.ts`), já disparado pelo botão "Salvar" existente, roda o `render.js`
+   da própria skill (Playwright) a cada save e regrava `instagram/slide-XX.png`. Os PNGs já existem e já
+   são servidos por `GET /api/carrosseis/slide?id=&slide=`. "Exportar PNG" só precisa: salvar se houver
+   mudança pendente, depois baixar cada PNG já renderizado via `<a download>` no navegador.
 4. "Agendar publicação" fica fora de escopo (sem integração de publicação orgânica hoje — não entra
    nem como modal mock).
 5. Excluídos por não terem contrapartida real ou por já serem cobertos melhor pelo que existe: seletor
@@ -94,10 +97,18 @@ Pediu pra atualizar nossa edição pra "ficar igual" — decisão tomada em brai
 ### Header (existente, ganha 1 botão)
 
 - Mantém "Cancelar" / "Salvar" como estão.
-- **Novo**: "Exportar PNG" — chama `POST /api/carrosseis/export` com `{ id, html }` (html atual, inclusive
-  não salvo — WYSIWYG do que tá na tela). Enquanto processa, spinner no botão. Ao voltar, dispara download
-  de cada PNG (link `<a>` temporário com `download="slide-01.png"` etc., a partir do `dataUrl` base64
-  retornado) — sem lib de zip nova.
+- **Novo**: "Exportar PNG" (100% frontend, sem rota nova):
+  1. Se `html !== htmlSalvo`, chama a `salvar()` já existente e aguarda (garante que `instagram/slide-XX.png`
+     reflete o que tá na tela — `writeCarrosselHtmlAndRender` já roda o `render.js` nesse caminho).
+  2. `total = slideCount(html)` (função já existe no arquivo).
+  3. Pra cada índice `i` de `0` a `total-1`: monta `filename = 'slide-' + String(i+1).padStart(2,'0') + '.png'`
+     (mesma convenção de `carrossel-editor.ts`), busca
+     `${BACKEND}/api/carrosseis/slide?id=${id}&slide=${filename}` como blob, cria `<a>` temporário
+     com `download={filename}` e `href` de `URL.createObjectURL(blob)`, clica, revoga a URL. Espera
+     ~150ms entre downloads (Chrome pode bloquear silenciosamente downloads múltiplos disparados no
+     mesmo tick sem esse intervalo).
+  4. Estado `exporting` desabilita o botão e mostra spinner durante o processo; erro (de `salvar()` ou
+     de algum `fetch` de slide) aparece como texto de erro reaproveitando o padrão de `saveError`.
 
 ## Backend
 
@@ -106,27 +117,14 @@ Pediu pra atualizar nossa edição pra "ficar igual" — decisão tomada em brai
 - `readLegenda(id): Promise<string>` — lê `legenda.md` da pasta do carrossel (mesmo guard de path de
   `readSlide`); retorna `""` se arquivo não existir (carrossel pode não ter legenda ainda).
 - `writeLegenda(id, legenda): Promise<void>` — escreve/sobrescreve `legenda.md`, mesmo guard de path.
-- `exportSlides(html): Promise<{ filename: string; dataUrl: string }[]>` — usa `playwright.chromium`:
-  1. `browser = await chromium.launch()`
-  2. `page = await browser.newPage({ viewport: { width: 1080, height: 1350 }, deviceScaleFactor: 2 })`
-  3. `await page.setContent(html, { waitUntil: 'networkidle' })` (espera fontes/imagens carregarem)
-  4. `const slides = await page.$$('.slide')`
-  5. Pra cada slide: `screenshot()` → `Buffer` → `data:image/png;base64,...`, filename `slide-${n}.png`
-     (`n` = índice+1, `padStart(2,'0')`)
-  6. `finally { await browser.close() }` — fecha mesmo se algum screenshot falhar no meio.
-  - Se `slides.length === 0`, lança erro claro ("Nenhum `.slide` encontrado no HTML").
 
 ### `server/src/server.ts` — rotas novas
 
 - `GET /api/carrosseis/legenda?id=` → `{ legenda: string }` (200; 400 se `id` faltando)
 - `PUT /api/carrosseis/legenda?id=` → body `{ legenda: string }` → escreve, 200 `{ ok: true }`
-- `POST /api/carrosseis/export` → body `{ html: string }` → `{ slides: [{ filename, dataUrl }] }` (200);
-  erro Playwright ou HTML sem `.slide` → 500 com mensagem
 
-### `server/package.json`
-
-- Adiciona `"playwright": "^1.48.0"` em `dependencies` (hoje só existe hoisted do root; passa a ser
-  dependência direta e explícita do server, que agora importa `chromium` de verdade em runtime).
+Nenhuma rota nova pra export — reaproveita `PUT /api/carrosseis/html` (já roda `render.js`) e
+`GET /api/carrosseis/slide` (já serve os PNGs), ambas existentes.
 
 ## Frontend — arquivos afetados
 
@@ -151,12 +149,8 @@ Pediu pra atualizar nossa edição pra "ficar igual" — decisão tomada em brai
 ## Testes
 
 - `server/src/carrosseis.test.ts` (não existe hoje — criar; `carrosseis.ts` não tinha testes próprios
-  antes desta mudança): `readLegenda`/`writeLegenda` (roundtrip, arquivo ausente retorna `""`),
-  `exportSlides` com Playwright real rodando contra um HTML fixture pequeno com 2 `.slide` (não mocka
-  o Playwright — é rápido o bastante e é o que dá confiança real no output; guard de erro quando HTML
-  não tem `.slide`).
+  antes desta mudança): `readLegenda`/`writeLegenda` (roundtrip, arquivo ausente retorna `""`).
 - `server/src/server.test.ts`: rotas `GET/PUT /api/carrosseis/legenda` (id faltando → 400, roundtrip
-  via arquivo temporário), `POST /api/carrosseis/export` (200 com slides válidos; 500 com HTML sem
-  `.slide`).
+  via arquivo temporário).
 - Frontend: sem harness de teste pra rotas hoje (mesmo padrão das últimas 3 specs de editor de
   carrossel — verificação por `tsc --noEmit` + `npm run build`, walkthrough visual fica pro usuário).
