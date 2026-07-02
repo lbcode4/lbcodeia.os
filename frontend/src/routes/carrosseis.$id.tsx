@@ -345,6 +345,35 @@ function CarrosselEditor() {
   const [exporting, setExporting] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
 
+  const [previewFormat, setPreviewFormat] = useState<"4:5" | "1:1">("4:5");
+
+  const [inspiracoes, setInspiracoes] = useState<string[]>([]);
+  const [inspiracoesLoading, setInspiracoesLoading] = useState(true);
+  const [inspiracoesError, setInspiracoesError] = useState<string | null>(null);
+  const [inspiracaoUploading, setInspiracaoUploading] = useState(false);
+
+  const [tituloSlide, setTituloSlide] = useState("");
+  const [textoSlide, setTextoSlide] = useState("");
+  const [slideHasBody, setSlideHasBody] = useState(true);
+
+  useEffect(() => {
+    setInspiracoesLoading(true);
+    setInspiracoesError(null);
+    fetch(`${BACKEND}/api/carrosseis/inspiracoes?id=${encodeURIComponent(id)}`)
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then((files: string[]) => {
+        setInspiracoes(files);
+        setInspiracoesLoading(false);
+      })
+      .catch((e) => {
+        setInspiracoesError(e instanceof Error ? e.message : "Erro ao carregar imagens");
+        setInspiracoesLoading(false);
+      });
+  }, [id]);
+
   useEffect(() => {
     setLegendaLoading(true);
     setLegendaLoadFailed(false);
@@ -367,6 +396,14 @@ function CarrosselEditor() {
 
   const slides = html ? parseSlides(html) : [];
 
+  useEffect(() => {
+    if (!html) return;
+    const fields = getSlideFields(html, activeSlide);
+    setTituloSlide(fields.title);
+    setTextoSlide(fields.body);
+    setSlideHasBody(fields.hasBody);
+  }, [html, activeSlide]);
+
   function aplicarFundo(hex: string) {
     mainIframeRef.current?.contentWindow?.postMessage({ type: "lbcode-set-background", hex }, "*");
     setMostrarFundo(false);
@@ -374,6 +411,45 @@ function CarrosselEditor() {
 
   function aplicarFonte(fonte: string) {
     mainIframeRef.current?.contentWindow?.postMessage({ type: "lbcode-set-font", fonte }, "*");
+  }
+
+  function aplicarTemplate(bg: string, fonte: string) {
+    aplicarFundo(bg);
+    aplicarFonte(fonte);
+  }
+
+  function commitSlideFields() {
+    const next = setSlideFields(html, activeSlide, { title: tituloSlide, body: textoSlide });
+    if (next === html) return;
+    applyHtml(next);
+  }
+
+  async function handleUploadInspiracao(file: File) {
+    setInspiracaoUploading(true);
+    setInspiracoesError(null);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch(`${BACKEND}/api/carrosseis/inspiracoes?id=${encodeURIComponent(id)}`, {
+        method: "POST",
+        body: formData,
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({ error: "Erro desconhecido" }));
+        throw new Error((body as { error?: string }).error ?? `HTTP ${res.status}`);
+      }
+      const body = (await res.json()) as { filename: string };
+      setInspiracoes((prev) => [...prev, body.filename]);
+    } catch (e) {
+      setInspiracoesError(e instanceof Error ? e.message : "Erro ao enviar imagem");
+    } finally {
+      setInspiracaoUploading(false);
+    }
+  }
+
+  function aplicarInspiracao(filename: string) {
+    const url = `${BACKEND}/api/carrosseis/inspiracao?id=${encodeURIComponent(id)}&file=${encodeURIComponent(filename)}`;
+    mainIframeRef.current?.contentWindow?.postMessage({ type: "lbcode-set-slide-image", url }, "*");
   }
 
   useEffect(() => {
