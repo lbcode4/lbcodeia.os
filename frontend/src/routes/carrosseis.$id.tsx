@@ -136,6 +136,15 @@ function setSlideFields(html: string, idx: number, fields: { title: string; body
   return serializeDoc(doc);
 }
 
+function getSlideImageUrl(html: string, idx: number): string | null {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const node = Array.from(doc.querySelectorAll(".slide"))[idx] as HTMLElement | undefined;
+  if (!node) return null;
+  const bg = node.style.background;
+  const match = bg.match(/url\(['"]?([^'")]+)['"]?\)/);
+  return match ? match[1] : null;
+}
+
 const EDITOR_SCRIPT = `<script id="__lbcode-editor-script">
 (function(){
   document.addEventListener('click', function(e){
@@ -284,7 +293,19 @@ const EDITOR_SCRIPT = `<script id="__lbcode-editor-script">
     if (e.data.type === 'lbcode-set-slide-image') {
       var slidesImg = document.querySelectorAll('.slide');
       var ativoImg = slidesImg[window.__lbcodeActiveSlide || 0];
-      if (ativoImg) { ativoImg.style.background = "url('" + e.data.url + "') center/cover no-repeat"; serializeAndNotify(); }
+      if (ativoImg) {
+        var posMap = { fundo: 'center', topo: 'top', base: 'bottom', esquerdo: 'left', direito: 'right' };
+        var pos = posMap[e.data.position] || 'center';
+        var darkenPct = typeof e.data.darken === 'number' ? e.data.darken : 45;
+        var overlay = 'rgba(0,0,0,' + (darkenPct / 100) + ')';
+        ativoImg.style.background = 'linear-gradient(' + overlay + ',' + overlay + '), url(\'' + e.data.url + '\') ' + pos + '/cover no-repeat';
+        serializeAndNotify();
+      }
+    }
+    if (e.data.type === 'lbcode-remove-slide-image') {
+      var slidesRm = document.querySelectorAll('.slide');
+      var ativoRm = slidesRm[window.__lbcodeActiveSlide || 0];
+      if (ativoRm) { ativoRm.style.background = ''; serializeAndNotify(); }
     }
   });
 })();
@@ -370,6 +391,10 @@ function CarrosselEditor() {
   const [textoSlide, setTextoSlide] = useState("");
   const [slideHasBody, setSlideHasBody] = useState(true);
 
+  const [slideImageUrl, setSlideImageUrl] = useState<string | null>(null);
+  const [imagePosition, setImagePosition] = useState<"fundo" | "topo" | "base" | "esquerdo" | "direito">("fundo");
+  const [imageDarken, setImageDarken] = useState(45);
+
   useEffect(() => {
     setInspiracoesLoading(true);
     setInspiracoesError(null);
@@ -416,6 +441,9 @@ function CarrosselEditor() {
     setTituloSlide(fields.title);
     setTextoSlide(fields.body);
     setSlideHasBody(fields.hasBody);
+    setSlideImageUrl(getSlideImageUrl(html, activeSlide));
+    setImagePosition("fundo");
+    setImageDarken(45);
   }, [html, activeSlide]);
 
   function aplicarFundo(hex: string) {
@@ -463,7 +491,34 @@ function CarrosselEditor() {
 
   function aplicarInspiracao(filename: string) {
     const url = `${BACKEND}/api/carrosseis/inspiracao?id=${encodeURIComponent(id)}&file=${encodeURIComponent(filename)}`;
-    mainIframeRef.current?.contentWindow?.postMessage({ type: "lbcode-set-slide-image", url }, "*");
+    setSlideImageUrl(url);
+    mainIframeRef.current?.contentWindow?.postMessage(
+      { type: "lbcode-set-slide-image", url, position: imagePosition, darken: imageDarken },
+      "*",
+    );
+  }
+
+  function aplicarPosicaoImagem(position: "fundo" | "topo" | "base" | "esquerdo" | "direito") {
+    setImagePosition(position);
+    if (!slideImageUrl) return;
+    mainIframeRef.current?.contentWindow?.postMessage(
+      { type: "lbcode-set-slide-image", url: slideImageUrl, position, darken: imageDarken },
+      "*",
+    );
+  }
+
+  function aplicarEscurecimentoImagem(darken: number) {
+    setImageDarken(darken);
+    if (!slideImageUrl) return;
+    mainIframeRef.current?.contentWindow?.postMessage(
+      { type: "lbcode-set-slide-image", url: slideImageUrl, position: imagePosition, darken },
+      "*",
+    );
+  }
+
+  function removerImagemSlide() {
+    setSlideImageUrl(null);
+    mainIframeRef.current?.contentWindow?.postMessage({ type: "lbcode-remove-slide-image" }, "*");
   }
 
   useEffect(() => {
@@ -1140,6 +1195,50 @@ function CarrosselEditor() {
                   <p className="text-[10.5px] text-muted-foreground leading-snug">
                     Editar aqui substitui o texto por texto simples — pra manter destaque (gradiente) ou negrito, edite direto no preview acima.
                   </p>
+                  <div className="pt-3 border-t border-border">
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="text-[11px] uppercase tracking-wide text-muted-foreground">Imagem do slide</label>
+                      {slideImageUrl && (
+                        <button
+                          onClick={removerImagemSlide}
+                          className="text-[11px] inline-flex items-center gap-1 text-destructive hover:opacity-80"
+                        >
+                          <XIcon size={11} /> Remover
+                        </button>
+                      )}
+                    </div>
+                    {slideImageUrl ? (
+                      <div className="space-y-2">
+                        <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Posição</div>
+                        <div className="grid grid-cols-5 gap-1">
+                          {(["fundo", "topo", "base", "esquerdo", "direito"] as const).map((p) => (
+                            <button
+                              key={p}
+                              onClick={() => aplicarPosicaoImagem(p)}
+                              className={`text-[10px] py-1.5 px-1 rounded border text-center capitalize ${imagePosition === p ? "border-primary bg-primary/10 text-foreground" : "border-border text-muted-foreground hover:text-foreground"}`}
+                            >
+                              {p}
+                            </button>
+                          ))}
+                        </div>
+                        <div className="text-[10px] uppercase tracking-wide text-muted-foreground mt-2">
+                          Escurecimento ({imageDarken}%)
+                        </div>
+                        <input
+                          type="range"
+                          min={0}
+                          max={80}
+                          value={imageDarken}
+                          onChange={(e) => aplicarEscurecimentoImagem(Number(e.target.value))}
+                          className="w-full accent-primary"
+                        />
+                      </div>
+                    ) : (
+                      <p className="text-[11px] text-muted-foreground">
+                        Aplique uma imagem pelo Banco de imagens pra ajustar posição e escurecimento.
+                      </p>
+                    )}
+                  </div>
                 </div>
               </Card>
             </>
