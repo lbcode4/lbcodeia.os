@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, ChevronLeft, ChevronRight, Loader2, Send, Sparkles, User, RotateCcw, CheckCircle2, ImagePlus, X as XIcon, Plus, ArrowUp, ArrowDown, Copy, Trash2, Download } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Loader2, Send, Sparkles, User, RotateCcw, CheckCircle2, ImagePlus, X as XIcon, Plus, ArrowUp, ArrowDown, Copy, Trash2, Download, Upload } from "lucide-react";
 import { Button, Card } from "@/components/app-shell";
 import { FONTES_GOOGLE } from "@/lib/fontes-google";
 
@@ -902,6 +902,48 @@ function CarrosselEditor() {
 
         <div className="border-b xl:border-b-0 xl:border-r border-border bg-card flex flex-col gap-4 overflow-y-auto p-4">
           <Card className="!p-4">
+            <h3 className="font-semibold text-[13px] mb-3">Formato</h3>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                onClick={() => setPreviewFormat("4:5")}
+                className={`text-[11px] py-2 rounded border ${previewFormat === "4:5" ? "border-primary bg-primary/10 text-foreground" : "border-border text-muted-foreground"}`}
+              >
+                4:5 Feed
+              </button>
+              <button
+                onClick={() => setPreviewFormat("1:1")}
+                className={`text-[11px] py-2 rounded border ${previewFormat === "1:1" ? "border-primary bg-primary/10 text-foreground" : "border-border text-muted-foreground"}`}
+              >
+                1:1 Quadrado
+              </button>
+              <button
+                disabled
+                title="Carrossel é gerado em 4:5 — 9:16 fora de escopo"
+                className="text-[11px] py-2 rounded border border-border text-muted-foreground/40 cursor-not-allowed"
+              >
+                9:16 Story
+              </button>
+            </div>
+          </Card>
+
+          <Card className="!p-4">
+            <h3 className="font-semibold text-[13px] mb-3">Template</h3>
+            <div className="grid grid-cols-3 gap-2">
+              {TEMPLATES.map((t) => (
+                <button
+                  key={t.nome}
+                  onClick={() => aplicarTemplate(t.bg, t.fonte)}
+                  title={t.nome}
+                  className="rounded border border-border overflow-hidden hover:border-primary transition-colors"
+                >
+                  <div className="aspect-square" style={{ background: t.bg }} />
+                  <div className="text-[9px] py-1 text-center text-muted-foreground truncate px-1">{t.nome}</div>
+                </button>
+              ))}
+            </div>
+          </Card>
+
+          <Card className="!p-4">
             <h3 className="font-semibold text-[13px] mb-3">Aparência</h3>
             <div className="relative mb-3">
               <button
@@ -977,14 +1019,14 @@ function CarrosselEditor() {
             <div className="text-red-500 text-[13px]">Erro ao carregar: {loadErro}</div>
           ) : (
             <>
-              <div className="relative bg-white shadow-lg overflow-hidden" style={{ width: 1080 * MAIN_SCALE, height: 1350 * MAIN_SCALE }}>
+              <div className="relative bg-white shadow-lg overflow-hidden" style={{ width: 1080 * MAIN_SCALE, height: previewFormat === "1:1" ? 1080 * MAIN_SCALE : 1350 * MAIN_SCALE }}>
                 <iframe
                   ref={mainIframeRef}
                   key={mainBlobUrl}
                   src={mainBlobUrl || undefined}
                   title="Preview"
                   sandbox="allow-scripts allow-same-origin"
-                  style={{ width: 1080, height: 1350, transform: `scale(${MAIN_SCALE})`, transformOrigin: "top left", border: 0 }}
+                  style={{ width: 1080, height: 1350, transform: `scale(${MAIN_SCALE})`, transformOrigin: "top left", marginTop: previewFormat === "1:1" ? -(1350 - 1080) / 2 : 0, border: 0 }}
                 />
                 {showSafeZone && (
                   <div className="absolute inset-0 pointer-events-none z-30">
@@ -1000,7 +1042,7 @@ function CarrosselEditor() {
                     </div>
                   </div>
                 )}
-                {showFeedCrop && (
+                {showFeedCrop && previewFormat === "4:5" && (
                   <div className="absolute inset-0 pointer-events-none z-30">
                     <div
                       className="absolute left-0 right-0 top-0"
@@ -1054,7 +1096,7 @@ function CarrosselEditor() {
                 )}
               </div>
               <p className="text-center text-[12px] text-muted-foreground">{activeSlide + 1} / {total}</p>
-              {(showSafeZone || showFeedCrop || showGrid) && (
+              {(showSafeZone || (showFeedCrop && previewFormat === "4:5") || showGrid) && (
                 <div className="flex flex-wrap justify-center gap-3 text-[11px] text-muted-foreground max-w-md">
                   {showSafeZone && (
                     <span className="flex items-center gap-1.5">
@@ -1062,7 +1104,7 @@ function CarrosselEditor() {
                       Margem segura
                     </span>
                   )}
-                  {showFeedCrop && (
+                  {showFeedCrop && previewFormat === "4:5" && (
                     <span className="flex items-center gap-1.5">
                       <span className="w-3 h-2 rounded-sm" style={{ background: "repeating-linear-gradient(45deg, rgba(239,68,68,0.6) 0 3px, transparent 3px 6px)" }} />
                       Área cortada no grid do perfil
@@ -1071,6 +1113,35 @@ function CarrosselEditor() {
                   {showGrid && <span>Regra dos terços</span>}
                 </div>
               )}
+              <Card className="!p-4 w-full max-w-md text-left">
+                <h3 className="font-semibold text-[13px] mb-3">Conteúdo do slide {activeSlide + 1}</h3>
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-[11px] uppercase tracking-wide text-muted-foreground">Título</label>
+                    <input
+                      value={tituloSlide}
+                      onChange={(e) => setTituloSlide(e.target.value)}
+                      onBlur={commitSlideFields}
+                      className="w-full mt-1 px-3 py-2 rounded-md border border-border bg-background text-[13px]"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] uppercase tracking-wide text-muted-foreground">Texto</label>
+                    <textarea
+                      value={textoSlide}
+                      onChange={(e) => setTextoSlide(e.target.value)}
+                      onBlur={commitSlideFields}
+                      disabled={!slideHasBody}
+                      placeholder={slideHasBody ? undefined : "Esse slide não tem parágrafo de corpo"}
+                      rows={3}
+                      className="w-full mt-1 px-3 py-2 rounded-md border border-border bg-background text-[13px] resize-none disabled:opacity-50"
+                    />
+                  </div>
+                  <p className="text-[10.5px] text-muted-foreground leading-snug">
+                    Editar aqui substitui o texto por texto simples — pra manter destaque (gradiente) ou negrito, edite direto no preview acima.
+                  </p>
+                </div>
+              </Card>
             </>
           )}
         </div>
@@ -1149,6 +1220,47 @@ function CarrosselEditor() {
           </Card>
 
           <Card className="!p-4">
+            <h3 className="font-semibold text-[13px] mb-2">Banco de imagens</h3>
+            <p className="text-[11.5px] text-muted-foreground mb-3">Clique pra aplicar no slide selecionado.</p>
+            {inspiracoesError && <p className="text-[11px] text-destructive mb-2">{inspiracoesError}</p>}
+            {inspiracoesLoading ? (
+              <p className="text-[12px] text-muted-foreground">Carregando…</p>
+            ) : (
+              <div className="grid grid-cols-3 gap-1.5">
+                {inspiracoes.map((filename) => (
+                  <button
+                    key={filename}
+                    onClick={() => aplicarInspiracao(filename)}
+                    className="aspect-square rounded overflow-hidden border border-border hover:border-primary transition-colors"
+                    title="Aplicar imagem ao slide"
+                  >
+                    <img
+                      src={`${BACKEND}/api/carrosseis/inspiracao?id=${encodeURIComponent(id)}&file=${encodeURIComponent(filename)}`}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+            <label className="mt-2 w-full border border-dashed border-border rounded-md py-2 text-[11.5px] text-muted-foreground hover:text-primary hover:border-primary flex items-center justify-center gap-1.5 cursor-pointer">
+              {inspiracaoUploading ? <Loader2 size={12} className="animate-spin" /> : <Upload size={12} />}
+              Enviar imagem
+              <input
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                className="hidden"
+                disabled={inspiracaoUploading}
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleUploadInspiracao(file);
+                  e.target.value = "";
+                }}
+              />
+            </label>
+          </Card>
+
+          <Card className="!p-4">
             <div className="flex items-center justify-between mb-2">
               <h3 className="font-semibold text-[13px]">Legenda do post</h3>
               {legendaSaved && <span className="text-[11px] text-[color:var(--success)]">Salvo</span>}
@@ -1189,6 +1301,18 @@ function CarrosselEditor() {
                 </button>
               </>
             )}
+          </Card>
+
+          <Card className="!p-4 bg-primary/5 border-primary/30">
+            <div className="flex items-start gap-2">
+              <Sparkles size={16} className="text-primary shrink-0 mt-0.5" />
+              <div>
+                <div className="text-[13px] font-semibold">Dica da IA</div>
+                <p className="text-[12px] text-muted-foreground mt-1 leading-snug">
+                  Carrosséis com 7 a 10 slides têm 35% mais salvamentos. Considere adicionar 2 slides de exemplos práticos.
+                </p>
+              </div>
+            </div>
           </Card>
         </div>
       </div>
