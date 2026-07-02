@@ -1064,7 +1064,7 @@ function CarrosselEditor() {
         <div
           ref={previewRef}
           tabIndex={0}
-          className="border-b xl:border-b-0 xl:border-r border-border flex flex-col items-center justify-center overflow-auto min-h-[400px] bg-muted/40 outline-none gap-3 py-6"
+          className="border-b xl:border-b-0 xl:border-r border-border flex flex-col items-center justify-start overflow-auto min-h-[400px] bg-muted/40 outline-none gap-3 py-6"
         >
           {loadingHtml ? (
             <div className="flex items-center justify-center text-muted-foreground gap-2">
