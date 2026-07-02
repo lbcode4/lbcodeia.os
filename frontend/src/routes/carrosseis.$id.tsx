@@ -294,6 +294,7 @@ const EDITOR_SCRIPT = `<script id="__lbcode-editor-script">
       var ativoImg = slidesImg[window.__lbcodeActiveSlide || 0];
       if (ativoImg) {
         ativoImg.style.background = '';
+        ativoImg.style.zIndex = '0';
         var position = e.data.position || 'fundo';
         var darkenPct = typeof e.data.darken === 'number' ? e.data.darken : 45;
 
@@ -361,6 +362,7 @@ const EDITOR_SCRIPT = `<script id="__lbcode-editor-script">
         if (imgRm) imgRm.remove();
         if (overlayRm) overlayRm.remove();
         ativoRm.style.background = '';
+        ativoRm.style.zIndex = '';
         ativoRm.style.justifyContent = '';
         ativoRm.style.paddingLeft = '';
         ativoRm.style.paddingRight = '';
