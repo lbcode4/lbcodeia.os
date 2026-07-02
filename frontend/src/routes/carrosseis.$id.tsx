@@ -100,6 +100,42 @@ const SUGESTOES_IA = [
 
 const HASHTAGS_SUGERIDAS = ["#carrossel", "#conteudo", "#dicas", "#marketingdigital", "#instagram"];
 
+const TEMPLATES = [
+  { nome: "Minimal", bg: "#FAFAF7", fonte: "Inter" },
+  { nome: "Dark Bold", bg: "#0F0F1A", fonte: "Poppins" },
+  { nome: "Pastel", bg: "#FFE8DC", fonte: "Poppins" },
+  { nome: "Corporate", bg: "#0F3460", fonte: "Inter" },
+  { nome: "Warm Sand", bg: "#F5E6D3", fonte: "Playfair Display" },
+  { nome: "Contraste", bg: "#1A1A2E", fonte: "Space Grotesk" },
+];
+
+function getSlideFields(html: string, idx: number): { title: string; body: string; hasBody: boolean } {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const nodes = Array.from(doc.querySelectorAll(".slide"));
+  const node = nodes[idx];
+  if (!node) return { title: "", body: "", hasBody: false };
+  const titleEl = node.querySelector("h1, h2, h3, h4");
+  const bodyEl = node.querySelector("p");
+  return {
+    title: titleEl?.textContent?.trim() ?? "",
+    body: bodyEl?.textContent?.trim() ?? "",
+    hasBody: !!bodyEl,
+  };
+}
+
+function setSlideFields(html: string, idx: number, fields: { title: string; body: string }): string {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const nodes = Array.from(doc.querySelectorAll(".slide"));
+  const node = nodes[idx];
+  if (!node) return html;
+  const titleEl = node.querySelector("h1, h2, h3, h4");
+  const bodyEl = node.querySelector("p");
+  if (!titleEl && !bodyEl) return html;
+  if (titleEl) titleEl.textContent = fields.title;
+  if (bodyEl) bodyEl.textContent = fields.body;
+  return serializeDoc(doc);
+}
+
 const EDITOR_SCRIPT = `<script id="__lbcode-editor-script">
 (function(){
   document.addEventListener('click', function(e){
