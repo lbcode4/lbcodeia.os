@@ -225,6 +225,15 @@ const EDITOR_SCRIPT = `<script id="__lbcode-editor-script">
     toolbar.appendChild(btn);
   });
 
+  [['P','2'],['M','4'],['G','6']].forEach(function(pair){
+    var btn = document.createElement('button');
+    btn.textContent = pair[0];
+    btn.style.cssText = 'width:64px;height:64px;border-radius:12px;border:none;background:#3a3a3a;color:#fff;font-size:24px;font-weight:600;cursor:pointer;';
+    btn.addEventListener('mousedown', function(e){ e.preventDefault(); });
+    btn.addEventListener('click', function(){ document.execCommand('fontSize', false, pair[1]); serializeAndNotify(); });
+    toolbar.appendChild(btn);
+  });
+
   document.body.appendChild(toolbar);
 
   document.addEventListener('selectionchange', function(){
@@ -271,6 +280,11 @@ const EDITOR_SCRIPT = `<script id="__lbcode-editor-script">
       override.textContent = ".slide{font-family:'" + fonte + "','Inter',Arial,sans-serif}";
 
       serializeAndNotify();
+    }
+    if (e.data.type === 'lbcode-set-slide-image') {
+      var slidesImg = document.querySelectorAll('.slide');
+      var ativoImg = slidesImg[window.__lbcodeActiveSlide || 0];
+      if (ativoImg) { ativoImg.style.background = "url('" + e.data.url + "') center/cover no-repeat"; serializeAndNotify(); }
     }
   });
 })();
