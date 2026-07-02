@@ -129,7 +129,7 @@ const EDITOR_SCRIPT = `<script id="__lbcode-editor-script">
 
   var style = document.createElement('style');
   style.id = '__lbcode-editor-style';
-  style.textContent = '.__lbcode-editable:hover{outline:2px dashed rgba(41,197,255,.6);outline-offset:2px;cursor:text}.__lbcode-editable:focus{outline:2px solid #29C5FF}';
+  style.textContent = '.__lbcode-editable:hover{outline:2px dashed rgba(41,197,255,.6);outline-offset:2px;cursor:text}.__lbcode-editable:focus{outline:2px solid #29C5FF}.frame{pointer-events:none}';
   document.head.appendChild(style);
 
   function serializeAndNotify(){

@@ -60,7 +60,8 @@ p{font-size:29px;font-weight:400;line-height:1.4;color:var(--txt-2)}
 .frame{position:absolute;inset:40px;border-radius:32px;padding:2px;background:var(--grad);
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
   -webkit-mask-composite:xor;mask-composite:exclude;
-  box-shadow:0 0 60px rgba(162,75,255,.35),inset 0 0 40px rgba(41,197,255,.15)}
+  box-shadow:0 0 60px rgba(162,75,255,.35),inset 0 0 40px rgba(41,197,255,.15);
+  pointer-events:none}
 ```
 
 **Textura de circuito/glow no fundo** (sutil, não competir com texto):
