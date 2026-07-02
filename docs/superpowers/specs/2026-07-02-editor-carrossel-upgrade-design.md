@@ -69,10 +69,12 @@ Pediu pra atualizar nossa edição pra "ficar igual" — decisão tomada em brai
 ### 4. Slides + Legenda (nova coluna, 300px)
 
 **Card "Slides (N)"**:
-- Lista vertical, uma linha por slide: miniatura (reaproveita `thumbBlobUrls` já gerado), texto do
-  primeiro heading do slide (extraído via `DOMParser`), badge com a segunda classe CSS do `.slide`
-  (ex.: `cta-final`, `capa` — badge real, não taxonomia inventada).
-  Fallback (nenhum heading com texto encontrado): mostra `slide N` como texto do item.
+- Lista vertical, uma linha por slide: miniatura (reaproveita `thumbBlobUrls` já gerado) + texto do
+  primeiro heading/parágrafo com conteúdo dentro do slide (extraído via `DOMParser`, truncado).
+  Checado o HTML real gerado pela skill (`class="slide"` sempre, sem segunda classe semântica — a
+  variação de layout vive só num comentário HTML tipo `<!-- SLIDE 1 — CAPA -->`, frágil demais pra
+  parsear como badge): **sem badge de tipo** — só número do slide + texto, mais simples e fiel ao que
+  existe de verdade. Fallback (nenhum texto encontrado): mostra `Slide N`.
 - Clique seleciona (`setActiveSlide`).
 - Hover mostra: Duplicar, Mover ↑, Mover ↓, Remover (Remover desabilitado se só sobrar 1 slide).
 - Botão "+ Novo slide" no fim da lista.
