@@ -20,7 +20,7 @@ import { getBiblioteca, readBibliotecaFile } from "./biblioteca.js";
 import { getDashboardData } from "./dashboard.js";
 import { runChat } from "./chat.js";
 import { getOnboardingStatus, getConfiguracoes, saveConfiguracoes, getAiConfig, saveAiConfig, type Configuracoes, type AiConfig } from "./onboarding.js";
-import { listCampanhas, setCampanhaStatus, listAdsets, setAdsetStatus, readMetaToken } from "./meta-campanhas.js";
+import { listCampanhas, setCampanhaStatus, listAdsets, setAdsetStatus, listAds, setAdStatus, readMetaToken } from "./meta-campanhas.js";
 
 export const app = new Hono();
 
@@ -623,6 +623,36 @@ app.put("/api/meta/adsets/:id/status", async (c) => {
     const token = await readMetaToken();
     const status = body.status as "ACTIVE" | "PAUSED";
     await setAdsetStatus(id, status, token);
+    return c.json({ id, new_status: status });
+  } catch (e) {
+    return c.json({ error: (e as Error).message }, 502);
+  }
+});
+
+app.get("/api/meta/ads", async (c) => {
+  const adset_id = c.req.query("adset_id");
+  const cliente = c.req.query("cliente");
+  if (!adset_id || !cliente) return c.json({ error: "adset_id e cliente obrigatórios" }, 400);
+  try {
+    const token = await readMetaToken();
+    const ads = await listAds(adset_id, token);
+    return c.json(ads);
+  } catch (e) {
+    return c.json({ error: (e as Error).message }, 502);
+  }
+});
+
+app.put("/api/meta/ads/:id/status", async (c) => {
+  const id = c.req.param("id");
+  let body: { status: string };
+  try { body = await c.req.json(); } catch { return c.json({ error: "JSON inválido" }, 400); }
+  if (body.status !== "ACTIVE" && body.status !== "PAUSED") {
+    return c.json({ error: "status deve ser ACTIVE ou PAUSED" }, 400);
+  }
+  try {
+    const token = await readMetaToken();
+    const status = body.status as "ACTIVE" | "PAUSED";
+    await setAdStatus(id, status, token);
     return c.json({ id, new_status: status });
   } catch (e) {
     return c.json({ error: (e as Error).message }, 502);

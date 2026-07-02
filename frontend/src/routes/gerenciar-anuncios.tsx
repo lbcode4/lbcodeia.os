@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, type MouseEvent } from "react";
 import { PageHeader, Card, Button } from "@/components/app-shell";
 import { useCliente } from "@/lib/cliente-context";
 import { ChevronDown, ChevronRight, History, RefreshCw, Loader2 } from "lucide-react";
@@ -8,7 +8,10 @@ export const Route = createFileRoute("/gerenciar-anuncios")({
   head: () => ({
     meta: [
       { title: "Campanhas Meta — LBCode Ads" },
-      { name: "description", content: "Veja e gerencie campanhas e conjuntos de anúncios do Meta Ads." },
+      {
+        name: "description",
+        content: "Veja e gerencie campanhas e conjuntos de anúncios do Meta Ads.",
+      },
     ],
   }),
   component: GerenciarCampanhas,
@@ -35,11 +38,25 @@ type Adset = {
   lifetime_budget?: string;
 };
 
+type Ad = {
+  id: string;
+  name: string;
+  status: "ACTIVE" | "PAUSED";
+  effective_status: string;
+  creative?: {
+    id: string;
+    body?: string;
+    title?: string;
+    image_url?: string;
+    thumbnail_url?: string;
+  };
+};
+
 type LogEntry = { ts: string; nivel: string; nome: string; acao: string };
 
 type ModalState = {
   id: string;
-  nivel: "campanha" | "adset";
+  nivel: "campanha" | "adset" | "ad";
   next: "ACTIVE" | "PAUSED";
   nome: string;
 };
@@ -62,7 +79,9 @@ function StatusToggle({ on, onClick }: { on: boolean; onClick: () => void }) {
       className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${on ? "bg-[color:var(--success)]" : "bg-muted"}`}
       aria-label="Alternar status"
     >
-      <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${on ? "translate-x-4" : "translate-x-0.5"}`} />
+      <span
+        className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${on ? "translate-x-4" : "translate-x-0.5"}`}
+      />
     </button>
   );
 }
@@ -71,8 +90,11 @@ function GerenciarCampanhas() {
   const { contas, cliente, setCliente } = useCliente();
   const [campanhas, setCampanhas] = useState<Campanha[]>([]);
   const [adsets, setAdsets] = useState<Record<string, Adset[]>>({});
+  const [ads, setAds] = useState<Record<string, Ad[]>>({});
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [expandedAdsetId, setExpandedAdsetId] = useState<string | null>(null);
   const [loadingAdsets, setLoadingAdsets] = useState<string | null>(null);
+  const [loadingAds, setLoadingAds] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState("");
   const [modal, setModal] = useState<ModalState | null>(null);
@@ -89,14 +111,16 @@ function GerenciarCampanhas() {
     setErro("");
     setCampanhas([]);
     setExpandedId(null);
+    setExpandedAdsetId(null);
     setAdsets({});
+    setAds({});
     try {
       const res = await fetch(`${BACKEND}/api/meta/campanhas?cliente=${encodeURIComponent(c)}`);
       if (!res.ok) {
-        const body = await res.json() as { error?: string };
+        const body = (await res.json()) as { error?: string };
         throw new Error(body.error ?? `Erro ${res.status}`);
       }
-      setCampanhas(await res.json() as Campanha[]);
+      setCampanhas((await res.json()) as Campanha[]);
     } catch (e) {
       setErro((e as Error).message);
     } finally {
@@ -111,15 +135,19 @@ function GerenciarCampanhas() {
   async function expandCampanha(id: string) {
     if (expandedId === id) {
       setExpandedId(null);
+      setExpandedAdsetId(null);
       return;
     }
     setExpandedId(id);
+    setExpandedAdsetId(null);
     if (adsets[id]) return;
     setLoadingAdsets(id);
     try {
-      const res = await fetch(`${BACKEND}/api/meta/adsets?campanha_id=${id}&cliente=${encodeURIComponent(cliente)}`);
+      const res = await fetch(
+        `${BACKEND}/api/meta/adsets?campanha_id=${id}&cliente=${encodeURIComponent(cliente)}`,
+      );
       if (!res.ok) throw new Error(`Erro ${res.status}`);
-      const data = await res.json() as Adset[];
+      const data = (await res.json()) as Adset[];
       setAdsets((prev) => ({ ...prev, [id]: data }));
     } catch {
       setAdsets((prev) => ({ ...prev, [id]: [] }));
@@ -128,7 +156,35 @@ function GerenciarCampanhas() {
     }
   }
 
-  function requestToggle(id: string, nivel: "campanha" | "adset", current: "ACTIVE" | "PAUSED", nome: string) {
+  async function expandAdset(id: string, e: MouseEvent) {
+    e.stopPropagation();
+    if (expandedAdsetId === id) {
+      setExpandedAdsetId(null);
+      return;
+    }
+    setExpandedAdsetId(id);
+    if (ads[id]) return;
+    setLoadingAds(id);
+    try {
+      const res = await fetch(
+        `${BACKEND}/api/meta/ads?adset_id=${id}&cliente=${encodeURIComponent(cliente)}`,
+      );
+      if (!res.ok) throw new Error(`Erro ${res.status}`);
+      const data = (await res.json()) as Ad[];
+      setAds((prev) => ({ ...prev, [id]: data }));
+    } catch {
+      setAds((prev) => ({ ...prev, [id]: [] }));
+    } finally {
+      setLoadingAds(null);
+    }
+  }
+
+  function requestToggle(
+    id: string,
+    nivel: "campanha" | "adset" | "ad",
+    current: "ACTIVE" | "PAUSED",
+    nome: string,
+  ) {
     setModal({ id, nivel, next: current === "ACTIVE" ? "PAUSED" : "ACTIVE", nome });
   }
 
@@ -138,24 +194,42 @@ function GerenciarCampanhas() {
 
     const prevCampanhas = campanhas;
     const prevAdsets = { ...adsets };
+    const prevAds = { ...ads };
 
     if (modal.nivel === "campanha") {
-      setCampanhas((prev) => prev.map((c) => c.id === modal.id ? { ...c, status: modal.next } : c));
-    } else {
+      setCampanhas((prev) =>
+        prev.map((c) => (c.id === modal.id ? { ...c, status: modal.next } : c)),
+      );
+    } else if (modal.nivel === "adset") {
       setAdsets((prev) => {
         const updated = { ...prev };
         for (const [cId, as] of Object.entries(updated)) {
           if (as.some((a) => a.id === modal.id)) {
-            updated[cId] = as.map((a) => a.id === modal.id ? { ...a, status: modal.next } : a);
+            updated[cId] = as.map((a) => (a.id === modal.id ? { ...a, status: modal.next } : a));
+          }
+        }
+        return updated;
+      });
+    } else {
+      setAds((prev) => {
+        const updated = { ...prev };
+        for (const [setId, list] of Object.entries(updated)) {
+          if (list.some((a) => a.id === modal.id)) {
+            updated[setId] = list.map((a) =>
+              a.id === modal.id ? { ...a, status: modal.next } : a,
+            );
           }
         }
         return updated;
       });
     }
 
-    const endpoint = modal.nivel === "campanha"
-      ? `/api/meta/campanhas/${modal.id}/status`
-      : `/api/meta/adsets/${modal.id}/status`;
+    const endpoint =
+      modal.nivel === "campanha"
+        ? `/api/meta/campanhas/${modal.id}/status`
+        : modal.nivel === "adset"
+          ? `/api/meta/adsets/${modal.id}/status`
+          : `/api/meta/ads/${modal.id}/status`;
 
     try {
       const res = await fetch(`${BACKEND}${endpoint}`, {
@@ -164,16 +238,21 @@ function GerenciarCampanhas() {
         body: JSON.stringify({ status: modal.next }),
       });
       if (!res.ok) {
-        const body = await res.json() as { error?: string };
+        const body = (await res.json()) as { error?: string };
         throw new Error(body.error ?? `Erro ${res.status}`);
       }
       const acao = modal.next === "ACTIVE" ? "Ativou" : "Pausou";
-      const nivel = modal.nivel === "campanha" ? "Campanha" : "Conjunto";
+      const nivel =
+        modal.nivel === "campanha" ? "Campanha" : modal.nivel === "adset" ? "Conjunto" : "Anúncio";
       setLog((prev) => [{ ts: nowTs(), nivel, nome: modal.nome, acao }, ...prev]);
     } catch (e) {
       setCampanhas(prevCampanhas);
       setAdsets(prevAdsets);
-      setLog((prev) => [{ ts: nowTs(), nivel: "Erro", nome: modal.nome, acao: (e as Error).message }, ...prev]);
+      setAds(prevAds);
+      setLog((prev) => [
+        { ts: nowTs(), nivel: "Erro", nome: modal.nome, acao: (e as Error).message },
+        ...prev,
+      ]);
     } finally {
       setToggling(false);
       setModal(null);
@@ -181,7 +260,8 @@ function GerenciarCampanhas() {
   }
 
   const filtered = campanhas.filter((c) => c.name.toLowerCase().includes(q.toLowerCase()));
-  const isInsta = (name: string) => name.toLowerCase().includes("instagram") || name.toLowerCase().includes("insta");
+  const isInsta = (name: string) =>
+    name.toLowerCase().includes("instagram") || name.toLowerCase().includes("insta");
   const filteredInsta = filtered.filter((c) => isInsta(c.name));
   const filteredOther = filtered.filter((c) => !isInsta(c.name));
 
@@ -191,20 +271,31 @@ function GerenciarCampanhas() {
     const campAdsets = adsets[camp.id] ?? [];
     return (
       <>
-        <tr key={camp.id} className="border-b border-border hover:bg-muted/20 cursor-pointer" onClick={() => expandCampanha(camp.id)}>
+        <tr
+          key={camp.id}
+          className="border-b border-border hover:bg-muted/20 cursor-pointer"
+          onClick={() => expandCampanha(camp.id)}
+        >
           <td className="py-3 px-3 text-muted-foreground">
             {expanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
           </td>
           <td className="py-3 px-3 font-medium">{camp.name}</td>
-          <td className="py-3 px-3 text-muted-foreground hidden sm:table-cell text-[11px]">{camp.objective}</td>
-          <td className="py-3 px-3 text-right hidden sm:table-cell tabular-nums">{fmtBudget(camp)}</td>
+          <td className="py-3 px-3 text-muted-foreground hidden sm:table-cell text-[11px]">
+            {camp.objective}
+          </td>
+          <td className="py-3 px-3 text-right hidden sm:table-cell tabular-nums">
+            {fmtBudget(camp)}
+          </td>
           <td className="py-3 px-3 text-center" onClick={(e) => e.stopPropagation()}>
-            <StatusToggle on={on} onClick={() => requestToggle(camp.id, "campanha", camp.status, camp.name)} />
+            <StatusToggle
+              on={on}
+              onClick={() => requestToggle(camp.id, "campanha", camp.status, camp.name)}
+            />
             <div className="text-[10px] text-muted-foreground mt-1">{camp.status}</div>
           </td>
         </tr>
-        {expanded && (
-          loadingAdsets === camp.id ? (
+        {expanded &&
+          (loadingAdsets === camp.id ? (
             <tr key={`${camp.id}-loading`} className="border-b border-border bg-muted/10">
               <td colSpan={5} className="py-3 px-10 text-muted-foreground text-[12px]">
                 <Loader2 size={12} className="animate-spin inline mr-1" /> Carregando conjuntos…
@@ -212,44 +303,142 @@ function GerenciarCampanhas() {
             </tr>
           ) : campAdsets.length === 0 ? (
             <tr key={`${camp.id}-empty`} className="border-b border-border bg-muted/10">
-              <td colSpan={5} className="py-3 px-10 text-muted-foreground text-[12px]">Nenhum conjunto ativo ou pausado.</td>
+              <td colSpan={5} className="py-3 px-10 text-muted-foreground text-[12px]">
+                Nenhum conjunto ativo ou pausado.
+              </td>
             </tr>
-          ) : campAdsets.map((adset) => {
-            const adOn = adset.status === "ACTIVE";
-            return (
-              <tr key={adset.id} className="border-b border-border last:border-0 bg-muted/10">
-                <td className="py-2 px-3"></td>
-                <td className="py-2 px-3 pl-8 text-muted-foreground">↳ {adset.name}</td>
-                <td className="py-2 px-3 hidden sm:table-cell"></td>
-                <td className="py-2 px-3 text-right hidden sm:table-cell tabular-nums text-[12px]">{fmtBudget(adset)}</td>
-                <td className="py-2 px-3 text-center">
-                  <StatusToggle on={adOn} onClick={() => requestToggle(adset.id, "adset", adset.status, adset.name)} />
-                  <div className="text-[10px] text-muted-foreground mt-1">{adset.status}</div>
-                </td>
-              </tr>
-            );
-          })
-        )}
+          ) : (
+            campAdsets.map((adset) => {
+              const adOn = adset.status === "ACTIVE";
+              const adsetExpanded = expandedAdsetId === adset.id;
+              const adsInSet = ads[adset.id] ?? [];
+              return (
+                <>
+                  <tr
+                    key={adset.id}
+                    className="border-b border-border last:border-0 bg-muted/10 hover:bg-muted/20 cursor-pointer"
+                    onClick={(e) => expandAdset(adset.id, e)}
+                  >
+                    <td className="py-2 px-3 text-muted-foreground">
+                      {adsetExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
+                    </td>
+                    <td className="py-2 px-3 pl-6 text-muted-foreground">↳ {adset.name}</td>
+                    <td className="py-2 px-3 hidden sm:table-cell"></td>
+                    <td className="py-2 px-3 text-right hidden sm:table-cell tabular-nums text-[12px]">
+                      {fmtBudget(adset)}
+                    </td>
+                    <td className="py-2 px-3 text-center" onClick={(e) => e.stopPropagation()}>
+                      <StatusToggle
+                        on={adOn}
+                        onClick={() => requestToggle(adset.id, "adset", adset.status, adset.name)}
+                      />
+                      <div className="text-[10px] text-muted-foreground mt-1">{adset.status}</div>
+                    </td>
+                  </tr>
+                  {adsetExpanded &&
+                    (loadingAds === adset.id ? (
+                      <tr
+                        key={`${adset.id}-loading`}
+                        className="border-b border-border bg-muted/20"
+                      >
+                        <td colSpan={5} className="py-3 px-14 text-muted-foreground text-[12px]">
+                          <Loader2 size={12} className="animate-spin inline mr-1" /> Carregando
+                          anúncios…
+                        </td>
+                      </tr>
+                    ) : adsInSet.length === 0 ? (
+                      <tr key={`${adset.id}-empty`} className="border-b border-border bg-muted/20">
+                        <td colSpan={5} className="py-3 px-14 text-muted-foreground text-[12px]">
+                          Nenhum anúncio ativo ou pausado.
+                        </td>
+                      </tr>
+                    ) : (
+                      adsInSet.map((ad) => {
+                        const on = ad.status === "ACTIVE";
+                        const thumb = ad.creative?.thumbnail_url ?? ad.creative?.image_url;
+                        return (
+                          <tr
+                            key={ad.id}
+                            className="border-b border-border last:border-0 bg-muted/20"
+                          >
+                            <td className="py-2 px-3"></td>
+                            <td className="py-2 px-3 pl-12" colSpan={3}>
+                              <div className="flex items-start gap-3">
+                                {thumb ? (
+                                  <img
+                                    src={thumb}
+                                    alt={ad.name}
+                                    className="w-12 h-12 rounded object-cover border border-border shrink-0"
+                                  />
+                                ) : (
+                                  <div className="w-12 h-12 rounded bg-muted shrink-0" />
+                                )}
+                                <div className="min-w-0">
+                                  <div className="text-muted-foreground text-[13px]">
+                                    ↳ {ad.name}
+                                  </div>
+                                  {ad.creative?.title && (
+                                    <div className="text-[12px] font-medium truncate max-w-md">
+                                      {ad.creative.title}
+                                    </div>
+                                  )}
+                                  {ad.creative?.body && (
+                                    <div className="text-[11px] text-muted-foreground truncate max-w-md">
+                                      {ad.creative.body}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </td>
+                            <td className="py-2 px-3 text-center">
+                              <StatusToggle
+                                on={on}
+                                onClick={() => requestToggle(ad.id, "ad", ad.status, ad.name)}
+                              />
+                              <div className="text-[10px] text-muted-foreground mt-1">
+                                {ad.status}
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    ))}
+                </>
+              );
+            })
+          ))}
       </>
     );
   }
 
   return (
     <>
-      <PageHeader title="Campanhas Meta" subtitle="Ative ou pause campanhas e conjuntos. Toda ação fica registrada no log." />
+      <PageHeader
+        title="Campanhas Meta"
+        subtitle="Ative ou pause campanhas e conjuntos. Toda ação fica registrada no log."
+      />
 
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <select
           value={cliente}
-          onChange={(e) => { setCliente(e.target.value); carregarCampanhasComCliente(e.target.value); }}
+          onChange={(e) => {
+            setCliente(e.target.value);
+            carregarCampanhasComCliente(e.target.value);
+          }}
           className="h-9 rounded-md border border-border bg-card text-[13px] px-3 min-w-[160px]"
         >
           {contas.map((c) => (
-            <option key={c.cliente} value={c.cliente}>{c.cliente}</option>
+            <option key={c.cliente} value={c.cliente}>
+              {c.cliente}
+            </option>
           ))}
         </select>
         <Button variant="secondary" onClick={carregarCampanhas} disabled={loading || !cliente}>
-          {loading ? <Loader2 size={14} className="animate-spin mr-1" /> : <RefreshCw size={14} className="mr-1" />}
+          {loading ? (
+            <Loader2 size={14} className="animate-spin mr-1" />
+          ) : (
+            <RefreshCw size={14} className="mr-1" />
+          )}
           Atualizar
         </Button>
         <input
@@ -275,7 +464,9 @@ function GerenciarCampanhas() {
               </div>
             ) : filtered.length === 0 ? (
               <div className="py-12 text-center text-muted-foreground text-[13px]">
-                {campanhas.length === 0 ? "Selecione um cliente para carregar as campanhas." : "Nenhuma campanha encontrada."}
+                {campanhas.length === 0
+                  ? "Selecione um cliente para carregar as campanhas."
+                  : "Nenhuma campanha encontrada."}
               </div>
             ) : (
               <div className="overflow-x-auto">
@@ -284,15 +475,22 @@ function GerenciarCampanhas() {
                     <tr>
                       <th className="text-left font-medium py-2 px-3 w-6"></th>
                       <th className="text-left font-medium py-2 px-3">Campanha</th>
-                      <th className="text-left font-medium py-2 px-3 hidden sm:table-cell">Objetivo</th>
-                      <th className="text-right font-medium py-2 px-3 hidden sm:table-cell">Orçamento</th>
+                      <th className="text-left font-medium py-2 px-3 hidden sm:table-cell">
+                        Objetivo
+                      </th>
+                      <th className="text-right font-medium py-2 px-3 hidden sm:table-cell">
+                        Orçamento
+                      </th>
                       <th className="text-center font-medium py-2 px-3">Status</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredOther.length > 0 && (
                       <tr className="bg-muted/30">
-                        <td colSpan={5} className="py-1.5 px-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                        <td
+                          colSpan={5}
+                          className="py-1.5 px-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground"
+                        >
                           Meta
                         </td>
                       </tr>
@@ -300,7 +498,10 @@ function GerenciarCampanhas() {
                     {filteredOther.map((camp) => renderCampRow(camp))}
                     {filteredInsta.length > 0 && (
                       <tr className="bg-muted/30">
-                        <td colSpan={5} className="py-1.5 px-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                        <td
+                          colSpan={5}
+                          className="py-1.5 px-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground"
+                        >
                           Instagram
                         </td>
                       </tr>
@@ -326,7 +527,9 @@ function GerenciarCampanhas() {
                 <li key={i} className="pb-3 border-b border-border last:border-0">
                   <div className="text-[11px] text-muted-foreground">{l.ts}</div>
                   <div className="mt-0.5">
-                    <span className={`font-medium ${l.nivel === "Erro" ? "text-destructive" : ""}`}>{l.acao}</span>{" "}
+                    <span className={`font-medium ${l.nivel === "Erro" ? "text-destructive" : ""}`}>
+                      {l.acao}
+                    </span>{" "}
                     <span className="text-muted-foreground text-[11px]">[{l.nivel}]</span>
                   </div>
                   <div className="text-[11px] text-muted-foreground truncate">{l.nome}</div>
@@ -343,25 +546,30 @@ function GerenciarCampanhas() {
           onClick={() => !toggling && setModal(null)}
         >
           <div onClick={(e) => e.stopPropagation()}>
-          <Card className="max-w-md w-full">
-            <h3 className="font-semibold text-[16px] mb-2">
-              {modal.next === "PAUSED" ? "Pausar" : "Ativar"}{" "}
-              {modal.nivel === "campanha" ? "campanha" : "conjunto"}?
-            </h3>
-            <p className="text-[13px] text-muted-foreground mb-5">
-              <span className="font-medium text-foreground">'{modal.nome}'</span> será{" "}
-              {modal.next === "PAUSED" ? "pausado" : "ativado"} no Meta Ads.
-            </p>
-            <div className="flex justify-end gap-2">
-              <Button variant="secondary" onClick={() => setModal(null)} disabled={toggling}>
-                Cancelar
-              </Button>
-              <Button onClick={confirmarToggle} disabled={toggling}>
-                {toggling ? <Loader2 size={14} className="animate-spin mr-1" /> : null}
-                Confirmar
-              </Button>
-            </div>
-          </Card>
+            <Card className="max-w-md w-full">
+              <h3 className="font-semibold text-[16px] mb-2">
+                {modal.next === "PAUSED" ? "Pausar" : "Ativar"}{" "}
+                {modal.nivel === "campanha"
+                  ? "campanha"
+                  : modal.nivel === "adset"
+                    ? "conjunto"
+                    : "anúncio"}
+                ?
+              </h3>
+              <p className="text-[13px] text-muted-foreground mb-5">
+                <span className="font-medium text-foreground">'{modal.nome}'</span> será{" "}
+                {modal.next === "PAUSED" ? "pausado" : "ativado"} no Meta Ads.
+              </p>
+              <div className="flex justify-end gap-2">
+                <Button variant="secondary" onClick={() => setModal(null)} disabled={toggling}>
+                  Cancelar
+                </Button>
+                <Button onClick={confirmarToggle} disabled={toggling}>
+                  {toggling ? <Loader2 size={14} className="animate-spin mr-1" /> : null}
+                  Confirmar
+                </Button>
+              </div>
+            </Card>
           </div>
         </div>
       )}

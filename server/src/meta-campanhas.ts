@@ -21,9 +21,24 @@ export type Adset = {
   lifetime_budget?: string;
 };
 
+export type Ad = {
+  id: string;
+  name: string;
+  status: "ACTIVE" | "PAUSED";
+  effective_status: string;
+  creative?: {
+    id: string;
+    body?: string;
+    title?: string;
+    image_url?: string;
+    thumbnail_url?: string;
+  };
+};
+
 const BASE_URL = "https://graph.facebook.com/v21.0";
 const CAMPANHA_FIELDS = "id,name,status,effective_status,objective,daily_budget,lifetime_budget";
 const ADSET_FIELDS = "id,name,status,effective_status,daily_budget,lifetime_budget";
+const AD_FIELDS = "id,name,status,effective_status,creative{id,body,title,image_url,thumbnail_url}";
 const VALID_STATUSES = new Set(["ACTIVE", "PAUSED"]);
 
 async function graphGet(path: string, params: Record<string, string>): Promise<unknown> {
@@ -75,5 +90,18 @@ export async function listAdsets(campaignId: string, token: string): Promise<Ads
 }
 
 export async function setAdsetStatus(id: string, status: "ACTIVE" | "PAUSED", token: string): Promise<void> {
+  await graphPost(id, token, { status });
+}
+
+export async function listAds(adsetId: string, token: string): Promise<Ad[]> {
+  const data = await graphGet(`${adsetId}/ads`, {
+    access_token: token,
+    fields: AD_FIELDS,
+    limit: "100",
+  }) as { data: Ad[] };
+  return data.data.filter((a) => VALID_STATUSES.has(a.status));
+}
+
+export async function setAdStatus(id: string, status: "ACTIVE" | "PAUSED", token: string): Promise<void> {
   await graphPost(id, token, { status });
 }

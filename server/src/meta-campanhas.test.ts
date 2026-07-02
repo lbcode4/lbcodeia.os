@@ -1,11 +1,12 @@
 // server/src/meta-campanhas.test.ts
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { listCampanhas, setCampanhaStatus, listAdsets, setAdsetStatus } from "./meta-campanhas.js";
+import { listCampanhas, setCampanhaStatus, listAdsets, setAdsetStatus, listAds, setAdStatus } from "./meta-campanhas.js";
 
 const TOKEN = "test-token";
 const ACCOUNT_ID = "act_123";
 const CAMPAIGN_ID = "cam_456";
 const ADSET_ID = "ads_789";
+const AD_ID = "ad_101";
 
 const mockFetch = vi.fn();
 beforeEach(() => {
@@ -109,5 +110,42 @@ describe("setAdsetStatus", () => {
     expect(url).toContain(ADSET_ID);
     const body = JSON.parse(opts.body as string);
     expect(body.status).toBe("ACTIVE");
+  });
+});
+
+describe("listAds", () => {
+  it("fetches ads with creative info for adset, filters out non-active/paused", async () => {
+    mockGraphOk({
+      data: [
+        {
+          id: "ad1", name: "AD001", status: "ACTIVE", effective_status: "ACTIVE",
+          creative: { id: "cr1", body: "texto", title: "título", image_url: "https://img/1.png" },
+        },
+        { id: "ad2", name: "AD002", status: "ARCHIVED", effective_status: "ARCHIVED" },
+      ],
+    });
+    const result = await listAds(ADSET_ID, TOKEN);
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe("ad1");
+    expect(result[0].creative?.image_url).toBe("https://img/1.png");
+    const url = mockFetch.mock.calls[0][0] as string;
+    expect(url).toContain(ADSET_ID);
+    expect(url).toContain("ads");
+  });
+
+  it("throws on Graph API error", async () => {
+    mockGraphError(400, "Invalid adset");
+    await expect(listAds(ADSET_ID, TOKEN)).rejects.toThrow("Invalid adset");
+  });
+});
+
+describe("setAdStatus", () => {
+  it("POSTs status to ad endpoint", async () => {
+    mockGraphOk({ success: true });
+    await setAdStatus(AD_ID, "PAUSED", TOKEN);
+    const [url, opts] = mockFetch.mock.calls[0] as [string, RequestInit];
+    expect(url).toContain(AD_ID);
+    const body = JSON.parse(opts.body as string);
+    expect(body.status).toBe("PAUSED");
   });
 });

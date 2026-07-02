@@ -1,7 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
 import {
-  LayoutDashboard, Menu, X, Moon, Sun, ChevronDown, User, Bot, Globe, FileBarChart, Target, Library, Newspaper, TrendingUp, Settings, Palette,
+  LayoutDashboard, Menu, X, Moon, Sun, ChevronDown, User, Bot, Globe, FileBarChart, Target, Library, Newspaper, TrendingUp, Settings, Palette, Megaphone,
 } from "lucide-react";
 import { useTheme } from "@/lib/theme";
 import { periods } from "@/lib/mock";
@@ -13,6 +13,7 @@ const topNav = [
   { to: "/assistente", label: "Assistente IA", icon: Bot },
   { to: "/prospeccao", label: "Prospecção", icon: Target },
   { to: "/dashboard-conteudo", label: "Dashboard de Posts", icon: LayoutDashboard },
+  { to: "/gerenciar-anuncios", label: "Campanhas Meta", icon: Megaphone },
   { to: "/conteudo", label: "Conteúdo", icon: Newspaper },
   { to: "/identidade", label: "Identidade", icon: Palette },
   { to: "/organico-instagram", label: "Reels Orgânicos", icon: TrendingUp },

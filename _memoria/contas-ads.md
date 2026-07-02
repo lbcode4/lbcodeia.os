@@ -7,4 +7,4 @@ Token secreto NÃO vive aqui (fica em `integracoes/credentials/`, gitignored).
 
 | Cliente | Meta Ad Account | IG User ID | Handle IG | Google Ads ID | Ativo |
 |---------|-----------------|------------|-----------|---------------|-------|
-| LBCode.IA |  |  |  |  | Sim |
+| LBCode.IA | act_2000230183864649 |  |  |  | Sim |
