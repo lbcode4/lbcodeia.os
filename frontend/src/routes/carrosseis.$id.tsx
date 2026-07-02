@@ -138,11 +138,10 @@ function setSlideFields(html: string, idx: number, fields: { title: string; body
 
 function getSlideImageUrl(html: string, idx: number): string | null {
   const doc = new DOMParser().parseFromString(html, "text/html");
-  const node = Array.from(doc.querySelectorAll(".slide"))[idx] as HTMLElement | undefined;
+  const node = Array.from(doc.querySelectorAll(".slide"))[idx];
   if (!node) return null;
-  const bg = node.style.background;
-  const match = bg.match(/url\(['"]?([^'")]+)['"]?\)/);
-  return match ? match[1] : null;
+  const img = node.querySelector(".__lbcode-slide-image");
+  return img?.getAttribute("src") ?? null;
 }
 
 const EDITOR_SCRIPT = `<script id="__lbcode-editor-script">
@@ -294,18 +293,79 @@ const EDITOR_SCRIPT = `<script id="__lbcode-editor-script">
       var slidesImg = document.querySelectorAll('.slide');
       var ativoImg = slidesImg[window.__lbcodeActiveSlide || 0];
       if (ativoImg) {
-        var posMap = { fundo: 'center', topo: 'top', base: 'bottom', esquerdo: 'left', direito: 'right' };
-        var pos = posMap[e.data.position] || 'center';
+        ativoImg.style.background = '';
+        var position = e.data.position || 'fundo';
         var darkenPct = typeof e.data.darken === 'number' ? e.data.darken : 45;
-        var overlay = 'rgba(0,0,0,' + (darkenPct / 100) + ')';
-        ativoImg.style.background = 'linear-gradient(' + overlay + ',' + overlay + '), url("' + e.data.url + '") ' + pos + '/cover no-repeat';
+
+        var img = ativoImg.querySelector('.__lbcode-slide-image');
+        if (!img) {
+          img = document.createElement('img');
+          img.className = '__lbcode-slide-image';
+          img.setAttribute('alt', '');
+          ativoImg.insertBefore(img, ativoImg.firstChild);
+        }
+        img.src = e.data.url;
+
+        var overlay = ativoImg.querySelector('.__lbcode-slide-image-overlay');
+
+        if (position === 'topo') {
+          img.style.cssText = 'position:absolute;object-fit:cover;z-index:-1;top:0;left:0;right:0;width:100%;height:50%;';
+          ativoImg.style.justifyContent = 'flex-end';
+          ativoImg.style.paddingLeft = '';
+          ativoImg.style.paddingRight = '';
+          if (overlay) overlay.remove();
+        } else if (position === 'base') {
+          img.style.cssText = 'position:absolute;object-fit:cover;z-index:-1;bottom:0;left:0;right:0;width:100%;height:50%;';
+          ativoImg.style.justifyContent = 'flex-start';
+          ativoImg.style.paddingLeft = '';
+          ativoImg.style.paddingRight = '';
+          if (overlay) overlay.remove();
+        } else if (position === 'esquerdo') {
+          img.style.cssText = 'position:absolute;object-fit:cover;z-index:-1;top:0;bottom:0;left:0;width:50%;height:100%;';
+          ativoImg.style.justifyContent = 'center';
+          ativoImg.style.paddingLeft = '54%';
+          ativoImg.style.paddingRight = '';
+          if (overlay) overlay.remove();
+        } else if (position === 'direito') {
+          img.style.cssText = 'position:absolute;object-fit:cover;z-index:-1;top:0;bottom:0;right:0;width:50%;height:100%;';
+          ativoImg.style.justifyContent = 'center';
+          ativoImg.style.paddingLeft = '';
+          ativoImg.style.paddingRight = '54%';
+          if (overlay) overlay.remove();
+        } else {
+          img.style.cssText = 'position:absolute;object-fit:cover;z-index:-1;inset:0;width:100%;height:100%;';
+          ativoImg.style.justifyContent = '';
+          ativoImg.style.paddingLeft = '';
+          ativoImg.style.paddingRight = '';
+          if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.className = '__lbcode-slide-image-overlay';
+            overlay.style.position = 'absolute';
+            overlay.style.inset = '0';
+            overlay.style.zIndex = '-1';
+            overlay.style.pointerEvents = 'none';
+            img.after(overlay);
+          }
+          var d = darkenPct / 100;
+          overlay.style.background = 'linear-gradient(180deg, rgba(0,0,0,' + (d * 0.6) + ') 0%, rgba(0,0,0,' + d + ') 100%)';
+        }
         serializeAndNotify();
       }
     }
     if (e.data.type === 'lbcode-remove-slide-image') {
       var slidesRm = document.querySelectorAll('.slide');
       var ativoRm = slidesRm[window.__lbcodeActiveSlide || 0];
-      if (ativoRm) { ativoRm.style.background = ''; serializeAndNotify(); }
+      if (ativoRm) {
+        var imgRm = ativoRm.querySelector('.__lbcode-slide-image');
+        var overlayRm = ativoRm.querySelector('.__lbcode-slide-image-overlay');
+        if (imgRm) imgRm.remove();
+        if (overlayRm) overlayRm.remove();
+        ativoRm.style.background = '';
+        ativoRm.style.justifyContent = '';
+        ativoRm.style.paddingLeft = '';
+        ativoRm.style.paddingRight = '';
+        serializeAndNotify();
+      }
     }
   });
 })();
@@ -1221,17 +1281,21 @@ function CarrosselEditor() {
                             </button>
                           ))}
                         </div>
-                        <div className="text-[10px] uppercase tracking-wide text-muted-foreground mt-2">
-                          Escurecimento ({imageDarken}%)
-                        </div>
-                        <input
-                          type="range"
-                          min={0}
-                          max={80}
-                          value={imageDarken}
-                          onChange={(e) => aplicarEscurecimentoImagem(Number(e.target.value))}
-                          className="w-full accent-primary"
-                        />
+                        {imagePosition === "fundo" && (
+                          <>
+                            <div className="text-[10px] uppercase tracking-wide text-muted-foreground mt-2">
+                              Escurecimento ({imageDarken}%)
+                            </div>
+                            <input
+                              type="range"
+                              min={0}
+                              max={80}
+                              value={imageDarken}
+                              onChange={(e) => aplicarEscurecimentoImagem(Number(e.target.value))}
+                              className="w-full accent-primary"
+                            />
+                          </>
+                        )}
                       </div>
                     ) : (
                       <p className="text-[11px] text-muted-foreground">
