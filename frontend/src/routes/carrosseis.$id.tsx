@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ChevronLeft, ChevronRight, Loader2, Send, Sparkles, User, RotateCcw, CheckCircle2, ImagePlus, X as XIcon, Plus, ArrowUp, ArrowDown, Copy, Trash2, Download, Upload } from "lucide-react";
-import { Button, Card } from "@/components/app-shell";
+import { Button, Card, Badge } from "@/components/app-shell";
 import { FONTES_GOOGLE } from "@/lib/fontes-google";
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8787";
@@ -35,7 +35,10 @@ function extrairCoresMarca(html: string): string[] {
   return [...new Set(matches.map((m) => m.split(":")[1].trim()))].slice(0, 6);
 }
 
-type SlideInfo = { text: string };
+type SlideTipo = "capa" | "conteudo" | "lista" | "citacao" | "cta";
+const SLIDE_TIPOS: SlideTipo[] = ["capa", "conteudo", "lista", "citacao", "cta"];
+
+type SlideInfo = { text: string; tipo: SlideTipo | null };
 
 function parseSlides(html: string): SlideInfo[] {
   const doc = new DOMParser().parseFromString(html, "text/html");
@@ -43,8 +46,18 @@ function parseSlides(html: string): SlideInfo[] {
   return nodes.map((node, i) => {
     const heading = node.querySelector("h1, h2, h3, h4, p");
     const text = heading?.textContent?.trim();
-    return { text: text ? text.slice(0, 60) : `Slide ${i + 1}` };
+    const tipoAttr = node.getAttribute("data-lbcode-tipo");
+    const tipo = tipoAttr && (SLIDE_TIPOS as string[]).includes(tipoAttr) ? (tipoAttr as SlideTipo) : null;
+    return { text: text ? text.slice(0, 60) : `Slide ${i + 1}`, tipo };
   });
+}
+
+function setSlideTipo(html: string, idx: number, tipo: SlideTipo): string {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const node = Array.from(doc.querySelectorAll(".slide"))[idx];
+  if (!node) return html;
+  node.setAttribute("data-lbcode-tipo", tipo);
+  return serializeDoc(doc);
 }
 
 function serializeDoc(doc: Document): string {
@@ -524,6 +537,12 @@ function CarrosselEditor() {
 
   function commitSlideFields() {
     const next = setSlideFields(html, activeSlide, { title: tituloSlide, body: textoSlide });
+    if (next === html) return;
+    applyHtml(next);
+  }
+
+  function handleSetTipo(tipo: SlideTipo) {
+    const next = setSlideTipo(html, activeSlide, tipo);
     if (next === html) return;
     applyHtml(next);
   }
@@ -1248,7 +1267,24 @@ function CarrosselEditor() {
                 </div>
               )}
               <Card className="!p-4 w-full max-w-md text-left">
-                <h3 className="font-semibold text-[13px] mb-3">Conteúdo do slide {activeSlide + 1}</h3>
+                <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+                  <h3 className="font-semibold text-[13px]">Conteúdo do slide {activeSlide + 1}</h3>
+                  <div className="flex gap-1.5 flex-wrap">
+                    {SLIDE_TIPOS.map((t) => (
+                      <button
+                        key={t}
+                        onClick={() => handleSetTipo(t)}
+                        className={`text-[11px] px-2.5 py-1 rounded border capitalize ${
+                          slides[activeSlide]?.tipo === t
+                            ? "border-primary bg-primary/10 text-foreground"
+                            : "border-border text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <div className="space-y-3">
                   <div>
                     <label className="text-[11px] uppercase tracking-wide text-muted-foreground">Título</label>
@@ -1363,7 +1399,10 @@ function CarrosselEditor() {
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-[10px] text-muted-foreground">Slide {i + 1}</div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] text-muted-foreground">Slide {i + 1}</span>
+                        {s.tipo && <Badge tone="neutral">{s.tipo}</Badge>}
+                      </div>
                       <div className="text-[12px] font-medium truncate mt-0.5">{s.text}</div>
                     </div>
                   </div>
