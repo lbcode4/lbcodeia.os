@@ -298,7 +298,7 @@ const EDITOR_SCRIPT = `<script id="__lbcode-editor-script">
         var pos = posMap[e.data.position] || 'center';
         var darkenPct = typeof e.data.darken === 'number' ? e.data.darken : 45;
         var overlay = 'rgba(0,0,0,' + (darkenPct / 100) + ')';
-        ativoImg.style.background = 'linear-gradient(' + overlay + ',' + overlay + '), url(\'' + e.data.url + '\') ' + pos + '/cover no-repeat';
+        ativoImg.style.background = 'linear-gradient(' + overlay + ',' + overlay + '), url("' + e.data.url + '") ' + pos + '/cover no-repeat';
         serializeAndNotify();
       }
     }
