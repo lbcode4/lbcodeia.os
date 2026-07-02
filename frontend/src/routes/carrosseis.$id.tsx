@@ -304,20 +304,29 @@ function CarrosselEditor() {
   const [legendaSaving, setLegendaSaving] = useState(false);
   const [legendaSaved, setLegendaSaved] = useState(false);
   const [legendaError, setLegendaError] = useState<string | null>(null);
+  const [legendaLoadFailed, setLegendaLoadFailed] = useState(false);
 
   const [exporting, setExporting] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
 
   useEffect(() => {
     setLegendaLoading(true);
+    setLegendaLoadFailed(false);
     fetch(`${BACKEND}/api/carrosseis/legenda?id=${encodeURIComponent(id)}`)
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
       .then((body: { legenda: string }) => {
         setLegenda(body.legenda);
         setLegendaSalva(body.legenda);
         setLegendaLoading(false);
       })
-      .catch(() => setLegendaLoading(false));
+      .catch((e) => {
+        setLegendaError(e instanceof Error ? e.message : "Erro ao carregar legenda");
+        setLegendaLoadFailed(true);
+        setLegendaLoading(false);
+      });
   }, [id]);
 
   const slides = html ? parseSlides(html) : [];
@@ -529,7 +538,7 @@ function CarrosselEditor() {
     }
   }
 
-  async function salvar() {
+  async function salvar(): Promise<boolean> {
     setSaving(true);
     setSaveError(null);
     try {
@@ -545,8 +554,10 @@ function CarrosselEditor() {
       setHtmlSalvo(html);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
+      return true;
     } catch (e) {
       setSaveError(e instanceof Error ? e.message : "Erro desconhecido");
+      return false;
     } finally {
       setSaving(false);
     }
@@ -584,7 +595,10 @@ function CarrosselEditor() {
     setExporting(true);
     setExportError(null);
     try {
-      if (html !== htmlSalvo) await salvar();
+      if (html !== htmlSalvo) {
+        const salvouOk = await salvar();
+        if (!salvouOk) throw new Error("Falha ao salvar antes de exportar — PNGs podem estar desatualizados");
+      }
       const totalSlides = slideCount(html);
       for (let i = 0; i < totalSlides; i++) {
         const filename = `slide-${String(i + 1).padStart(2, "0")}.png`;
@@ -1041,7 +1055,7 @@ function CarrosselEditor() {
                 {legendaError && <p className="text-[11px] text-destructive mt-2">{legendaError}</p>}
                 <button
                   onClick={salvarLegenda}
-                  disabled={legendaSaving || legenda === legendaSalva}
+                  disabled={legendaSaving || legenda === legendaSalva || legendaLoadFailed}
                   className="mt-3 w-full text-[12px] font-medium px-3 py-2 rounded-md border border-border bg-card hover:bg-accent disabled:opacity-40 flex items-center justify-center gap-1.5"
                 >
                   {legendaSaving ? <Loader2 size={13} className="animate-spin" /> : null}
