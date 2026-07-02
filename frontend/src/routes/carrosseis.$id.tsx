@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, ChevronLeft, ChevronRight, Loader2, Send, Sparkles, User, RotateCcw, CheckCircle2, ImagePlus, X as XIcon } from "lucide-react";
-import { Button } from "@/components/app-shell";
+import { ArrowLeft, ChevronLeft, ChevronRight, Loader2, Send, Sparkles, User, RotateCcw, CheckCircle2, ImagePlus, X as XIcon, Plus, ArrowUp, ArrowDown, Copy, Trash2, Download } from "lucide-react";
+import { Button, Card } from "@/components/app-shell";
 import { FONTES_GOOGLE } from "@/lib/fontes-google";
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8787";
@@ -619,11 +619,20 @@ function CarrosselEditor() {
         </div>
         <div className="flex items-center gap-2">
           {saveError && <span className="text-[12px] text-destructive max-w-[240px] truncate" title={saveError}>{saveError}</span>}
+          {exportError && <span className="text-[12px] text-destructive max-w-[240px] truncate" title={exportError}>{exportError}</span>}
           <button
             onClick={cancelar}
             className="text-[14px] font-medium px-3 py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent"
           >
             Cancelar
+          </button>
+          <button
+            onClick={exportarPng}
+            disabled={exporting || loadingHtml}
+            className="text-[14px] font-medium px-3 py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent disabled:opacity-50 flex items-center gap-1.5"
+          >
+            {exporting ? <Loader2 className="animate-spin" size={15} /> : <Download size={15} />}
+            <span className="hidden sm:inline">Exportar PNG</span>
           </button>
           <Button onClick={salvar} disabled={saving} className="!px-4 !py-2">
             {saving ? <Loader2 className="animate-spin" size={16} /> : <CheckCircle2 size={16} />}
@@ -632,8 +641,8 @@ function CarrosselEditor() {
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col lg:flex-row min-h-0">
-        <div className="lg:w-[400px] lg:border-r border-b lg:border-b-0 border-border bg-card flex flex-col min-h-0">
+      <div className="flex-1 flex flex-col xl:grid xl:grid-cols-[320px_260px_1fr_300px] min-h-0">
+        <div className="border-b xl:border-b-0 xl:border-r border-border bg-card flex flex-col min-h-0">
           <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4">
             {messages.map((m, i) => (
               <div key={i} className={`flex gap-2 ${m.role === "user" ? "flex-row-reverse" : ""}`}>
@@ -673,6 +682,18 @@ function CarrosselEditor() {
           </div>
 
           <div className="border-t border-border p-3 space-y-2">
+            <div className="flex flex-wrap gap-1.5">
+              {SUGESTOES_IA.map((s) => (
+                <button
+                  key={s}
+                  onClick={() => send(s)}
+                  disabled={chatLoading}
+                  className="text-[11px] px-2 py-1 rounded-full border border-border text-muted-foreground hover:border-primary hover:text-primary disabled:opacity-40"
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
             {images.length > 0 && (
               <div className="flex gap-2 flex-wrap">
                 {images.map((img, i) => (
@@ -739,10 +760,74 @@ function CarrosselEditor() {
           </div>
         </div>
 
+        <div className="border-b xl:border-b-0 xl:border-r border-border bg-card flex flex-col gap-4 overflow-y-auto p-4">
+          <Card className="!p-4">
+            <h3 className="font-semibold text-[13px] mb-3">Aparência</h3>
+            <div className="relative mb-3">
+              <button
+                onClick={() => setMostrarFundo((v) => !v)}
+                className="w-full text-left text-[12px] font-medium px-3 py-2 rounded-md border border-border bg-card hover:bg-accent"
+              >
+                Fundo
+              </button>
+              {mostrarFundo && (
+                <div className="mt-2 flex flex-wrap items-center gap-2 p-2 rounded-md border border-border bg-card shadow-lg">
+                  {extrairCoresMarca(html).map((hex) => (
+                    <button
+                      key={hex}
+                      onClick={() => aplicarFundo(hex)}
+                      title={hex}
+                      className="w-7 h-7 rounded-md border border-border"
+                      style={{ backgroundColor: hex }}
+                    />
+                  ))}
+                  <input
+                    type="color"
+                    onChange={(e) => aplicarFundo(e.target.value)}
+                    className="w-7 h-7 rounded-md border border-border cursor-pointer"
+                  />
+                </div>
+              )}
+            </div>
+            <select
+              defaultValue=""
+              onChange={(e) => { if (e.target.value) aplicarFonte(e.target.value); }}
+              className="w-full text-[12px] px-2 py-2 rounded-md border border-border bg-card"
+            >
+              <option value="">Fonte…</option>
+              {FONTES_GOOGLE.map((f) => <option key={f} value={f}>{f}</option>)}
+            </select>
+          </Card>
+
+          <Card className="!p-4">
+            <h3 className="font-semibold text-[13px] mb-3">Guias do Instagram</h3>
+            <div className="flex flex-col gap-1.5">
+              <button
+                onClick={() => setShowSafeZone((v) => !v)}
+                className={`text-[11px] px-2 py-1.5 rounded border text-left transition-colors ${showSafeZone ? "border-primary bg-primary/10 text-foreground" : "border-border text-muted-foreground hover:border-primary/40"}`}
+              >
+                Safe zone
+              </button>
+              <button
+                onClick={() => setShowFeedCrop((v) => !v)}
+                className={`text-[11px] px-2 py-1.5 rounded border text-left transition-colors ${showFeedCrop ? "border-primary bg-primary/10 text-foreground" : "border-border text-muted-foreground hover:border-primary/40"}`}
+              >
+                Crop do perfil (1:1)
+              </button>
+              <button
+                onClick={() => setShowGrid((v) => !v)}
+                className={`text-[11px] px-2 py-1.5 rounded border text-left transition-colors ${showGrid ? "border-primary bg-primary/10 text-foreground" : "border-border text-muted-foreground hover:border-primary/40"}`}
+              >
+                Regra dos terços
+              </button>
+            </div>
+          </Card>
+        </div>
+
         <div
           ref={previewRef}
           tabIndex={0}
-          className="flex-1 flex flex-col items-center justify-center overflow-auto min-h-[400px] bg-muted/40 outline-none gap-3 py-6"
+          className="border-b xl:border-b-0 xl:border-r border-border flex flex-col items-center justify-center overflow-auto min-h-[400px] bg-muted/40 outline-none gap-3 py-6"
         >
           {loadingHtml ? (
             <div className="flex items-center justify-center text-muted-foreground gap-2">
@@ -752,40 +837,6 @@ function CarrosselEditor() {
             <div className="text-red-500 text-[13px]">Erro ao carregar: {loadErro}</div>
           ) : (
             <>
-              <div className="flex items-center gap-2 relative">
-                <button
-                  onClick={() => setMostrarFundo((v) => !v)}
-                  className="text-[12px] font-medium px-3 py-1.5 rounded-md border border-border bg-card hover:bg-accent"
-                >
-                  Fundo
-                </button>
-                <select
-                  defaultValue=""
-                  onChange={(e) => { if (e.target.value) aplicarFonte(e.target.value); }}
-                  className="text-[12px] px-2 py-1.5 rounded-md border border-border bg-card"
-                >
-                  <option value="">Fonte…</option>
-                  {FONTES_GOOGLE.map((f) => <option key={f} value={f}>{f}</option>)}
-                </select>
-                {mostrarFundo && (
-                  <div className="absolute top-full left-0 mt-1 z-10 flex items-center gap-2 p-2 rounded-md border border-border bg-card shadow-lg">
-                    {extrairCoresMarca(html).map((hex) => (
-                      <button
-                        key={hex}
-                        onClick={() => aplicarFundo(hex)}
-                        title={hex}
-                        className="w-7 h-7 rounded-md border border-border"
-                        style={{ backgroundColor: hex }}
-                      />
-                    ))}
-                    <input
-                      type="color"
-                      onChange={(e) => aplicarFundo(e.target.value)}
-                      className="w-7 h-7 rounded-md border border-border cursor-pointer"
-                    />
-                  </div>
-                )}
-              </div>
               <div className="relative bg-white shadow-lg overflow-hidden" style={{ width: 1080 * MAIN_SCALE, height: 1350 * MAIN_SCALE }}>
                 <iframe
                   ref={mainIframeRef}
@@ -795,6 +846,54 @@ function CarrosselEditor() {
                   sandbox="allow-scripts allow-same-origin"
                   style={{ width: 1080, height: 1350, transform: `scale(${MAIN_SCALE})`, transformOrigin: "top left", border: 0 }}
                 />
+                {showSafeZone && (
+                  <div className="absolute inset-0 pointer-events-none z-30">
+                    <div
+                      className="absolute border-2 border-dashed"
+                      style={{ top: "5%", bottom: "5%", left: "5%", right: "5%", borderColor: "rgba(34,197,94,0.85)" }}
+                    />
+                    <div
+                      className="absolute top-[5%] left-[5%] text-[8px] font-semibold px-1 rounded-sm"
+                      style={{ background: "rgba(34,197,94,0.95)", color: "#fff", transform: "translateY(-100%)" }}
+                    >
+                      SAFE ZONE
+                    </div>
+                  </div>
+                )}
+                {showFeedCrop && (
+                  <div className="absolute inset-0 pointer-events-none z-30">
+                    <div
+                      className="absolute left-0 right-0 top-0"
+                      style={{
+                        height: "10%",
+                        background: "repeating-linear-gradient(45deg, rgba(239,68,68,0.18) 0 6px, transparent 6px 12px)",
+                        borderBottom: "1.5px dashed rgba(239,68,68,0.9)",
+                      }}
+                    />
+                    <div
+                      className="absolute left-0 right-0 bottom-0"
+                      style={{
+                        height: "10%",
+                        background: "repeating-linear-gradient(45deg, rgba(239,68,68,0.18) 0 6px, transparent 6px 12px)",
+                        borderTop: "1.5px dashed rgba(239,68,68,0.9)",
+                      }}
+                    />
+                    <div
+                      className="absolute right-1 top-1/2 -translate-y-1/2 text-[8px] font-semibold px-1.5 py-0.5 rounded-sm"
+                      style={{ background: "rgba(239,68,68,0.95)", color: "#fff" }}
+                    >
+                      1:1 perfil
+                    </div>
+                  </div>
+                )}
+                {showGrid && (
+                  <div className="absolute inset-0 pointer-events-none z-30">
+                    <div className="absolute top-1/3 left-0 right-0 border-t border-white/40 mix-blend-difference" />
+                    <div className="absolute top-2/3 left-0 right-0 border-t border-white/40 mix-blend-difference" />
+                    <div className="absolute left-1/3 top-0 bottom-0 border-l border-white/40 mix-blend-difference" />
+                    <div className="absolute left-2/3 top-0 bottom-0 border-l border-white/40 mix-blend-difference" />
+                  </div>
+                )}
                 {total > 1 && (
                   <>
                     <button
@@ -815,26 +914,142 @@ function CarrosselEditor() {
                 )}
               </div>
               <p className="text-center text-[12px] text-muted-foreground">{activeSlide + 1} / {total}</p>
-              <div className="flex gap-2 overflow-x-auto pb-1 max-w-full">
-                {thumbBlobUrls.map((url, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setActiveSlide(i)}
-                    className={`shrink-0 rounded-md overflow-hidden border-2 transition-colors bg-white ${i === activeSlide ? "border-primary" : "border-transparent"}`}
-                    style={{ width: 1080 * THUMB_SCALE, height: 1350 * THUMB_SCALE }}
-                  >
-                    <iframe
-                      src={url}
-                      title={`thumb ${i + 1}`}
-                      tabIndex={-1}
-                      sandbox="allow-same-origin"
-                      style={{ width: 1080, height: 1350, transform: `scale(${THUMB_SCALE})`, transformOrigin: "top left", border: 0, pointerEvents: "none" }}
-                    />
-                  </button>
-                ))}
-              </div>
+              {(showSafeZone || showFeedCrop || showGrid) && (
+                <div className="flex flex-wrap justify-center gap-3 text-[11px] text-muted-foreground max-w-md">
+                  {showSafeZone && (
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-3 h-0.5 border-t-2 border-dashed" style={{ borderColor: "rgb(34,197,94)" }} />
+                      Margem segura
+                    </span>
+                  )}
+                  {showFeedCrop && (
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-3 h-2 rounded-sm" style={{ background: "repeating-linear-gradient(45deg, rgba(239,68,68,0.6) 0 3px, transparent 3px 6px)" }} />
+                      Área cortada no grid do perfil
+                    </span>
+                  )}
+                  {showGrid && <span>Regra dos terços</span>}
+                </div>
+              )}
             </>
           )}
+        </div>
+
+        <div className="bg-card flex flex-col gap-4 min-h-0 overflow-y-auto p-4">
+          <Card className="!p-4 flex flex-col min-h-0">
+            <div className="flex items-center justify-between mb-3 shrink-0">
+              <h3 className="font-semibold text-[13px]">Slides ({slides.length})</h3>
+              <button
+                onClick={handleAddSlide}
+                disabled={loadingHtml}
+                className="text-[12px] inline-flex items-center gap-1 text-primary hover:opacity-80 disabled:opacity-40"
+              >
+                <Plus size={12} /> Adicionar
+              </button>
+            </div>
+            <div className="space-y-2 max-h-[420px] overflow-y-auto pr-1">
+              {slides.map((s, i) => (
+                <div
+                  key={i}
+                  onClick={() => setActiveSlide(i)}
+                  className={`group rounded-md border p-2 cursor-pointer transition-colors ${i === activeSlide ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"}`}
+                >
+                  <div className="flex items-center gap-2">
+                    <div
+                      className="shrink-0 rounded overflow-hidden border border-border bg-white"
+                      style={{ width: 1080 * THUMB_SCALE, height: 1350 * THUMB_SCALE }}
+                    >
+                      {thumbBlobUrls[i] && (
+                        <iframe
+                          src={thumbBlobUrls[i]}
+                          title={`thumb ${i + 1}`}
+                          tabIndex={-1}
+                          sandbox="allow-same-origin"
+                          style={{ width: 1080, height: 1350, transform: `scale(${THUMB_SCALE})`, transformOrigin: "top left", border: 0, pointerEvents: "none" }}
+                        />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[10px] text-muted-foreground">Slide {i + 1}</div>
+                      <div className="text-[12px] font-medium truncate mt-0.5">{s.text}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleMoveSlide(i, -1); }}
+                      disabled={i === 0}
+                      className="h-6 w-6 rounded border border-border flex items-center justify-center hover:bg-accent disabled:opacity-30"
+                    >
+                      <ArrowUp size={11} />
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleMoveSlide(i, 1); }}
+                      disabled={i === slides.length - 1}
+                      className="h-6 w-6 rounded border border-border flex items-center justify-center hover:bg-accent disabled:opacity-30"
+                    >
+                      <ArrowDown size={11} />
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleDuplicateSlide(i); }}
+                      className="h-6 w-6 rounded border border-border flex items-center justify-center hover:bg-accent"
+                    >
+                      <Copy size={11} />
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleRemoveSlide(i); }}
+                      disabled={slides.length <= 1}
+                      className="h-6 w-6 rounded border border-border flex items-center justify-center hover:bg-destructive/10 text-destructive ml-auto disabled:opacity-30"
+                    >
+                      <Trash2 size={11} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          <Card className="!p-4">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="font-semibold text-[13px]">Legenda do post</h3>
+              {legendaSaved && <span className="text-[11px] text-[color:var(--success)]">Salvo</span>}
+            </div>
+            {legendaLoading ? (
+              <p className="text-[12px] text-muted-foreground">Carregando…</p>
+            ) : (
+              <>
+                <textarea
+                  value={legenda}
+                  onChange={(e) => setLegenda(e.target.value)}
+                  rows={5}
+                  className="w-full px-3 py-2 rounded-md border border-border bg-background text-[13px] resize-none"
+                />
+                <div className="flex items-center justify-between mt-1.5 text-[11px] text-muted-foreground">
+                  <span>{legenda.length} / 2.200 caracteres</span>
+                  <span>{(legenda.match(/#\w+/g) ?? []).length} hashtags</span>
+                </div>
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  {HASHTAGS_SUGERIDAS.map((h) => (
+                    <button
+                      key={h}
+                      onClick={() => setLegenda((c) => (c ? `${c} ${h}` : h))}
+                      className="text-[11px] px-2 py-1 rounded-full border border-border hover:border-primary hover:text-primary"
+                    >
+                      {h}
+                    </button>
+                  ))}
+                </div>
+                {legendaError && <p className="text-[11px] text-destructive mt-2">{legendaError}</p>}
+                <button
+                  onClick={salvarLegenda}
+                  disabled={legendaSaving || legenda === legendaSalva}
+                  className="mt-3 w-full text-[12px] font-medium px-3 py-2 rounded-md border border-border bg-card hover:bg-accent disabled:opacity-40 flex items-center justify-center gap-1.5"
+                >
+                  {legendaSaving ? <Loader2 size={13} className="animate-spin" /> : null}
+                  Salvar legenda
+                </button>
+              </>
+            )}
+          </Card>
         </div>
       </div>
     </div>
