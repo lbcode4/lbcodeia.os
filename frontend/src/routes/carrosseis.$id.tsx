@@ -35,6 +35,71 @@ function extrairCoresMarca(html: string): string[] {
   return [...new Set(matches.map((m) => m.split(":")[1].trim()))].slice(0, 6);
 }
 
+type SlideInfo = { text: string };
+
+function parseSlides(html: string): SlideInfo[] {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const nodes = Array.from(doc.querySelectorAll(".slide"));
+  return nodes.map((node, i) => {
+    const heading = node.querySelector("h1, h2, h3, h4, p");
+    const text = heading?.textContent?.trim();
+    return { text: text ? text.slice(0, 60) : `Slide ${i + 1}` };
+  });
+}
+
+function serializeDoc(doc: Document): string {
+  return "<!doctype html>" + doc.documentElement.outerHTML;
+}
+
+function duplicateSlideAt(html: string, idx: number): string {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const nodes = Array.from(doc.querySelectorAll(".slide"));
+  const target = nodes[idx];
+  if (!target) return html;
+  const clone = target.cloneNode(true) as Element;
+  target.after(clone);
+  return serializeDoc(doc);
+}
+
+function removeSlideAt(html: string, idx: number): string {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const nodes = Array.from(doc.querySelectorAll(".slide"));
+  if (nodes.length <= 1) return html;
+  const target = nodes[idx];
+  if (!target) return html;
+  target.remove();
+  return serializeDoc(doc);
+}
+
+function moveSlideAt(html: string, idx: number, dir: -1 | 1): string {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const nodes = Array.from(doc.querySelectorAll(".slide"));
+  const j = idx + dir;
+  if (j < 0 || j >= nodes.length) return html;
+  const a = nodes[idx];
+  const b = nodes[j];
+  if (!a || !b) return html;
+  if (dir === 1) b.after(a);
+  else b.before(a);
+  return serializeDoc(doc);
+}
+
+function addSlideAtEnd(html: string): string {
+  const count = parseSlides(html).length;
+  if (count === 0) return html;
+  return duplicateSlideAt(html, count - 1);
+}
+
+const SUGESTOES_IA = [
+  "Reescrever capa com gancho de curiosidade",
+  "Gerar 3 variações de CTA",
+  "Encurtar textos (regra 20 palavras)",
+  "Traduzir carrossel pra inglês",
+  "Sugerir hashtags pro tema",
+];
+
+const HASHTAGS_SUGERIDAS = ["#carrossel", "#conteudo", "#dicas", "#marketingdigital", "#instagram"];
+
 const EDITOR_SCRIPT = `<script id="__lbcode-editor-script">
 (function(){
   document.addEventListener('click', function(e){
