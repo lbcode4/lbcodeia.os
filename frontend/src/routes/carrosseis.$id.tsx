@@ -1026,7 +1026,7 @@ function CarrosselEditor() {
                   src={mainBlobUrl || undefined}
                   title="Preview"
                   sandbox="allow-scripts allow-same-origin"
-                  style={{ width: 1080, height: 1350, transform: `scale(${MAIN_SCALE})`, transformOrigin: "top left", marginTop: previewFormat === "1:1" ? -(1350 - 1080) / 2 : 0, border: 0 }}
+                  style={{ width: 1080, height: 1350, transform: `scale(${MAIN_SCALE})`, transformOrigin: "top left", marginTop: previewFormat === "1:1" ? -(1350 - 1080) / 2 * MAIN_SCALE : 0, border: 0 }}
                 />
                 {showSafeZone && (
                   <div className="absolute inset-0 pointer-events-none z-30">
