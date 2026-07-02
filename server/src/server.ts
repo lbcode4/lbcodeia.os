@@ -16,11 +16,13 @@ import {
   type CorMarca, type Tipografia,
 } from "./identidade.js";
 import { saveReferencia, readReferencia, deleteReferencias } from "./referencias-temp.js";
-import { getBiblioteca, readBibliotecaFile } from "./biblioteca.js";
+import { getBiblioteca, getCampanhasMeta, readBibliotecaFile, REPO_ROOT } from "./biblioteca.js";
 import { getDashboardData } from "./dashboard.js";
 import { runChat } from "./chat.js";
 import { getOnboardingStatus, getConfiguracoes, saveConfiguracoes, getAiConfig, saveAiConfig, type Configuracoes, type AiConfig } from "./onboarding.js";
-import { listCampanhas, setCampanhaStatus, listAdsets, setAdsetStatus, listAds, setAdStatus, readMetaToken } from "./meta-campanhas.js";
+import { listCampanhas, setCampanhaStatus, listAdsets, setAdsetStatus, listAds, setAdStatus, readMetaToken, readMetaPageId, readMetaWhatsappPhone } from "./meta-campanhas.js";
+import { readCampanhaJson, writeCampanhaPublicado, PUBLISHERS } from "./campanha-publish.js";
+import { join, resolve } from "node:path";
 
 export const app = new Hono();
 
@@ -515,6 +517,52 @@ app.get("/api/biblioteca/arquivo", async (c) => {
     if (code === "ENOENT" || (e as Error).message === "Caminho inválido")
       return c.json({ error: "Arquivo não encontrado" }, 404);
     return c.json({ error: "Erro ao ler arquivo" }, 500);
+  }
+});
+
+app.get("/api/biblioteca/campanhas-meta", async (c) => {
+  try {
+    return c.json(await getCampanhasMeta());
+  } catch {
+    return c.json({ error: "Falha ao carregar metadados de campanhas" }, 500);
+  }
+});
+
+app.post("/api/biblioteca/campanhas/publicar", async (c) => {
+  let body: { path?: string; cliente?: string };
+  try { body = await c.req.json(); } catch { return c.json({ error: "JSON inválido" }, 400); }
+  const { path, cliente } = body;
+  if (!path || !cliente) return c.json({ error: "path e cliente obrigatórios" }, 400);
+
+  const campanhaDir = resolve(join(REPO_ROOT, path));
+  const dentroDeCampanhas = campanhaDir.startsWith(resolve(join(REPO_ROOT, "saidas", "marketing", "campanhas")) + "/");
+  if (!dentroDeCampanhas) return c.json({ error: "Caminho inválido" }, 400);
+
+  try {
+    const campanha = await readCampanhaJson(campanhaDir);
+    if (campanha.publicado) {
+      return c.json({ error: `Campanha já publicada em ${campanha.publicado.em}`, publicado: campanha.publicado }, 409);
+    }
+    const publisher = PUBLISHERS[campanha.tipo];
+    if (!publisher) {
+      return c.json({ error: `Tipo '${campanha.tipo}' ainda não suporta publicação automática` }, 400);
+    }
+
+    const contas = await listContas();
+    const conta = contas.find((ct) => ct.cliente === cliente);
+    if (!conta?.metaAdAccount) return c.json({ error: "Conta Meta não configurada para este cliente" }, 404);
+
+    const [token, pageId, phone] = await Promise.all([
+      readMetaToken(), readMetaPageId(), readMetaWhatsappPhone(),
+    ]);
+
+    const resultado = await publisher(campanha, campanhaDir, conta.metaAdAccount, pageId, phone, token);
+    await writeCampanhaPublicado(campanhaDir, campanha, resultado);
+    return c.json(resultado);
+  } catch (e) {
+    const msg = (e as Error).message;
+    if (msg === "campanha.json não encontrado nessa pasta") return c.json({ error: msg }, 404);
+    return c.json({ error: msg }, 502);
   }
 });
 

@@ -1,8 +1,9 @@
 import { readdir, readFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { join, resolve, extname, relative, basename } from "node:path";
+import { parseCampanhaJson, PUBLISHERS, type CampanhaJson } from "./campanha-publish.js";
 
-const REPO_ROOT = join(import.meta.dirname, "..", "..");
+export const REPO_ROOT = join(import.meta.dirname, "..", "..");
 
 export type BibliotecaItem = {
   path: string;       // relative to REPO_ROOT, used as ID
@@ -87,6 +88,45 @@ async function scanCampanhas(dir: string): Promise<BibliotecaItem[]> {
   return items;
 }
 
+export type CampanhaMeta = {
+  subsection: string;    // ex: "conversao/meta-whatsapp-2026-07-01"
+  path: string;           // relativo a REPO_ROOT, ex: "saidas/marketing/campanhas/conversao/meta-whatsapp-2026-07-01"
+  tipo: string;
+  publicavel: boolean;    // existe publicador implementado pra esse tipo
+  criativos: CampanhaJson["criativos"];
+  publicado: CampanhaJson["publicado"];
+};
+
+export async function scanCampanhasMeta(dir: string): Promise<CampanhaMeta[]> {
+  const out: CampanhaMeta[] = [];
+  let camps: import("node:fs").Dirent[];
+  try { camps = await readdir(dir, { withFileTypes: true }); } catch { return []; }
+
+  for (const tipo_camp of camps.filter((d) => d.isDirectory())) {
+    const tipoDir = join(dir, tipo_camp.name);
+    let campaignDirs: import("node:fs").Dirent[];
+    try { campaignDirs = await readdir(tipoDir, { withFileTypes: true }); } catch { continue; }
+
+    for (const camp of campaignDirs.filter((d) => d.isDirectory())) {
+      const campDir = join(tipoDir, camp.name);
+      const jsonPath = join(campDir, "campanha.json");
+      let raw: string;
+      try { raw = await readFile(jsonPath, "utf-8"); } catch { continue; }
+      let campanha: CampanhaJson;
+      try { campanha = parseCampanhaJson(raw); } catch { continue; }
+      out.push({
+        subsection: `${tipo_camp.name}/${camp.name}`,
+        path: relative(REPO_ROOT, campDir),
+        tipo: campanha.tipo,
+        publicavel: campanha.tipo in PUBLISHERS,
+        criativos: campanha.criativos,
+        publicado: campanha.publicado,
+      });
+    }
+  }
+  return out;
+}
+
 async function scanSites(dir: string): Promise<BibliotecaItem[]> {
   const items: BibliotecaItem[] = [];
   let dirs: import("node:fs").Dirent[];
@@ -147,6 +187,10 @@ export async function getBiblioteca(): Promise<BibliotecaSection[]> {
   ];
 
   return sections.filter((sec) => sec.items.length > 0);
+}
+
+export async function getCampanhasMeta(): Promise<CampanhaMeta[]> {
+  return scanCampanhasMeta(join(REPO_ROOT, "saidas", "marketing", "campanhas"));
 }
 
 const ALLOWED_ROOTS = ["saidas"];

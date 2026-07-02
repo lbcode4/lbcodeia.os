@@ -177,6 +177,7 @@ def create_campaign(client: MetaAPIClient, dry_run=False) -> str:
         "special_ad_categories": [],
         "campaign_budget_optimization": "true",
         "daily_budget": DAILY_BUDGET_CENTS,
+        "bid_strategy": "LOWEST_COST_WITHOUT_CAP",
     }
     print(f"\n[CAMPANHA] {CAMPAIGN_NAME}")
     print(f"  objetivo=OUTCOME_ENGAGEMENT  CBO=sim  orçamento=R${DAILY_BUDGET_CENTS/100:.2f}/dia  status=PAUSED")

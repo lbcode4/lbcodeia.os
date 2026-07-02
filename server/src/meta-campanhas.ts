@@ -35,7 +35,7 @@ export type Ad = {
   };
 };
 
-const BASE_URL = "https://graph.facebook.com/v21.0";
+export const BASE_URL = "https://graph.facebook.com/v21.0";
 const CAMPANHA_FIELDS = "id,name,status,effective_status,objective,daily_budget,lifetime_budget";
 const ADSET_FIELDS = "id,name,status,effective_status,daily_budget,lifetime_budget";
 const AD_FIELDS = "id,name,status,effective_status,creative{id,body,title,image_url,thumbnail_url}";
@@ -59,12 +59,28 @@ async function graphPost(path: string, token: string, body: Record<string, strin
   if (!res.ok || json.error) throw new Error(json.error?.message ?? `Graph API error ${res.status}`);
 }
 
-export async function readMetaToken(): Promise<string> {
+async function readMetaEnvVar(key: string): Promise<string> {
   const envPath = join(import.meta.dirname, "..", "..", "integracoes", "credentials", "meta.env");
   const content = await readFile(envPath, "utf-8");
-  const match = content.match(/^META_ACCESS_TOKEN=(.+)$/m);
-  if (!match) throw new Error("META_ACCESS_TOKEN não encontrado em meta.env");
+  const match = content.match(new RegExp(`^${key}=(.+)$`, "m"));
+  if (!match) throw new Error(`${key} não encontrado em meta.env`);
   return match[1].trim();
+}
+
+export async function readMetaPageId(): Promise<string> {
+  return readMetaEnvVar("META_PAGE_ID");
+}
+
+export async function readMetaWhatsappPhone(): Promise<string> {
+  return readMetaEnvVar("META_WHATSAPP_PHONE");
+}
+
+export async function readMetaToken(): Promise<string> {
+  try {
+    return await readMetaEnvVar("META_ACCESS_TOKEN");
+  } catch {
+    throw new Error("META_ACCESS_TOKEN não encontrado em meta.env");
+  }
 }
 
 export async function listCampanhas(accountId: string, token: string): Promise<Campanha[]> {

@@ -100,19 +100,16 @@ Default = Advantage (Meta escolhe — OK pra iniciante).
 - ❌ Desmarcar **Facebook** (público de menor poder aquisitivo)
 - ❌ Desmarcar Audience Network (qualidade baixa)
 
-### Passo 7 — OPA-A: Criar anúncio (Criativo + Mensagem)
+### Passo 7 — OPA-A: Criar anúncio (Texto primeiro, imagem depois)
+
+**⚠️ Ordem obrigatória: copy (texto) sempre antes do criativo visual.** Imagem nasce do texto aprovado — nunca o contrário. Gera os dois em momentos separados, nunca em paralelo sem ponte entre eles.
 
 **Nome:** padrão `AD001 <Produto/Serviço>` (ex.: `AD001 Demo [seu produto]`).
 
 **Identidade:**
 - Página Facebook + perfil IG conectados
 
-**Formato:** imagem OU vídeo OU carrossel.
-
-**Formatos essenciais (sempre gerar os 2):**
-- **Quadrada (1:1)** — feed
-- **Vertical (9:16)** — Stories/Reels
-- Bônus: 16:9 pra alguns posicionamentos
+#### Passo 7a — Copy (sempre primeiro)
 
 **Estrutura GCC (Gancho + Corpo + CTA):**
 - Gancho: 1 dos 4 tipos (pergunta, contraintuitivo, história, segmentado)
@@ -123,6 +120,25 @@ Default = Advantage (Meta escolhe — OK pra iniciante).
 - 5+ variações de texto principal
 - 3+ variações de título
 - Meta testa e otimiza pra vencedor
+
+Salvar em `copies.md`. **CHECKPOINT OBRIGATÓRIO — parar aqui e perguntar:**
+
+> "Copy pronto (5 textos + títulos). Aprova? E quer que eu já gere os criativos visuais agora, ou só o texto por enquanto?"
+
+Não seguir pro Passo 7b sem aprovação explícita do texto.
+
+**Ao aprovar:** escrever/atualizar `campanha.json` na pasta (ver seção "campanha.json" abaixo) com `criativos: null` — é o que habilita o botão "Publicar no Meta Ads" na Biblioteca mesmo sem imagem ainda.
+
+#### Passo 7b — Criativo visual (só depois do copy aprovado, e só se pedido)
+
+**Formato:** imagem OU vídeo OU carrossel.
+
+**Formatos essenciais (sempre gerar os 2):**
+- **Quadrada (1:1)** — feed
+- **Vertical (9:16)** — Stories/Reels
+- Bônus: 16:9 pra alguns posicionamentos
+
+**Regra de consistência (obrigatória):** ao chamar `/lb-conteudo-carrossel` pra gerar `ad001-1x1.png`/`ad001-9x16.png`, o headline (`<h1>`) da imagem **precisa ser o mesmo gancho** do Texto 1 aprovado em `copies.md` (ou uma versão condensada dele) — nunca um headline novo inventado ali na hora. Se o gancho do texto for longo demais pra imagem, condensar mantendo a mesma ideia central, não trocar de ângulo.
 
 **⚠️ DESATIVAR TODOS OS APRIMORAMENTOS META** (sempre — cagam o anúncio):
 - "Aprimoramentos essenciais"
@@ -135,6 +151,39 @@ Default = Advantage (Meta escolhe — OK pra iniciante).
 - Ex.: *"Oi! Vi o anúncio sobre demo da [seu produto]. Quero saber mais."*
 - Isso permite rastrear qual criativo converte (vai aparecer na conversa do WhatsApp)
 
+**Ao terminar de renderizar as imagens:** atualizar `campanha.json` preenchendo o campo `criativos` (ver seção abaixo).
+
+---
+
+## `campanha.json` — dado estruturado pra publicar
+
+Além dos `.md` (leitura humana), a skill escreve `campanha.json` na mesma pasta — é a fonte de verdade que o botão
+"Publicar no Meta Ads" da Biblioteca lê pra criar a campanha via API. Nada de novo é inventado aqui: são os
+mesmos dados dos passos acima, só estruturados.
+
+```json
+{
+  "tipo": "whatsapp",
+  "nome_campanha": "<nome do Passo 2>",
+  "orcamento_diario_centavos": 2000,
+  "nome_conjunto": "<nome do Passo 4>",
+  "localizacao": { "latitude": -2.4468, "longitude": -54.7083, "raio_km": 15 },
+  "idade_min": 28,
+  "idade_max": 55,
+  "textos": [
+    { "corpo": "<Texto 1 de copies.md>", "titulo": "<Título 1>" }
+  ],
+  "mensagem_inicial_whatsapp": "<AD001 de mensagem-inicial.md>",
+  "criativos": null,
+  "publicado": null
+}
+```
+
+**Quando escrever/atualizar:**
+- No checkpoint do Passo 7a (copy aprovado) → escreve o arquivo inteiro com `criativos: null`
+- No Passo 7b (se o usuário aprovar gerar imagens) → só atualiza o campo `criativos` com os caminhos relativos das PNGs geradas
+- Nunca mexer no campo `publicado` — é escrito pelo backend depois que a publicação acontecer de verdade
+
 ---
 
 ## Output
@@ -142,15 +191,18 @@ Default = Advantage (Meta escolhe — OK pra iniciante).
 ```
 saidas/marketing/campanhas/conversao/meta-whatsapp-<YYYY-MM-DD>/
   configuracao.md       ← 7 passos preenchidos prontos pra copiar
-  copies.md             ← textos principais + títulos + descrições (várias variações)
+  copies.md             ← textos principais + títulos + descrições (Passo 7a, sempre gerado)
+  campanha.json          ← dado estruturado pra publicar via API (Passo 7a, atualizado no 7b)
   mensagem-inicial.md   ← mensagens iniciais WhatsApp por criativo
-  criativos/
-    ad001-1x1.png       ← imagem feed (chamar /lb-conteudo-carrossel se precisar gerar)
+  criativos/            ← Passo 7b, só se o usuário pedir/aprovar depois do copy
+    ad001-1x1.png       ← imagem feed (chamar /lb-conteudo-carrossel, headline = gancho do copies.md)
     ad001-9x16.png      ← imagem story
   publicos.md           ← descrição de cada público manual configurado
   followup-script.md    ← sequência pra responder a primeira mensagem (usa 99 scripts se existir)
   checklist.md          ← validação pré-ativação
 ```
+
+Se o usuário só quiser o texto por enquanto, `criativos/` fica pendente — não bloqueia gerar `configuracao.md`, `copies.md`, `publicos.md` etc. Rodar `/lb-conteudo-carrossel` depois, quando pedido, passando o gancho aprovado como headline obrigatório.
 
 ---
 
@@ -187,6 +239,8 @@ Antes de tirar do pausado:
 
 ## Regras
 
+- **Sempre copy antes de criativo visual** — texto aprovado primeiro (Passo 7a), imagem só depois e só se pedido (Passo 7b)
+- **Headline da imagem = gancho do copy aprovado** — nunca inventar um headline novo ao chamar `/lb-conteudo-carrossel`
 - **Sempre ler `_memoria/framework-trafego.md`** antes de executar
 - **Sempre manual, nunca personalizada** ("varinha mágica")
 - **Sempre recusar Advantage** no início (<30 dias de dados)

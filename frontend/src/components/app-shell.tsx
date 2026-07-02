@@ -1,7 +1,23 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
 import {
-  LayoutDashboard, Menu, X, Moon, Sun, ChevronDown, User, Bot, Globe, FileBarChart, Target, Library, Newspaper, TrendingUp, Settings, Palette, Megaphone,
+  LayoutDashboard,
+  Menu,
+  X,
+  Moon,
+  Sun,
+  ChevronDown,
+  User,
+  Bot,
+  Globe,
+  FileBarChart,
+  Target,
+  Library,
+  Newspaper,
+  TrendingUp,
+  Settings,
+  Palette,
+  Megaphone,
 } from "lucide-react";
 import { useTheme } from "@/lib/theme";
 import { periods } from "@/lib/mock";
@@ -48,10 +64,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       >
         <div className="h-16 flex items-center justify-between px-6 border-b border-sidebar-border">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center text-primary-foreground font-bold text-sm">L</div>
+            <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center text-primary-foreground font-bold text-sm">
+              L
+            </div>
             <span className="font-bold text-[15px] tracking-tight">LBCode Ads</span>
           </Link>
-          <button className="md:hidden" onClick={() => setMobileOpen(false)} aria-label="Fechar menu">
+          <button
+            className="md:hidden"
+            onClick={() => setMobileOpen(false)}
+            aria-label="Fechar menu"
+          >
             <X size={20} />
           </button>
         </div>
@@ -71,7 +93,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 }`}
               >
                 {active && <span className="absolute left-0 top-0 bottom-0 w-[3px] bg-primary" />}
-                <Icon size={18} strokeWidth={2} className={active ? "text-foreground" : "text-muted-foreground"} />
+                <Icon
+                  size={18}
+                  strokeWidth={2}
+                  className={active ? "text-foreground" : "text-muted-foreground"}
+                />
                 <span>{item.label}</span>
               </Link>
             );
@@ -97,7 +123,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 }`}
               >
                 {active && <span className="absolute left-0 top-0 bottom-0 w-[3px] bg-primary" />}
-                <Icon size={18} strokeWidth={2} className={active ? "text-foreground" : "text-muted-foreground"} />
+                <Icon
+                  size={18}
+                  strokeWidth={2}
+                  className={active ? "text-foreground" : "text-muted-foreground"}
+                />
                 <span className="flex-1">{hub.name}</span>
                 <span className="text-[10.5px] text-muted-foreground/80">{hub.skills.length}</span>
               </Link>
@@ -122,7 +152,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 }`}
               >
                 {active && <span className="absolute left-0 top-0 bottom-0 w-[3px] bg-primary" />}
-                <Icon size={18} strokeWidth={2} className={active ? "text-foreground" : "text-muted-foreground"} />
+                <Icon
+                  size={18}
+                  strokeWidth={2}
+                  className={active ? "text-foreground" : "text-muted-foreground"}
+                />
                 <span>{item.label}</span>
               </Link>
             );
@@ -134,7 +168,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </aside>
 
       {mobileOpen && (
-        <div className="fixed inset-0 bg-black/40 z-30 md:hidden" onClick={() => setMobileOpen(false)} />
+        <div
+          className="fixed inset-0 bg-black/40 z-30 md:hidden"
+          onClick={() => setMobileOpen(false)}
+        />
       )}
 
       {/* Main */}
@@ -142,18 +179,27 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         {/* Topbar */}
         <header className="h-16 bg-card border-b border-border flex items-center justify-between px-4 md:px-6 sticky top-0 z-20">
           <div className="flex items-center gap-3">
-            <button className="md:hidden" onClick={() => setMobileOpen(true)} aria-label="Abrir menu">
+            <button
+              className="md:hidden"
+              onClick={() => setMobileOpen(true)}
+              aria-label="Abrir menu"
+            >
               <Menu size={20} />
             </button>
 
             {/* Client selector */}
             <div className="relative">
               <button
-                onClick={() => { setClientOpen((o) => !o); setPeriodOpen(false); }}
+                onClick={() => {
+                  setClientOpen((o) => !o);
+                  setPeriodOpen(false);
+                }}
                 className="flex items-center gap-2 h-9 px-3 rounded-md border border-border bg-card text-[13px] hover:bg-accent"
               >
                 <span className="font-medium">{activeClient?.cliente ?? "—"}</span>
-                <span className="text-muted-foreground hidden sm:inline">{activeClient?.handleIg ?? ""}</span>
+                <span className="text-muted-foreground hidden sm:inline">
+                  {activeClient?.handleIg ?? ""}
+                </span>
                 <ChevronDown size={14} />
               </button>
               {clientOpen && (
@@ -161,7 +207,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   {contas.map((c) => (
                     <button
                       key={c.cliente}
-                      onClick={() => { setCliente(c.cliente); setClientOpen(false); }}
+                      onClick={() => {
+                        setCliente(c.cliente);
+                        setClientOpen(false);
+                      }}
                       className="w-full text-left px-3 py-2 text-[13px] hover:bg-accent flex justify-between"
                     >
                       <span>{c.cliente}</span>
@@ -175,7 +224,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             {/* Period */}
             <div className="relative hidden sm:block">
               <button
-                onClick={() => { setPeriodOpen((o) => !o); setClientOpen(false); }}
+                onClick={() => {
+                  setPeriodOpen((o) => !o);
+                  setClientOpen(false);
+                }}
                 className="flex items-center gap-2 h-9 px-3 rounded-md border border-border bg-card text-[13px] hover:bg-accent"
               >
                 {period}
@@ -186,7 +238,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   {periods.map((p) => (
                     <button
                       key={p}
-                      onClick={() => { setPeriod(p); setPeriodOpen(false); }}
+                      onClick={() => {
+                        setPeriod(p);
+                        setPeriodOpen(false);
+                      }}
                       className="w-full text-left px-3 py-2 text-[13px] hover:bg-accent"
                     >
                       {p}
@@ -217,7 +272,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function PageHeader({ title, subtitle, actions }: { title: string; subtitle?: string; actions?: React.ReactNode }) {
+export function PageHeader({
+  title,
+  subtitle,
+  actions,
+}: {
+  title: string;
+  subtitle?: string;
+  actions?: React.ReactNode;
+}) {
   return (
     <div className="mb-6 flex items-start justify-between gap-4 flex-wrap">
       <div>
@@ -229,18 +292,32 @@ export function PageHeader({ title, subtitle, actions }: { title: string; subtit
   );
 }
 
-export function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+export function Card({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
-    <div className={`bg-card border border-border rounded-lg p-6 shadow-[0_2px_4px_rgba(0,0,0,0.04)] ${className}`}>
+    <div
+      className={`bg-card border border-border rounded-lg p-6 shadow-[0_2px_4px_rgba(0,0,0,0.04)] ${className}`}
+    >
       {children}
     </div>
   );
 }
 
 export function Button({
-  children, variant = "primary", className = "", ...props
-}: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "secondary" | "ghost" }) {
-  const base = "inline-flex items-center justify-center gap-2 rounded-md font-semibold text-[14px] transition-colors disabled:opacity-50";
+  children,
+  variant = "primary",
+  className = "",
+  ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement> & {
+  variant?: "primary" | "secondary" | "ghost";
+}) {
+  const base =
+    "inline-flex items-center justify-center gap-2 rounded-md font-semibold text-[14px] transition-colors disabled:opacity-50";
   const styles = {
     primary: "bg-primary text-primary-foreground hover:opacity-90 px-6 py-3",
     secondary: "bg-card border border-border text-foreground hover:bg-accent px-6 py-3",
@@ -254,8 +331,12 @@ export function Button({
 }
 
 export function Badge({
-  children, tone = "neutral",
-}: { children: React.ReactNode; tone?: "neutral" | "success" | "warning" | "error" | "primary" }) {
+  children,
+  tone = "neutral",
+}: {
+  children: React.ReactNode;
+  tone?: "neutral" | "success" | "warning" | "error" | "primary";
+}) {
   const tones = {
     neutral: "bg-muted text-muted-foreground",
     success: "bg-[color:var(--success)]/15 text-[color:var(--success)]",
@@ -264,7 +345,9 @@ export function Badge({
     primary: "bg-primary/15 text-primary",
   };
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium ${tones[tone]}`}>
+    <span
+      className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium ${tones[tone]}`}
+    >
       {children}
     </span>
   );

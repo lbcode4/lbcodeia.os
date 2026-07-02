@@ -219,3 +219,61 @@ describe("DELETE /api/carrosseis/referencias", () => {
     expect(res.status).toBe(200);
   });
 });
+
+describe("GET /api/biblioteca/campanhas-meta", () => {
+  it("retorna 200 com array", async () => {
+    const res = await app.request("/api/biblioteca/campanhas-meta");
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(Array.isArray(body)).toBe(true);
+  });
+});
+
+describe("POST /api/biblioteca/campanhas/publicar", () => {
+  it("retorna 400 quando path ausente", async () => {
+    const res = await app.request("/api/biblioteca/campanhas/publicar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ cliente: "X" }),
+    });
+    expect(res.status).toBe(400);
+  });
+
+  it("retorna 400 quando cliente ausente", async () => {
+    const res = await app.request("/api/biblioteca/campanhas/publicar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ path: "saidas/marketing/campanhas/conversao/x" }),
+    });
+    expect(res.status).toBe(400);
+  });
+
+  it("retorna 400 para JSON malformado", async () => {
+    const res = await app.request("/api/biblioteca/campanhas/publicar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "isso nao eh json",
+    });
+    expect(res.status).toBe(400);
+  });
+
+  it("retorna 400 para path fora de saidas/marketing/campanhas", async () => {
+    const res = await app.request("/api/biblioteca/campanhas/publicar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ path: "integracoes/credentials", cliente: "X" }),
+    });
+    expect(res.status).toBe(400);
+    const body = await res.json() as { error: string };
+    expect(body.error).toBe("Caminho inválido");
+  });
+
+  it("retorna 404 quando pasta não tem campanha.json", async () => {
+    const res = await app.request("/api/biblioteca/campanhas/publicar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ path: "saidas/marketing/campanhas/conversao/pasta-que-nao-existe", cliente: "X" }),
+    });
+    expect(res.status).toBe(404);
+  });
+});
