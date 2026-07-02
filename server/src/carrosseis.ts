@@ -1,6 +1,6 @@
-import { readdir, readFile } from "node:fs/promises";
+import { readdir, readFile, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
-import { join, resolve, extname } from "node:path";
+import { join, resolve, extname, sep } from "node:path";
 
 const REPO_ROOT = join(import.meta.dirname, "..", "..");
 const CARROSSEIS_ROOT = join(REPO_ROOT, "saidas", "marketing", "conteudo", "carrossel");
@@ -64,4 +64,21 @@ export async function readSlide(carrosselId: string, filename: string): Promise<
   const safe = resolve(join(CARROSSEIS_ROOT, carrosselId, "instagram", filename));
   if (!safe.startsWith(resolve(CARROSSEIS_ROOT))) throw new Error("Caminho inválido");
   return readFile(safe) as Promise<Buffer>;
+}
+
+export async function readLegenda(carrosselId: string): Promise<string> {
+  const safe = resolve(join(CARROSSEIS_ROOT, carrosselId, "legenda.md"));
+  if (!safe.startsWith(resolve(CARROSSEIS_ROOT) + sep)) throw new Error("Caminho inválido");
+  try {
+    return await readFile(safe, "utf-8");
+  } catch (e) {
+    if ((e as NodeJS.ErrnoException).code === "ENOENT") return "";
+    throw e;
+  }
+}
+
+export async function writeLegenda(carrosselId: string, legenda: string): Promise<void> {
+  const safe = resolve(join(CARROSSEIS_ROOT, carrosselId, "legenda.md"));
+  if (!safe.startsWith(resolve(CARROSSEIS_ROOT) + sep)) throw new Error("Caminho inválido");
+  await writeFile(safe, legenda, "utf-8");
 }
