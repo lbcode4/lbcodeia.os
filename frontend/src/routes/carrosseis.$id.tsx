@@ -52,10 +52,55 @@ function parseSlides(html: string): SlideInfo[] {
   });
 }
 
-function setSlideTipo(html: string, idx: number, tipo: SlideTipo): string {
+function applySlideTipo(html: string, idx: number, tipo: SlideTipo): string {
   const doc = new DOMParser().parseFromString(html, "text/html");
   const node = Array.from(doc.querySelectorAll(".slide"))[idx];
   if (!node) return html;
+
+  const existingTitle = node.querySelector("h1, h2, h3, h4")?.textContent?.trim() || "Título";
+  const existingBody = node.querySelector("p")?.textContent?.trim() || "";
+  const existingItems = Array.from(node.querySelectorAll("li")).map((li) => li.textContent?.trim() || "");
+  const cleanTitle = existingTitle.replace(/^[""]|[""]$/g, "");
+
+  // Só remove os elementos de conteúdo (título/texto/lista/cta) — .frame, .logo-area,
+  // .slide-num e as camadas de imagem injetadas pelo Banco de imagens ficam intactos.
+  node.querySelectorAll("span.label, h1, h2, h3, h4, p, ul, ol, .cta-pill").forEach((el) => el.remove());
+
+  const ownerDoc = node.ownerDocument;
+  const makeEl = (tag: string, className: string, text: string) => {
+    const el = ownerDoc.createElement(tag);
+    if (className) el.className = className;
+    el.textContent = text;
+    return el;
+  };
+
+  if (tipo === "capa") {
+    node.appendChild(makeEl("span", "label", "CARROSSEL"));
+    node.appendChild(makeEl("h1", "", cleanTitle));
+    if (existingBody) node.appendChild(makeEl("p", "", existingBody));
+  } else if (tipo === "conteudo") {
+    node.appendChild(makeEl("h1", "", cleanTitle));
+    if (existingBody) node.appendChild(makeEl("p", "", existingBody));
+  } else if (tipo === "lista") {
+    node.appendChild(makeEl("h1", "", cleanTitle));
+    if (existingBody) node.appendChild(makeEl("p", "", existingBody));
+    const ul = ownerDoc.createElement("ul");
+    const items = existingItems.length > 0 ? existingItems : ["Item 1", "Item 2", "Item 3"];
+    items.forEach((item) => {
+      const li = ownerDoc.createElement("li");
+      li.textContent = item;
+      ul.appendChild(li);
+    });
+    node.appendChild(ul);
+  } else if (tipo === "citacao") {
+    node.appendChild(makeEl("h1", "", `"${cleanTitle}"`));
+    if (existingBody) node.appendChild(makeEl("p", "", existingBody));
+  } else if (tipo === "cta") {
+    node.appendChild(makeEl("h1", "", cleanTitle));
+    if (existingBody) node.appendChild(makeEl("p", "", existingBody));
+    node.appendChild(makeEl("div", "cta-pill", "Arraste pra próxima →"));
+  }
+
   node.setAttribute("data-lbcode-tipo", tipo);
   return serializeDoc(doc);
 }
@@ -542,7 +587,7 @@ function CarrosselEditor() {
   }
 
   function handleSetTipo(tipo: SlideTipo) {
-    const next = setSlideTipo(html, activeSlide, tipo);
+    const next = applySlideTipo(html, activeSlide, tipo);
     if (next === html) return;
     applyHtml(next);
   }
