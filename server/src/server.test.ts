@@ -332,3 +332,38 @@ describe("PUT /api/carrosseis/legenda", () => {
     expect(lida).toBe("legenda via rota, teste");
   });
 });
+
+const INSPIRACAO_FIXTURE_ID = "server-inspiracao-fixture";
+const INSPIRACAO_FIXTURE_DIR = join(REPO_ROOT, "saidas", "marketing", "conteudo", "carrossel", INSPIRACAO_FIXTURE_ID, "inspiracoes");
+
+beforeAll(async () => {
+  await mkdir(INSPIRACAO_FIXTURE_DIR, { recursive: true });
+  await writeFile(join(INSPIRACAO_FIXTURE_DIR, "fixture.png"), "png de teste", "utf-8");
+});
+
+afterAll(async () => {
+  await rm(join(REPO_ROOT, "saidas", "marketing", "conteudo", "carrossel", INSPIRACAO_FIXTURE_ID), { recursive: true, force: true });
+});
+
+describe("DELETE /api/carrosseis/inspiracao", () => {
+  it("retorna 400 quando id ou file não informados", async () => {
+    const res = await app.request("/api/carrosseis/inspiracao?id=foo", { method: "DELETE" });
+    expect(res.status).toBe(400);
+  });
+
+  it("retorna 404 pra imagem inexistente", async () => {
+    const res = await app.request(`/api/carrosseis/inspiracao?id=${INSPIRACAO_FIXTURE_ID}&file=naoexiste.png`, { method: "DELETE" });
+    expect(res.status).toBe(404);
+  });
+
+  it("remove a imagem e a listagem seguinte não inclui mais ela", async () => {
+    const listBefore = await app.request(`/api/carrosseis/inspiracoes?id=${INSPIRACAO_FIXTURE_ID}`);
+    expect(await listBefore.json()).toContain("fixture.png");
+
+    const delRes = await app.request(`/api/carrosseis/inspiracao?id=${INSPIRACAO_FIXTURE_ID}&file=fixture.png`, { method: "DELETE" });
+    expect(delRes.status).toBe(200);
+
+    const listAfter = await app.request(`/api/carrosseis/inspiracoes?id=${INSPIRACAO_FIXTURE_ID}`);
+    expect(await listAfter.json()).not.toContain("fixture.png");
+  });
+});

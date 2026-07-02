@@ -11,7 +11,7 @@ import { createSite, listSites, readSiteHtml, writeSiteHtml, streamSiteChat, typ
 import { listCarrosseis, readSlide, readLegenda, writeLegenda } from "./carrosseis.js";
 import { readCarrosselHtml, writeCarrosselHtmlAndRender, streamCarrosselChat } from "./carrossel-editor.js";
 import {
-  listIdentidade, readIdentidadeArquivo, listInspiracoes, saveInspiracao, readInspiracao,
+  listIdentidade, readIdentidadeArquivo, listInspiracoes, saveInspiracao, readInspiracao, deleteInspiracao,
   writePaleta, writeTipografia, readTomDeVoz, writeTomDeVoz,
   type CorMarca, type Tipografia,
 } from "./identidade.js";
@@ -327,6 +327,22 @@ app.get("/api/carrosseis/inspiracao", async (c) => {
     const code = (e as NodeJS.ErrnoException).code;
     if (code === "ENOENT") return c.json({ error: "Não encontrado" }, 404);
     return c.json({ error: "Erro ao ler arquivo" }, 500);
+  }
+});
+
+app.delete("/api/carrosseis/inspiracao", async (c) => {
+  const id = c.req.query("id");
+  const file = c.req.query("file");
+  if (!id || !file) return c.json({ error: "id e file obrigatórios" }, 400);
+  try {
+    await deleteInspiracao(id, file);
+    return c.json({ ok: true });
+  } catch (e) {
+    const msg = (e as Error).message;
+    if (msg === "Caminho inválido" || msg === "Tipo inválido") return c.json({ error: "Não encontrado" }, 404);
+    const code = (e as NodeJS.ErrnoException).code;
+    if (code === "ENOENT") return c.json({ error: "Não encontrado" }, 404);
+    return c.json({ error: "Erro ao remover arquivo" }, 500);
   }
 });
 

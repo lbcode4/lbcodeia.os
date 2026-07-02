@@ -1,4 +1,4 @@
-import { readdir, readFile, writeFile, mkdir } from "node:fs/promises";
+import { readdir, readFile, writeFile, mkdir, unlink } from "node:fs/promises";
 import { join, resolve, extname, basename } from "node:path";
 
 const REPO_ROOT = join(import.meta.dirname, "..", "..");
@@ -199,4 +199,13 @@ export async function readInspiracao(carrosselId: string, filename: string): Pro
   const safe = resolve(join(dir, filename));
   if (!safe.startsWith(resolve(CARROSSEIS_ROOT))) throw new Error("Caminho inválido");
   return { buf: await readFile(safe), mime };
+}
+
+export async function deleteInspiracao(carrosselId: string, filename: string): Promise<void> {
+  const ext = extname(filename).toLowerCase();
+  if (!IMAGE_EXTS.includes(ext)) throw new Error("Tipo inválido");
+  const dir = resolveInspiracoes(carrosselId);
+  const safe = resolve(join(dir, filename));
+  if (!safe.startsWith(resolve(CARROSSEIS_ROOT))) throw new Error("Caminho inválido");
+  await unlink(safe);
 }

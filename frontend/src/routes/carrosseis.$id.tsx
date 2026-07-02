@@ -551,6 +551,23 @@ function CarrosselEditor() {
     }
   }
 
+  async function handleDeleteInspiracao(filename: string) {
+    setInspiracoesError(null);
+    try {
+      const res = await fetch(
+        `${BACKEND}/api/carrosseis/inspiracao?id=${encodeURIComponent(id)}&file=${encodeURIComponent(filename)}`,
+        { method: "DELETE" },
+      );
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({ error: "Erro desconhecido" }));
+        throw new Error((body as { error?: string }).error ?? `HTTP ${res.status}`);
+      }
+      setInspiracoes((prev) => prev.filter((f) => f !== filename));
+    } catch (e) {
+      setInspiracoesError(e instanceof Error ? e.message : "Erro ao remover imagem");
+    }
+  }
+
   function aplicarInspiracao(filename: string) {
     const url = `${BACKEND}/api/carrosseis/inspiracao?id=${encodeURIComponent(id)}&file=${encodeURIComponent(filename)}`;
     setSlideImageUrl(url);
@@ -1393,18 +1410,29 @@ function CarrosselEditor() {
             ) : (
               <div className="grid grid-cols-3 gap-1.5">
                 {inspiracoes.map((filename) => (
-                  <button
-                    key={filename}
-                    onClick={() => aplicarInspiracao(filename)}
-                    className="aspect-square rounded overflow-hidden border border-border hover:border-primary transition-colors"
-                    title="Aplicar imagem ao slide"
-                  >
-                    <img
-                      src={`${BACKEND}/api/carrosseis/inspiracao?id=${encodeURIComponent(id)}&file=${encodeURIComponent(filename)}`}
-                      alt=""
-                      className="w-full h-full object-cover"
-                    />
-                  </button>
+                  <div key={filename} className="relative group">
+                    <button
+                      onClick={() => aplicarInspiracao(filename)}
+                      className="aspect-square w-full rounded overflow-hidden border border-border hover:border-primary transition-colors"
+                      title="Aplicar imagem ao slide"
+                    >
+                      <img
+                        src={`${BACKEND}/api/carrosseis/inspiracao?id=${encodeURIComponent(id)}&file=${encodeURIComponent(filename)}`}
+                        alt=""
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteInspiracao(filename);
+                      }}
+                      title="Remover do banco de imagens"
+                      className="absolute -top-1 -right-1 w-4 h-4 bg-destructive text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <XIcon size={9} />
+                    </button>
+                  </div>
                 ))}
               </div>
             )}
