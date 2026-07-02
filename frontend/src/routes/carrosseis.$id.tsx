@@ -1074,7 +1074,7 @@ function CarrosselEditor() {
             <div className="text-red-500 text-[13px]">Erro ao carregar: {loadErro}</div>
           ) : (
             <>
-              <div className="relative bg-white shadow-lg overflow-hidden" style={{ width: 1080 * MAIN_SCALE, height: previewFormat === "1:1" ? 1080 * MAIN_SCALE : 1350 * MAIN_SCALE }}>
+              <div className="relative shrink-0 bg-white shadow-lg overflow-hidden" style={{ width: 1080 * MAIN_SCALE, height: previewFormat === "1:1" ? 1080 * MAIN_SCALE : 1350 * MAIN_SCALE }}>
                 <iframe
                   ref={mainIframeRef}
                   key={mainBlobUrl}
