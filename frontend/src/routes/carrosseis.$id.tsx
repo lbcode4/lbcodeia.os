@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, ChevronLeft, ChevronRight, Loader2, Send, Sparkles, User, RotateCcw, CheckCircle2, ImagePlus, X as XIcon } from "lucide-react";
-import { Button } from "@/components/app-shell";
+import { ArrowLeft, ChevronLeft, ChevronRight, Loader2, Send, Sparkles, User, RotateCcw, CheckCircle2, ImagePlus, X as XIcon, Plus, ArrowUp, ArrowDown, Copy, Trash2, Download } from "lucide-react";
+import { Button, Card } from "@/components/app-shell";
 import { FONTES_GOOGLE } from "@/lib/fontes-google";
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8787";
@@ -34,6 +34,71 @@ function extrairCoresMarca(html: string): string[] {
   const matches = html.match(/--[\w-]+:\s*(#[0-9a-fA-F]{3,8})/g) ?? [];
   return [...new Set(matches.map((m) => m.split(":")[1].trim()))].slice(0, 6);
 }
+
+type SlideInfo = { text: string };
+
+function parseSlides(html: string): SlideInfo[] {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const nodes = Array.from(doc.querySelectorAll(".slide"));
+  return nodes.map((node, i) => {
+    const heading = node.querySelector("h1, h2, h3, h4, p");
+    const text = heading?.textContent?.trim();
+    return { text: text ? text.slice(0, 60) : `Slide ${i + 1}` };
+  });
+}
+
+function serializeDoc(doc: Document): string {
+  return "<!doctype html>" + doc.documentElement.outerHTML;
+}
+
+function duplicateSlideAt(html: string, idx: number): string {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const nodes = Array.from(doc.querySelectorAll(".slide"));
+  const target = nodes[idx];
+  if (!target) return html;
+  const clone = target.cloneNode(true) as Element;
+  target.after(clone);
+  return serializeDoc(doc);
+}
+
+function removeSlideAt(html: string, idx: number): string {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const nodes = Array.from(doc.querySelectorAll(".slide"));
+  if (nodes.length <= 1) return html;
+  const target = nodes[idx];
+  if (!target) return html;
+  target.remove();
+  return serializeDoc(doc);
+}
+
+function moveSlideAt(html: string, idx: number, dir: -1 | 1): string {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const nodes = Array.from(doc.querySelectorAll(".slide"));
+  const j = idx + dir;
+  if (j < 0 || j >= nodes.length) return html;
+  const a = nodes[idx];
+  const b = nodes[j];
+  if (!a || !b) return html;
+  if (dir === 1) b.after(a);
+  else b.before(a);
+  return serializeDoc(doc);
+}
+
+function addSlideAtEnd(html: string): string {
+  const count = parseSlides(html).length;
+  if (count === 0) return html;
+  return duplicateSlideAt(html, count - 1);
+}
+
+const SUGESTOES_IA = [
+  "Reescrever capa com gancho de curiosidade",
+  "Gerar 3 variações de CTA",
+  "Encurtar textos (regra 20 palavras)",
+  "Traduzir carrossel pra inglês",
+  "Sugerir hashtags pro tema",
+];
+
+const HASHTAGS_SUGERIDAS = ["#carrossel", "#conteudo", "#dicas", "#marketingdigital", "#instagram"];
 
 const EDITOR_SCRIPT = `<script id="__lbcode-editor-script">
 (function(){
@@ -229,6 +294,43 @@ function CarrosselEditor() {
 
   const [mostrarFundo, setMostrarFundo] = useState(false);
 
+  const [showSafeZone, setShowSafeZone] = useState(true);
+  const [showFeedCrop, setShowFeedCrop] = useState(true);
+  const [showGrid, setShowGrid] = useState(false);
+
+  const [legenda, setLegenda] = useState("");
+  const [legendaSalva, setLegendaSalva] = useState("");
+  const [legendaLoading, setLegendaLoading] = useState(true);
+  const [legendaSaving, setLegendaSaving] = useState(false);
+  const [legendaSaved, setLegendaSaved] = useState(false);
+  const [legendaError, setLegendaError] = useState<string | null>(null);
+  const [legendaLoadFailed, setLegendaLoadFailed] = useState(false);
+
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLegendaLoading(true);
+    setLegendaLoadFailed(false);
+    fetch(`${BACKEND}/api/carrosseis/legenda?id=${encodeURIComponent(id)}`)
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then((body: { legenda: string }) => {
+        setLegenda(body.legenda);
+        setLegendaSalva(body.legenda);
+        setLegendaLoading(false);
+      })
+      .catch((e) => {
+        setLegendaError(e instanceof Error ? e.message : "Erro ao carregar legenda");
+        setLegendaLoadFailed(true);
+        setLegendaLoading(false);
+      });
+  }, [id]);
+
+  const slides = html ? parseSlides(html) : [];
+
   function aplicarFundo(hex: string) {
     mainIframeRef.current?.contentWindow?.postMessage({ type: "lbcode-set-background", hex }, "*");
     setMostrarFundo(false);
@@ -316,6 +418,34 @@ function CarrosselEditor() {
     });
   }
 
+  function handleAddSlide() {
+    const next = addSlideAtEnd(html);
+    if (next === html) return;
+    applyHtml(next);
+    setActiveSlide(slideCount(next) - 1);
+  }
+
+  function handleDuplicateSlide(idx: number) {
+    const next = duplicateSlideAt(html, idx);
+    if (next === html) return;
+    applyHtml(next);
+  }
+
+  function handleRemoveSlide(idx: number) {
+    const next = removeSlideAt(html, idx);
+    if (next === html) return;
+    applyHtml(next);
+    setActiveSlide((i) => Math.min(i, Math.max(0, slideCount(next) - 1)));
+  }
+
+  function handleMoveSlide(idx: number, dir: -1 | 1) {
+    const next = moveSlideAt(html, idx, dir);
+    if (next === html) return;
+    applyHtml(next);
+    if (activeSlide === idx) setActiveSlide(idx + dir);
+    else if (activeSlide === idx + dir) setActiveSlide(idx);
+  }
+
   async function handlePaste(e: React.ClipboardEvent) {
     const items = Array.from(e.clipboardData.items);
     const imageItems = items.filter((i) => i.type.startsWith("image/"));
@@ -336,8 +466,8 @@ function CarrosselEditor() {
     setImages((prev) => [...prev, ...results.filter((r): r is CarrosselImage => r !== null)]);
   }
 
-  async function send() {
-    const t = input.trim();
+  async function send(overrideText?: string) {
+    const t = (overrideText ?? input).trim();
     if ((!t && !images.length) || chatLoading) return;
     setChatError(null);
     const sentImages = [...images];
@@ -408,7 +538,7 @@ function CarrosselEditor() {
     }
   }
 
-  async function salvar() {
+  async function salvar(): Promise<boolean> {
     setSaving(true);
     setSaveError(null);
     try {
@@ -424,8 +554,10 @@ function CarrosselEditor() {
       setHtmlSalvo(html);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
+      return true;
     } catch (e) {
       setSaveError(e instanceof Error ? e.message : "Erro desconhecido");
+      return false;
     } finally {
       setSaving(false);
     }
@@ -434,6 +566,58 @@ function CarrosselEditor() {
   function cancelar() {
     if (html !== htmlSalvo && !window.confirm("Descartar alterações não salvas?")) return;
     navigate({ to: "/carrosseis" });
+  }
+
+  async function salvarLegenda() {
+    setLegendaSaving(true);
+    setLegendaError(null);
+    try {
+      const res = await fetch(`${BACKEND}/api/carrosseis/legenda?id=${encodeURIComponent(id)}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ legenda }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({ error: "Erro desconhecido" }));
+        throw new Error((body as { error?: string }).error ?? `HTTP ${res.status}`);
+      }
+      setLegendaSalva(legenda);
+      setLegendaSaved(true);
+      setTimeout(() => setLegendaSaved(false), 2000);
+    } catch (e) {
+      setLegendaError(e instanceof Error ? e.message : "Erro desconhecido");
+    } finally {
+      setLegendaSaving(false);
+    }
+  }
+
+  async function exportarPng() {
+    setExporting(true);
+    setExportError(null);
+    try {
+      if (html !== htmlSalvo) {
+        const salvouOk = await salvar();
+        if (!salvouOk) throw new Error("Falha ao salvar antes de exportar — PNGs podem estar desatualizados");
+      }
+      const totalSlides = slideCount(html);
+      for (let i = 0; i < totalSlides; i++) {
+        const filename = `slide-${String(i + 1).padStart(2, "0")}.png`;
+        const res = await fetch(`${BACKEND}/api/carrosseis/slide?id=${encodeURIComponent(id)}&slide=${filename}`);
+        if (!res.ok) throw new Error(`Falha ao baixar ${filename}`);
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+        await new Promise((r) => setTimeout(r, 150));
+      }
+    } catch (e) {
+      setExportError(e instanceof Error ? e.message : "Erro desconhecido");
+    } finally {
+      setExporting(false);
+    }
   }
 
   return (
@@ -449,11 +633,20 @@ function CarrosselEditor() {
         </div>
         <div className="flex items-center gap-2">
           {saveError && <span className="text-[12px] text-destructive max-w-[240px] truncate" title={saveError}>{saveError}</span>}
+          {exportError && <span className="text-[12px] text-destructive max-w-[240px] truncate" title={exportError}>{exportError}</span>}
           <button
             onClick={cancelar}
             className="text-[14px] font-medium px-3 py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent"
           >
             Cancelar
+          </button>
+          <button
+            onClick={exportarPng}
+            disabled={exporting || loadingHtml}
+            className="text-[14px] font-medium px-3 py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent disabled:opacity-50 flex items-center gap-1.5"
+          >
+            {exporting ? <Loader2 className="animate-spin" size={15} /> : <Download size={15} />}
+            <span className="hidden sm:inline">Exportar PNG</span>
           </button>
           <Button onClick={salvar} disabled={saving} className="!px-4 !py-2">
             {saving ? <Loader2 className="animate-spin" size={16} /> : <CheckCircle2 size={16} />}
@@ -462,8 +655,8 @@ function CarrosselEditor() {
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col lg:flex-row min-h-0">
-        <div className="lg:w-[400px] lg:border-r border-b lg:border-b-0 border-border bg-card flex flex-col min-h-0">
+      <div className="flex-1 flex flex-col xl:grid xl:grid-cols-[320px_260px_1fr_300px] min-h-0">
+        <div className="border-b xl:border-b-0 xl:border-r border-border bg-card flex flex-col min-h-0">
           <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4">
             {messages.map((m, i) => (
               <div key={i} className={`flex gap-2 ${m.role === "user" ? "flex-row-reverse" : ""}`}>
@@ -503,6 +696,18 @@ function CarrosselEditor() {
           </div>
 
           <div className="border-t border-border p-3 space-y-2">
+            <div className="flex flex-wrap gap-1.5">
+              {SUGESTOES_IA.map((s) => (
+                <button
+                  key={s}
+                  onClick={() => send(s)}
+                  disabled={chatLoading}
+                  className="text-[11px] px-2 py-1 rounded-full border border-border text-muted-foreground hover:border-primary hover:text-primary disabled:opacity-40"
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
             {images.length > 0 && (
               <div className="flex gap-2 flex-wrap">
                 {images.map((img, i) => (
@@ -562,17 +767,81 @@ function CarrosselEditor() {
                 disabled={chatLoading}
                 className="flex-1 resize-none rounded-md border border-border bg-background px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-primary/30 max-h-48"
               />
-              <Button onClick={send} disabled={chatLoading || (!input.trim() && !images.length)} className="!px-3 !py-2 shrink-0">
+              <Button onClick={() => send()} disabled={chatLoading || (!input.trim() && !images.length)} className="!px-3 !py-2 shrink-0">
                 {chatLoading ? <Loader2 className="animate-spin" size={15} /> : <Send size={15} />}
               </Button>
             </div>
           </div>
         </div>
 
+        <div className="border-b xl:border-b-0 xl:border-r border-border bg-card flex flex-col gap-4 overflow-y-auto p-4">
+          <Card className="!p-4">
+            <h3 className="font-semibold text-[13px] mb-3">Aparência</h3>
+            <div className="relative mb-3">
+              <button
+                onClick={() => setMostrarFundo((v) => !v)}
+                className="w-full text-left text-[12px] font-medium px-3 py-2 rounded-md border border-border bg-card hover:bg-accent"
+              >
+                Fundo
+              </button>
+              {mostrarFundo && (
+                <div className="mt-2 flex flex-wrap items-center gap-2 p-2 rounded-md border border-border bg-card shadow-lg">
+                  {extrairCoresMarca(html).map((hex) => (
+                    <button
+                      key={hex}
+                      onClick={() => aplicarFundo(hex)}
+                      title={hex}
+                      className="w-7 h-7 rounded-md border border-border"
+                      style={{ backgroundColor: hex }}
+                    />
+                  ))}
+                  <input
+                    type="color"
+                    onChange={(e) => aplicarFundo(e.target.value)}
+                    className="w-7 h-7 rounded-md border border-border cursor-pointer"
+                  />
+                </div>
+              )}
+            </div>
+            <select
+              defaultValue=""
+              onChange={(e) => { if (e.target.value) aplicarFonte(e.target.value); }}
+              className="w-full text-[12px] px-2 py-2 rounded-md border border-border bg-card"
+            >
+              <option value="">Fonte…</option>
+              {FONTES_GOOGLE.map((f) => <option key={f} value={f}>{f}</option>)}
+            </select>
+          </Card>
+
+          <Card className="!p-4">
+            <h3 className="font-semibold text-[13px] mb-3">Guias do Instagram</h3>
+            <div className="flex flex-col gap-1.5">
+              <button
+                onClick={() => setShowSafeZone((v) => !v)}
+                className={`text-[11px] px-2 py-1.5 rounded border text-left transition-colors ${showSafeZone ? "border-primary bg-primary/10 text-foreground" : "border-border text-muted-foreground hover:border-primary/40"}`}
+              >
+                Safe zone
+              </button>
+              <button
+                onClick={() => setShowFeedCrop((v) => !v)}
+                className={`text-[11px] px-2 py-1.5 rounded border text-left transition-colors ${showFeedCrop ? "border-primary bg-primary/10 text-foreground" : "border-border text-muted-foreground hover:border-primary/40"}`}
+              >
+                Crop do perfil (1:1)
+              </button>
+              <button
+                onClick={() => setShowGrid((v) => !v)}
+                className={`text-[11px] px-2 py-1.5 rounded border text-left transition-colors ${showGrid ? "border-primary bg-primary/10 text-foreground" : "border-border text-muted-foreground hover:border-primary/40"}`}
+              >
+                Regra dos terços
+              </button>
+            </div>
+          </Card>
+        </div>
+
         <div
           ref={previewRef}
           tabIndex={0}
-          className="flex-1 flex flex-col items-center justify-center overflow-auto min-h-[400px] bg-muted/40 outline-none gap-3 py-6"
+          className="border-b xl:border-b-0 xl:border-r border-border flex flex-col items-center justify-center overflow-auto min-h-[400px] bg-muted/40 outline-none gap-3 py-6"
         >
           {loadingHtml ? (
             <div className="flex items-center justify-center text-muted-foreground gap-2">
@@ -582,40 +851,6 @@ function CarrosselEditor() {
             <div className="text-red-500 text-[13px]">Erro ao carregar: {loadErro}</div>
           ) : (
             <>
-              <div className="flex items-center gap-2 relative">
-                <button
-                  onClick={() => setMostrarFundo((v) => !v)}
-                  className="text-[12px] font-medium px-3 py-1.5 rounded-md border border-border bg-card hover:bg-accent"
-                >
-                  Fundo
-                </button>
-                <select
-                  defaultValue=""
-                  onChange={(e) => { if (e.target.value) aplicarFonte(e.target.value); }}
-                  className="text-[12px] px-2 py-1.5 rounded-md border border-border bg-card"
-                >
-                  <option value="">Fonte…</option>
-                  {FONTES_GOOGLE.map((f) => <option key={f} value={f}>{f}</option>)}
-                </select>
-                {mostrarFundo && (
-                  <div className="absolute top-full left-0 mt-1 z-10 flex items-center gap-2 p-2 rounded-md border border-border bg-card shadow-lg">
-                    {extrairCoresMarca(html).map((hex) => (
-                      <button
-                        key={hex}
-                        onClick={() => aplicarFundo(hex)}
-                        title={hex}
-                        className="w-7 h-7 rounded-md border border-border"
-                        style={{ backgroundColor: hex }}
-                      />
-                    ))}
-                    <input
-                      type="color"
-                      onChange={(e) => aplicarFundo(e.target.value)}
-                      className="w-7 h-7 rounded-md border border-border cursor-pointer"
-                    />
-                  </div>
-                )}
-              </div>
               <div className="relative bg-white shadow-lg overflow-hidden" style={{ width: 1080 * MAIN_SCALE, height: 1350 * MAIN_SCALE }}>
                 <iframe
                   ref={mainIframeRef}
@@ -625,6 +860,54 @@ function CarrosselEditor() {
                   sandbox="allow-scripts allow-same-origin"
                   style={{ width: 1080, height: 1350, transform: `scale(${MAIN_SCALE})`, transformOrigin: "top left", border: 0 }}
                 />
+                {showSafeZone && (
+                  <div className="absolute inset-0 pointer-events-none z-30">
+                    <div
+                      className="absolute border-2 border-dashed"
+                      style={{ top: "5%", bottom: "5%", left: "5%", right: "5%", borderColor: "rgba(34,197,94,0.85)" }}
+                    />
+                    <div
+                      className="absolute top-[5%] left-[5%] text-[8px] font-semibold px-1 rounded-sm"
+                      style={{ background: "rgba(34,197,94,0.95)", color: "#fff", transform: "translateY(-100%)" }}
+                    >
+                      SAFE ZONE
+                    </div>
+                  </div>
+                )}
+                {showFeedCrop && (
+                  <div className="absolute inset-0 pointer-events-none z-30">
+                    <div
+                      className="absolute left-0 right-0 top-0"
+                      style={{
+                        height: "10%",
+                        background: "repeating-linear-gradient(45deg, rgba(239,68,68,0.18) 0 6px, transparent 6px 12px)",
+                        borderBottom: "1.5px dashed rgba(239,68,68,0.9)",
+                      }}
+                    />
+                    <div
+                      className="absolute left-0 right-0 bottom-0"
+                      style={{
+                        height: "10%",
+                        background: "repeating-linear-gradient(45deg, rgba(239,68,68,0.18) 0 6px, transparent 6px 12px)",
+                        borderTop: "1.5px dashed rgba(239,68,68,0.9)",
+                      }}
+                    />
+                    <div
+                      className="absolute right-1 top-1/2 -translate-y-1/2 text-[8px] font-semibold px-1.5 py-0.5 rounded-sm"
+                      style={{ background: "rgba(239,68,68,0.95)", color: "#fff" }}
+                    >
+                      1:1 perfil
+                    </div>
+                  </div>
+                )}
+                {showGrid && (
+                  <div className="absolute inset-0 pointer-events-none z-30">
+                    <div className="absolute top-1/3 left-0 right-0 border-t border-white/40 mix-blend-difference" />
+                    <div className="absolute top-2/3 left-0 right-0 border-t border-white/40 mix-blend-difference" />
+                    <div className="absolute left-1/3 top-0 bottom-0 border-l border-white/40 mix-blend-difference" />
+                    <div className="absolute left-2/3 top-0 bottom-0 border-l border-white/40 mix-blend-difference" />
+                  </div>
+                )}
                 {total > 1 && (
                   <>
                     <button
@@ -645,26 +928,142 @@ function CarrosselEditor() {
                 )}
               </div>
               <p className="text-center text-[12px] text-muted-foreground">{activeSlide + 1} / {total}</p>
-              <div className="flex gap-2 overflow-x-auto pb-1 max-w-full">
-                {thumbBlobUrls.map((url, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setActiveSlide(i)}
-                    className={`shrink-0 rounded-md overflow-hidden border-2 transition-colors bg-white ${i === activeSlide ? "border-primary" : "border-transparent"}`}
-                    style={{ width: 1080 * THUMB_SCALE, height: 1350 * THUMB_SCALE }}
-                  >
-                    <iframe
-                      src={url}
-                      title={`thumb ${i + 1}`}
-                      tabIndex={-1}
-                      sandbox="allow-same-origin"
-                      style={{ width: 1080, height: 1350, transform: `scale(${THUMB_SCALE})`, transformOrigin: "top left", border: 0, pointerEvents: "none" }}
-                    />
-                  </button>
-                ))}
-              </div>
+              {(showSafeZone || showFeedCrop || showGrid) && (
+                <div className="flex flex-wrap justify-center gap-3 text-[11px] text-muted-foreground max-w-md">
+                  {showSafeZone && (
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-3 h-0.5 border-t-2 border-dashed" style={{ borderColor: "rgb(34,197,94)" }} />
+                      Margem segura
+                    </span>
+                  )}
+                  {showFeedCrop && (
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-3 h-2 rounded-sm" style={{ background: "repeating-linear-gradient(45deg, rgba(239,68,68,0.6) 0 3px, transparent 3px 6px)" }} />
+                      Área cortada no grid do perfil
+                    </span>
+                  )}
+                  {showGrid && <span>Regra dos terços</span>}
+                </div>
+              )}
             </>
           )}
+        </div>
+
+        <div className="bg-card flex flex-col gap-4 min-h-0 overflow-y-auto p-4">
+          <Card className="!p-4 flex flex-col min-h-0">
+            <div className="flex items-center justify-between mb-3 shrink-0">
+              <h3 className="font-semibold text-[13px]">Slides ({slides.length})</h3>
+              <button
+                onClick={handleAddSlide}
+                disabled={loadingHtml}
+                className="text-[12px] inline-flex items-center gap-1 text-primary hover:opacity-80 disabled:opacity-40"
+              >
+                <Plus size={12} /> Adicionar
+              </button>
+            </div>
+            <div className="space-y-2 max-h-[420px] overflow-y-auto pr-1">
+              {slides.map((s, i) => (
+                <div
+                  key={i}
+                  onClick={() => setActiveSlide(i)}
+                  className={`group rounded-md border p-2 cursor-pointer transition-colors ${i === activeSlide ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"}`}
+                >
+                  <div className="flex items-center gap-2">
+                    <div
+                      className="shrink-0 rounded overflow-hidden border border-border bg-white"
+                      style={{ width: 1080 * THUMB_SCALE, height: 1350 * THUMB_SCALE }}
+                    >
+                      {thumbBlobUrls[i] && (
+                        <iframe
+                          src={thumbBlobUrls[i]}
+                          title={`thumb ${i + 1}`}
+                          tabIndex={-1}
+                          sandbox="allow-same-origin"
+                          style={{ width: 1080, height: 1350, transform: `scale(${THUMB_SCALE})`, transformOrigin: "top left", border: 0, pointerEvents: "none" }}
+                        />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[10px] text-muted-foreground">Slide {i + 1}</div>
+                      <div className="text-[12px] font-medium truncate mt-0.5">{s.text}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleMoveSlide(i, -1); }}
+                      disabled={i === 0}
+                      className="h-6 w-6 rounded border border-border flex items-center justify-center hover:bg-accent disabled:opacity-30"
+                    >
+                      <ArrowUp size={11} />
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleMoveSlide(i, 1); }}
+                      disabled={i === slides.length - 1}
+                      className="h-6 w-6 rounded border border-border flex items-center justify-center hover:bg-accent disabled:opacity-30"
+                    >
+                      <ArrowDown size={11} />
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleDuplicateSlide(i); }}
+                      className="h-6 w-6 rounded border border-border flex items-center justify-center hover:bg-accent"
+                    >
+                      <Copy size={11} />
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleRemoveSlide(i); }}
+                      disabled={slides.length <= 1}
+                      className="h-6 w-6 rounded border border-border flex items-center justify-center hover:bg-destructive/10 text-destructive ml-auto disabled:opacity-30"
+                    >
+                      <Trash2 size={11} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          <Card className="!p-4">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="font-semibold text-[13px]">Legenda do post</h3>
+              {legendaSaved && <span className="text-[11px] text-[color:var(--success)]">Salvo</span>}
+            </div>
+            {legendaLoading ? (
+              <p className="text-[12px] text-muted-foreground">Carregando…</p>
+            ) : (
+              <>
+                <textarea
+                  value={legenda}
+                  onChange={(e) => setLegenda(e.target.value)}
+                  rows={5}
+                  className="w-full px-3 py-2 rounded-md border border-border bg-background text-[13px] resize-none"
+                />
+                <div className="flex items-center justify-between mt-1.5 text-[11px] text-muted-foreground">
+                  <span>{legenda.length} / 2.200 caracteres</span>
+                  <span>{(legenda.match(/#\w+/g) ?? []).length} hashtags</span>
+                </div>
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  {HASHTAGS_SUGERIDAS.map((h) => (
+                    <button
+                      key={h}
+                      onClick={() => setLegenda((c) => (c ? `${c} ${h}` : h))}
+                      className="text-[11px] px-2 py-1 rounded-full border border-border hover:border-primary hover:text-primary"
+                    >
+                      {h}
+                    </button>
+                  ))}
+                </div>
+                {legendaError && <p className="text-[11px] text-destructive mt-2">{legendaError}</p>}
+                <button
+                  onClick={salvarLegenda}
+                  disabled={legendaSaving || legenda === legendaSalva || legendaLoadFailed}
+                  className="mt-3 w-full text-[12px] font-medium px-3 py-2 rounded-md border border-border bg-card hover:bg-accent disabled:opacity-40 flex items-center justify-center gap-1.5"
+                >
+                  {legendaSaving ? <Loader2 size={13} className="animate-spin" /> : null}
+                  Salvar legenda
+                </button>
+              </>
+            )}
+          </Card>
         </div>
       </div>
     </div>
