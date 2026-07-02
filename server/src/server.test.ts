@@ -1,4 +1,6 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { mkdir, rm, writeFile } from "node:fs/promises";
+import { join } from "node:path";
 import { app } from "./server.js";
 
 describe("GET /api/contas", () => {
@@ -275,5 +277,58 @@ describe("POST /api/biblioteca/campanhas/publicar", () => {
       body: JSON.stringify({ path: "saidas/marketing/campanhas/conversao/pasta-que-nao-existe", cliente: "X" }),
     });
     expect(res.status).toBe(404);
+  });
+});
+
+const REPO_ROOT = join(import.meta.dirname, "..", "..");
+const LEGENDA_FIXTURE_ID = "server-legenda-fixture";
+const LEGENDA_FIXTURE_DIR = join(REPO_ROOT, "saidas", "marketing", "conteudo", "carrossel", LEGENDA_FIXTURE_ID);
+
+beforeAll(async () => {
+  await mkdir(LEGENDA_FIXTURE_DIR, { recursive: true });
+  await writeFile(join(LEGENDA_FIXTURE_DIR, "legenda.md"), "legenda de fixture pra rota", "utf-8");
+});
+
+afterAll(async () => {
+  await rm(LEGENDA_FIXTURE_DIR, { recursive: true, force: true });
+});
+
+describe("GET /api/carrosseis/legenda", () => {
+  it("retorna 400 quando id não informado", async () => {
+    const res = await app.request("/api/carrosseis/legenda");
+    expect(res.status).toBe(400);
+  });
+
+  it("retorna legenda do carrossel de teste", async () => {
+    const res = await app.request(`/api/carrosseis/legenda?id=${LEGENDA_FIXTURE_ID}`);
+    expect(res.status).toBe(200);
+    const body = await res.json() as { legenda: string };
+    expect(body.legenda).toBe("legenda de fixture pra rota");
+  });
+
+  it("retorna string vazia pra carrossel sem legenda", async () => {
+    const res = await app.request("/api/carrosseis/legenda?id=carrossel-que-nao-existe");
+    expect(res.status).toBe(200);
+    const body = await res.json() as { legenda: string };
+    expect(body.legenda).toBe("");
+  });
+});
+
+describe("PUT /api/carrosseis/legenda", () => {
+  it("retorna 400 quando id não informado", async () => {
+    const res = await app.request("/api/carrosseis/legenda", { method: "PUT" });
+    expect(res.status).toBe(400);
+  });
+
+  it("escreve e a leitura seguinte reflete o novo conteúdo", async () => {
+    const putRes = await app.request(`/api/carrosseis/legenda?id=${LEGENDA_FIXTURE_ID}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ legenda: "legenda via rota, teste" }),
+    });
+    expect(putRes.status).toBe(200);
+    const checkRes = await app.request(`/api/carrosseis/legenda?id=${LEGENDA_FIXTURE_ID}`);
+    const { legenda: lida } = await checkRes.json() as { legenda: string };
+    expect(lida).toBe("legenda via rota, teste");
   });
 });

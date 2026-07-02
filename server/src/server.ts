@@ -8,7 +8,7 @@ import { runSkill, loadResult } from "./runner.js";
 import { listCampaigns, readCampaignFile } from "./prospeccao.js";
 import { listConteudo, readConteudoArquivo, updateConteudoStatus } from "./conteudo.js";
 import { createSite, listSites, readSiteHtml, writeSiteHtml, streamSiteChat, type ChatMessage } from "./sites.js";
-import { listCarrosseis, readSlide } from "./carrosseis.js";
+import { listCarrosseis, readSlide, readLegenda, writeLegenda } from "./carrosseis.js";
 import { readCarrosselHtml, writeCarrosselHtmlAndRender, streamCarrosselChat } from "./carrossel-editor.js";
 import {
   listIdentidade, readIdentidadeArquivo, listInspiracoes, saveInspiracao, readInspiracao,
@@ -168,6 +168,29 @@ app.put("/api/carrosseis/html", async (c) => {
     const { html } = await c.req.json<{ html: string }>();
     const { slides } = await writeCarrosselHtmlAndRender(id, html);
     return c.json({ ok: true, slides });
+  } catch (e) {
+    return c.json({ error: (e as Error).message }, 500);
+  }
+});
+
+app.get("/api/carrosseis/legenda", async (c) => {
+  const id = c.req.query("id");
+  if (!id) return c.json({ error: "id obrigatório" }, 400);
+  try {
+    const legenda = await readLegenda(id);
+    return c.json({ legenda });
+  } catch (e) {
+    return c.json({ error: (e as Error).message }, 500);
+  }
+});
+
+app.put("/api/carrosseis/legenda", async (c) => {
+  const id = c.req.query("id");
+  if (!id) return c.json({ error: "id obrigatório" }, 400);
+  try {
+    const { legenda } = await c.req.json<{ legenda: string }>();
+    await writeLegenda(id, legenda);
+    return c.json({ ok: true });
   } catch (e) {
     return c.json({ error: (e as Error).message }, 500);
   }
