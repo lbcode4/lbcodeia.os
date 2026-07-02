@@ -294,6 +294,34 @@ function CarrosselEditor() {
 
   const [mostrarFundo, setMostrarFundo] = useState(false);
 
+  const [showSafeZone, setShowSafeZone] = useState(true);
+  const [showFeedCrop, setShowFeedCrop] = useState(true);
+  const [showGrid, setShowGrid] = useState(false);
+
+  const [legenda, setLegenda] = useState("");
+  const [legendaSalva, setLegendaSalva] = useState("");
+  const [legendaLoading, setLegendaLoading] = useState(true);
+  const [legendaSaving, setLegendaSaving] = useState(false);
+  const [legendaSaved, setLegendaSaved] = useState(false);
+  const [legendaError, setLegendaError] = useState<string | null>(null);
+
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLegendaLoading(true);
+    fetch(`${BACKEND}/api/carrosseis/legenda?id=${encodeURIComponent(id)}`)
+      .then((r) => r.json())
+      .then((body: { legenda: string }) => {
+        setLegenda(body.legenda);
+        setLegendaSalva(body.legenda);
+        setLegendaLoading(false);
+      })
+      .catch(() => setLegendaLoading(false));
+  }, [id]);
+
+  const slides = html ? parseSlides(html) : [];
+
   function aplicarFundo(hex: string) {
     mainIframeRef.current?.contentWindow?.postMessage({ type: "lbcode-set-background", hex }, "*");
     setMostrarFundo(false);
@@ -381,6 +409,34 @@ function CarrosselEditor() {
     });
   }
 
+  function handleAddSlide() {
+    const next = addSlideAtEnd(html);
+    if (next === html) return;
+    applyHtml(next);
+    setActiveSlide(slideCount(next) - 1);
+  }
+
+  function handleDuplicateSlide(idx: number) {
+    const next = duplicateSlideAt(html, idx);
+    if (next === html) return;
+    applyHtml(next);
+  }
+
+  function handleRemoveSlide(idx: number) {
+    const next = removeSlideAt(html, idx);
+    if (next === html) return;
+    applyHtml(next);
+    setActiveSlide((i) => Math.min(i, Math.max(0, slideCount(next) - 1)));
+  }
+
+  function handleMoveSlide(idx: number, dir: -1 | 1) {
+    const next = moveSlideAt(html, idx, dir);
+    if (next === html) return;
+    applyHtml(next);
+    if (activeSlide === idx) setActiveSlide(idx + dir);
+    else if (activeSlide === idx + dir) setActiveSlide(idx);
+  }
+
   async function handlePaste(e: React.ClipboardEvent) {
     const items = Array.from(e.clipboardData.items);
     const imageItems = items.filter((i) => i.type.startsWith("image/"));
@@ -401,8 +457,8 @@ function CarrosselEditor() {
     setImages((prev) => [...prev, ...results.filter((r): r is CarrosselImage => r !== null)]);
   }
 
-  async function send() {
-    const t = input.trim();
+  async function send(overrideText?: string) {
+    const t = (overrideText ?? input).trim();
     if ((!t && !images.length) || chatLoading) return;
     setChatError(null);
     const sentImages = [...images];
@@ -499,6 +555,55 @@ function CarrosselEditor() {
   function cancelar() {
     if (html !== htmlSalvo && !window.confirm("Descartar alterações não salvas?")) return;
     navigate({ to: "/carrosseis" });
+  }
+
+  async function salvarLegenda() {
+    setLegendaSaving(true);
+    setLegendaError(null);
+    try {
+      const res = await fetch(`${BACKEND}/api/carrosseis/legenda?id=${encodeURIComponent(id)}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ legenda }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({ error: "Erro desconhecido" }));
+        throw new Error((body as { error?: string }).error ?? `HTTP ${res.status}`);
+      }
+      setLegendaSalva(legenda);
+      setLegendaSaved(true);
+      setTimeout(() => setLegendaSaved(false), 2000);
+    } catch (e) {
+      setLegendaError(e instanceof Error ? e.message : "Erro desconhecido");
+    } finally {
+      setLegendaSaving(false);
+    }
+  }
+
+  async function exportarPng() {
+    setExporting(true);
+    setExportError(null);
+    try {
+      if (html !== htmlSalvo) await salvar();
+      const totalSlides = slideCount(html);
+      for (let i = 0; i < totalSlides; i++) {
+        const filename = `slide-${String(i + 1).padStart(2, "0")}.png`;
+        const res = await fetch(`${BACKEND}/api/carrosseis/slide?id=${encodeURIComponent(id)}&slide=${filename}`);
+        if (!res.ok) throw new Error(`Falha ao baixar ${filename}`);
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+        await new Promise((r) => setTimeout(r, 150));
+      }
+    } catch (e) {
+      setExportError(e instanceof Error ? e.message : "Erro desconhecido");
+    } finally {
+      setExporting(false);
+    }
   }
 
   return (
@@ -627,7 +732,7 @@ function CarrosselEditor() {
                 disabled={chatLoading}
                 className="flex-1 resize-none rounded-md border border-border bg-background px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-primary/30 max-h-48"
               />
-              <Button onClick={send} disabled={chatLoading || (!input.trim() && !images.length)} className="!px-3 !py-2 shrink-0">
+              <Button onClick={() => send()} disabled={chatLoading || (!input.trim() && !images.length)} className="!px-3 !py-2 shrink-0">
                 {chatLoading ? <Loader2 className="animate-spin" size={15} /> : <Send size={15} />}
               </Button>
             </div>
