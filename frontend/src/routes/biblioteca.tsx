@@ -237,7 +237,7 @@ function BibliotecaPagina() {
               return (
                 <div key={sub}>
                   {sub !== "—" && (
-                    <div className="px-3 py-1.5 bg-muted/20 border-b border-border sticky top-0">
+                    <div className="px-3 py-1.5 bg-card border-b border-border sticky top-0 z-10">
                       <div className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground/70">
                         {sub.replace(/-/g, " ")}
                       </div>
