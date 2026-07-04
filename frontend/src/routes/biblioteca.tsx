@@ -136,9 +136,9 @@ function BibliotecaPagina() {
   };
 
   const gerarImagens = (meta: CampanhaMeta) => {
-    const comando = `/lb-conteudo-carrossel para a campanha ${meta.path}`;
+    const comando = `Gerar criativo de anúncio (não carrossel) pra campanha em ${meta.path}, seguindo o Passo 7b de /lb-meta-campanha-whatsapp: leia campanha.json dessa pasta (campo textos[0] = copy aprovado), use o título de textos[0] como headline (<h1>) — não inventar headline novo. Gere só 2 imagens, no estilo de /lb-conteudo-carrossel (identidade/design-guide.md + referências): ad001-1x1.png (1080x1080) e ad001-9x16.png (1080x1920). Salvar em ${meta.path}/criativos/. Depois atualizar campanha.json preenchendo o campo criativos com esses 2 caminhos relativos.`;
     navigator.clipboard?.writeText(comando).catch(() => {});
-    setPublishMsg("Comando copiado — cole no Claude Code pra gerar as imagens.");
+    setPublishMsg("Comando copiado — cole no Claude Code pra gerar os criativos 1:1 + 9:16.");
   };
 
   useEffect(() => {
