@@ -26,6 +26,10 @@ Uma vez só, setup:
 - Permissões corretas no Meta App
 - Scripts `scripts/postar-instagram.js` + `scripts/postar-facebook.js`
 
+> **Atenção — duas credenciais Meta distintas:** o `.env` da raiz guarda o **token de Página**
+> (publicar no IG/FB via `postar-*.js`). O `integracoes/credentials/meta.env` guarda o **token
+> de Marketing API** (skills `lb-meta-*` de ads). Não são intercambiáveis — não misturar.
+
 Falta algo? Parar e avisar — criar `saidas/marketing/setup-automacao-meta.md` se precisar.
 
 ## Fluxo
@@ -35,9 +39,13 @@ Falta algo? Parar e avisar — criar `saidas/marketing/setup-automacao-meta.md` 
 (Slug = nome do arquivo blog **sem .md**)
 
 1. **Validar**
-   - Arquivo blog existe em `saidas/marketing/blog/como-conservar-produto.md`?
-   - Carrossel PNG existe em `saidas/marketing/conteudo/carrossel/<slug>-2026-06-01/`?
-   - Legendas existem em `saidas/marketing/conteudo/carrossel/<slug>-2026-06-01/legendas.md`?
+   - **Preferir o manifest:** ler `saidas/marketing/conteudo/carrossel/<slug>-*/manifest.json`
+     (gerado por `/lb-conteudo-publicar`) — aponta blog, pasta dos PNGs e legendas. Se houver
+     mais de uma pasta com o slug, usar a de data mais recente.
+   - **Sem manifest** (conteúdo antigo ou avulso), resolver na mão:
+     - Blog: `site/astro-site/src/content/blog/<slug>.md` ou `saidas/marketing/conteudo/blog/<slug>.md`
+     - Carrossel PNG: `saidas/marketing/conteudo/carrossel/<slug>-<YYYY-MM-DD>/instagram/`
+     - Legendas: `legendas.md` na mesma pasta do carrossel
 
 2. **Publicar site** *(só se houver site configurado)*
    - **Checar primeiro:** existe `site/astro-site/` (ou outro stack de site)?

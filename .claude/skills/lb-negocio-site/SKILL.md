@@ -44,113 +44,10 @@ Sempre perguntar (a pessoa escolhe):
 
 ## Passo 0b — Modo Clonagem (URL fornecida)
 
-**Ativado quando:** o usuário fornecer uma URL (`http://` ou `https://`) no pedido.
-
-Objetivo: mapear o site existente (estrutura, visual, copy) e recriar algo equivalente com a identidade e a mensagem do negócio atual. **Não copiar copy literal** — clonar padrão/estrutura, adaptar a voz.
-
-### 1. Buscar e analisar o site de referência
-
-```
-WebFetch: <URL fornecida>
-```
-
-Do HTML retornado, extrair:
-
-**Estrutura de seções (nesta ordem se existir):**
-- Nav/header: logo + links + CTA
-- Hero: headline + subheadline + CTA + imagem/vídeo
-- Seções do corpo (nomes das seções, número, ordem)
-- Social proof: depoimentos, logos, números
-- Pricing / planos (se houver)
-- FAQ (se houver)
-- Footer: links, redes, contato
-
-**Paleta de cores:**
-- CSS variables (`:root { --primary: ... }`)
-- `background`, `color`, `border-color` dominantes no `<style>` ou inline
-- Classificar: primária, secundária, acento, fundo, texto
-
-**Tipografia:**
-- Links Google Fonts: `<link href="https://fonts.googleapis.com/...">` → extrair família(s)
-- `font-family` no `<style>` ou CSS inline
-- Classificar: fonte de título, fonte de corpo
-
-**Layout:**
-- Grid / flex no hero e nas seções
-- Número de colunas nas seções de features/benefits
-- Posição das imagens (esquerda/direita/centralizada/fundo)
-- Estilo de CTA (botão sólido, outline, gradiente)
-
-**Padrão de copy (estrutura, não texto literal):**
-- Tipo de gancho no headline (pergunta / dado / transformação / segmentado)
-- Tom (técnico / emocional / direto / narrativo)
-- Número de benefícios listados
-- Formato dos depoimentos (nome + cargo + empresa / anônimo / NPS)
-
-### 2. Tirar screenshot do site de referência (opcional mas recomendado)
-
-```javascript
-// Se Playwright disponível — screenshot pra análise visual
-const { chromium } = require('playwright');
-(async () => {
-  const browser = await chromium.launch();
-  const page = await browser.newPage();
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('<URL>');
-  await page.waitForTimeout(2000);
-  await page.screenshot({ path: '/tmp/referencia-desktop.png', fullPage: true });
-  const mobile = await browser.newPage();
-  await mobile.setViewportSize({ width: 390, height: 844 });
-  await mobile.goto('<URL>');
-  await mobile.waitForTimeout(2000);
-  await mobile.screenshot({ path: '/tmp/referencia-mobile.png', fullPage: true });
-  await browser.close();
-})();
-```
-
-Ler as screenshots via `Read` pra análise visual da composição, hierarquia e ritmo.
-
-### 3. Montar o Mapa de Referência
-
-Produzir internamente (não mostrar pro usuário a menos que peça):
-
-```markdown
-## Mapa de Referência — <URL>
-
-### Estrutura
-- Seções em ordem: [nav] [hero] [seção X] [seção Y] ...
-
-### Paleta
-- Primária: #... | Secundária: #... | Acento: #... | Fundo: #... | Texto: #...
-
-### Tipografia
-- Títulos: <fonte> | Corpo: <fonte>
-
-### Layout
-- Hero: [descrição do layout]
-- Features: [N colunas, posição de ícone/imagem]
-- CTA style: [botão sólido / outline / gradiente, cor]
-
-### Copy pattern
-- Gancho headline: [tipo]
-- Tom: [tom identificado]
-- N benefícios: [N]
-- Prova social: [formato]
-```
-
-### 4. Adaptar à marca atual
-
-Regra: o Mapa de Referência informa **estrutura e padrões** — identidade da marca atual tem prioridade em cores, fontes e voz.
-
-| Elemento | Referência usa | Aplicar |
-|----------|---------------|---------|
-| Estrutura de seções | ✓ clonar ordem/lógica | Adaptar ao produto atual |
-| Paleta | ✓ extrair lógica (claro/escuro, acento) | Substituir pelas cores do `design-guide.md` |
-| Fontes | ✓ estilo (serif/sans, bold/light) | Usar fontes do `design-guide.md` se definidas |
-| Copy structure | ✓ tipo de gancho, n° benefícios | Reescrever 100% com GCC + RETINA |
-| Layout | ✓ clonar composição | Manter, ajustar ao conteúdo |
-
-Depois de montar o Mapa, **continuar pelo Passo 1** do workflow normal — o Mapa substitui apenas o "design system genérico", não o contexto do negócio.
+**Ativado só quando** o usuário fornecer uma URL (`http://`/`https://`) no pedido.
+Nesse caso, **carregar `reference/modo-clonagem.md`** e seguir os 4 passos lá
+(buscar/analisar referência → screenshot → Mapa de Referência → adaptar à marca),
+depois continuar pelo Passo 1. Sem URL, pular este passo.
 
 ---
 
@@ -191,27 +88,10 @@ Antes do visual, montar a copy de TODAS as seções. Site bom é copy boa com de
 
 ### Passo 3 — Garantir + invocar frontend-design (motor de design)
 
-**3a. Garantir que a skill existe (instalar se faltar).** Antes de invocar, checar se `frontend-design` está disponível. Se não estiver em `.claude/skills/frontend-design/` nem em `~/.claude/skills/frontend-design/`, instalar a skill oficial (`anthropics/skills/frontend-design`) no projeto:
-
-```bash
-DEST=.claude/skills/frontend-design
-if [ ! -f "$DEST/SKILL.md" ] && [ ! -f "$HOME/.claude/skills/frontend-design/SKILL.md" ]; then
-  mkdir -p "$DEST"
-  # 1) tentar o marketplace oficial já presente na máquina
-  SRC=$(find "$HOME/.claude/plugins" -type d -path "*frontend-design/skills/frontend-design" 2>/dev/null | head -1)
-  if [ -n "$SRC" ]; then
-    cp -r "$SRC/." "$DEST/"
-  else
-    # 2) fallback: clonar do repositório oficial anthropics/skills
-    TMP=$(mktemp -d)
-    git clone --depth 1 https://github.com/anthropics/skills "$TMP" \
-      && cp -r "$TMP/frontend-design/." "$DEST/"
-    rm -rf "$TMP"
-  fi
-fi
-```
-
-Confirmar que `.claude/skills/frontend-design/SKILL.md` existe antes de seguir.
+**3a. Garantir que a skill existe (instalar se faltar).** Checar se `frontend-design` está
+disponível em `.claude/skills/frontend-design/` ou `~/.claude/skills/frontend-design/`.
+Se faltar, **carregar `reference/instalar-frontend-design.md`** e seguir o script de instalação.
+Se já existir, seguir direto pro 3b.
 
 **3b. Invocar.** Invocar a skill `frontend-design` via `Skill` antes de escrever HTML. Passar pra ela:
 - A copy aprovada (Passo 2)

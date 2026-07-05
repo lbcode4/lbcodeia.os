@@ -85,7 +85,7 @@ Chamar skill `/lb-conteudo-carrossel` passando:
 - 5-7 pontos principais do artigo
 - Legenda (vai ser composta depois)
 
-Saída: 9 slides PNG (Insta padrão) em `saidas/marketing/conteudo/carrossel/<slug>-YYYY-MM-DD/`
+Saída: 5-10 slides PNG (Insta padrão, quantidade definida pelo carrossel) em `saidas/marketing/conteudo/carrossel/<slug>-YYYY-MM-DD/`
 
 ### Passo 4 — 3 Legendas (Insta/FB/LinkedIn)
 
@@ -115,12 +115,30 @@ Gerar 3 versões + CTA único pra blog:
 
 Salvar em: `saidas/marketing/conteudo/carrossel/<slug>-YYYY-MM-DD/legendas.md`
 
-### Passo 5 — Resumo
+### Passo 5 — Manifest + Resumo
+
+Gravar `manifest.json` na pasta do carrossel — é o contrato que `/lb-conteudo-aprovar` lê
+(elimina adivinhação de caminho/data):
+
+```json
+{
+  "slug": "<slug>",
+  "criadoEm": "YYYY-MM-DD",
+  "blog": "saidas/marketing/conteudo/blog/<slug>.md",
+  "carrossel": "saidas/marketing/conteudo/carrossel/<slug>-YYYY-MM-DD/instagram/",
+  "legendas": "saidas/marketing/conteudo/carrossel/<slug>-YYYY-MM-DD/legendas.md"
+}
+```
+
+(`blog` aponta pro caminho real usado no Passo 2 — Astro ou fallback.)
+
+Resumo:
 
 ```
 ✓ Blog: [link do artigo]
-✓ Carrossel: [pasta com 9 PNGs]
+✓ Carrossel: [pasta com os PNGs]
 ✓ Legendas: [arquivo .md com 3 versões]
+✓ Manifest: [caminho do manifest.json]
 
 Próxima: `/lb-conteudo-aprovar <slug>` pra publicar tudo junto.
 ```

@@ -18,7 +18,7 @@ Puxa dado real da Graph API v21.0 → HTML. Não é CSV manual.
 - **Conta:** `_memoria/contas-ads.md` (resolve via --cliente)
 - **Framework:** `_memoria/framework-trafego.md` (Bolo de Cenoura)
 - **Contexto/voz:** `_memoria/empresa.md`, `estrategia.md`, `preferencias.md`
-- **Credencial:** `integracoes/credentials/meta.env` (validar com `python integracoes/meta-ads/scripts/meta_api.py --test`; skill `/lb-ads-conectar` chega no Plano 2)
+- **Credencial:** `integracoes/credentials/meta.env` (validar com `python integracoes/meta-ads/scripts/meta_api.py --test`; se falhar, rodar `/lb-ads-conectar`)
 
 ## Passos
 1. Carregar contexto + voz de `_memoria/`.

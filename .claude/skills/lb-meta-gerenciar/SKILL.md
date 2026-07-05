@@ -17,7 +17,7 @@ Operação destrutiva. Puxa dados reais da Graph API v21.0 e executa pause/activ
 - **Motor:** `integracoes/meta-ads/scripts/gerenciar.py`
 - **Conta:** `_memoria/contas-ads.md` (resolve via --cliente)
 - **Contexto/voz:** `_memoria/empresa.md`, `estrategia.md`, `preferencias.md`
-- **Credencial:** `integracoes/credentials/meta.env` (validar com `python integracoes/meta-ads/scripts/meta_api.py --test`; skill `/lb-ads-conectar` chega no Plano 2)
+- **Credencial:** `integracoes/credentials/meta.env` (validar com `python integracoes/meta-ads/scripts/meta_api.py --test`; se falhar, rodar `/lb-ads-conectar`)
 - **Log de auditoria:** `integracoes/meta-ads/output/acoes-log.json`
 
 ## Regra critica (operacao destrutiva)

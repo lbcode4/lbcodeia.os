@@ -58,7 +58,7 @@ Pedir nicho ao usuário. Se vazio, sugerir critérios:
 **Recomendação default:** prestador de serviço, com posicionamento na internet, que **NÃO anuncia ainda** (margem maior, sem trauma de gestor anterior). Negócios locais facilitam mas evitar cidades <50k hab.
 
 **Após escolher nicho:**
-- Rodar agente persona pro **DONO** (não cliente final) — chama `prompts/persona.md` (Sprint 5)
+- Rodar agente persona pro **DONO** (não cliente final) — usar `prompts/persona.md` (pasta `prompts/` na raiz do repo)
 - Persona deve devolver métricas financeiras do negócio:
   - Faturamento bruto, lucro líquido, margem
   - Ticket médio, atendimentos/mês
@@ -146,7 +146,7 @@ Cada abordagem segue:
 
 > Abordagem genérica = nota 5 (espera por milagre). Abordagem com 10 = converte.
 
-Gerar via `prompts/script-prospeccao.md` (Sprint 5).
+Gerar via `prompts/script-prospeccao.md` (pasta `prompts/` na raiz do repo).
 
 #### Material a enviar ("Plano de Marketing")
 

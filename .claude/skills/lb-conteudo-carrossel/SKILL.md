@@ -58,7 +58,7 @@ Antes de definir a capa, considerar a **última capa publicada** pra alternar (c
 
 ### Legenda — sempre gerar junto
 
-Ao terminar de renderizar os PNGs, gerar **automaticamente** a legenda e salvar em `legenda.md` na mesma pasta. **Não esperar o usuário pedir.** Estrutura: (1) Hook, (2) Contexto, (3) CTA pra arrastar, (4) Bloco de oferta + contato, (5) Hashtags (10-15: público + nicho + local).
+Ao terminar de renderizar os PNGs, gerar **automaticamente** a legenda e salvar em `legendas.md` na mesma pasta (mesmo nome que `/lb-conteudo-publicar` e `/lb-conteudo-aprovar` usam). **Não esperar o usuário pedir.** Estrutura: (1) Hook, (2) Contexto, (3) CTA pra arrastar, (4) Bloco de oferta + contato, (5) Hashtags (10-15: público + nicho + local).
 
 ---
 
@@ -140,8 +140,8 @@ saidas/marketing/conteudo/carrossel/<tema>-<YYYY-MM-DD>/
   render.js
   instagram/  slide-01.png → slide-NN.png
   tiktok/     (se pedido — formato 9:16)
-  legenda.md            ← legenda Insta+FB
-  legenda-linkedin.md   ← (se pedido, mais formal)
+  legendas.md           ← legenda Insta+FB
+  legendas-linkedin.md  ← (se pedido, mais formal)
 ```
 
 ### Passo 6 — Conexão com blog (opcional)
@@ -158,7 +158,7 @@ Se sim, chamar `/lb-conteudo-publicar` com o mesmo tema.
 - Carrossel: 1080x1350 (4:5) sempre. TikTok/Reels: 1080x1920 (9:16) só quando pedido
 - Linguagem segue `_memoria/preferencias.md` estritamente
 - Sempre considerar a sequência de capa no feed antes de definir capa nova
-- Sempre gerar legenda automaticamente ao final (`legenda.md`)
+- Sempre gerar legenda automaticamente ao final (`legendas.md`)
 - Fotos IA: prompts em inglês, sempre pedir aprovação, nunca rostos identificáveis ("only hands, no face, no body above wrists"), default Gemini + refs de `identidade/`, gerar em paralelo (ver `reference/prompts-imagem.md`)
 - HTMLs: um único `carrossel.html` + `render.js` na mesma pasta, inline CSS
 - Render: reutilizar `node_modules` quando possível
