@@ -31,6 +31,9 @@ Valida credenciais e popula o mapa de contas. Meta e Google.
 5. **Confirmar:** mostrar a linha cadastrada e lembrar que as skills `/meta-*` já resolvem por `--cliente "<Nome>"`.
 
 ## Conectar Google Ads (opcional)
+
+> Guia completo do zero (credenciais, OAuth, MCC, erros comuns, formulário Basic Access):
+> `integracoes/google-ads/docs/GUIA-CONEXAO.md`
 1. **Credencial existe?** Conferir `integracoes/credentials/google-ads.yaml`. Se faltar ou placeholder:
    - instruir: `cp integracoes/credentials/google-ads.yaml.example integracoes/credentials/google-ads.yaml`
    - explicar que precisa: `developer_token` (aprovação no Google Ads API Center), `client_id`,

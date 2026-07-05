@@ -51,3 +51,4 @@ saidas/marketing/
 
 # Scratch de execução do subagent-driven-development (efêmero, não versiona)
 .superpowers/
+integracoes/credentials/*.json
