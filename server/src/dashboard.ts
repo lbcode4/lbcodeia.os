@@ -1,4 +1,4 @@
-import { readdir, readFile } from "node:fs/promises";
+import { readdir, readFile, stat } from "node:fs/promises";
 import { join } from "node:path";
 
 const REPO_ROOT = join(import.meta.dirname, "..", "..");
@@ -36,7 +36,7 @@ function normalizeSlug(s: string): string {
 }
 
 async function findLatestFile(nameFilter: (n: string) => boolean, clienteSlug?: string): Promise<string | null> {
-  const candidates: { path: string; name: string }[] = [];
+  const candidates: { path: string; mtime: number }[] = [];
   try {
     const clients = await readdir(RELATORIOS_ROOT, { withFileTypes: true });
     const dirs = clients.filter((d) => d.isDirectory()).filter((d) =>
@@ -45,12 +45,15 @@ async function findLatestFile(nameFilter: (n: string) => boolean, clienteSlug?: 
     for (const c of dirs) {
       const files = await readdir(join(RELATORIOS_ROOT, c.name), { withFileTypes: true });
       for (const f of files.filter((f) => f.isFile() && f.name.endsWith(".html") && nameFilter(f.name.toLowerCase()))) {
-        candidates.push({ path: join(RELATORIOS_ROOT, c.name, f.name), name: f.name });
+        const path = join(RELATORIOS_ROOT, c.name, f.name);
+        candidates.push({ path, mtime: (await stat(path)).mtimeMs });
       }
     }
   } catch { return null; }
   if (!candidates.length) return null;
-  candidates.sort((a, b) => b.name.localeCompare(a.name));
+  // Ordenar por data de modificação (mais recente primeiro). Nome não serve:
+  // meses abreviados não ordenam cronológico ("jul" < "jun" alfabético).
+  candidates.sort((a, b) => b.mtime - a.mtime);
   return candidates[0].path;
 }
 

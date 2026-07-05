@@ -23,10 +23,28 @@ import { getOnboardingStatus, getConfiguracoes, saveConfiguracoes, getAiConfig, 
 import { listCampanhas, setCampanhaStatus, listAdsets, setAdsetStatus, listAds, setAdStatus, readMetaToken, readMetaPageId, readMetaWhatsappPhone } from "./meta-campanhas.js";
 import { readCampanhaJson, writeCampanhaPublicado, PUBLISHERS } from "./campanha-publish.js";
 import { join, resolve } from "node:path";
+import { readFile } from "node:fs/promises";
 
 export const app = new Hono();
 
 app.use("/api/*", cors()); // dev: front em :3000 chama backend em :8787
+
+// Capas de posts do IG baixadas pelo motor (reels.py). Servidas localmente
+// porque as URLs scontent do IG expiram em horas.
+app.get("/ig-thumbs/:slug/:file", async (c) => {
+  const { slug, file } = c.req.param();
+  if (!/^[a-z0-9]+$/.test(slug) || !/^[\w-]+\.jpg$/.test(file)) {
+    return c.body(null, 400);
+  }
+  try {
+    const buf = await readFile(join(REPO_ROOT, "saidas", "cache", "ig-thumbs", slug, file));
+    return new Response(new Uint8Array(buf), {
+      headers: { "Content-Type": "image/jpeg", "Cache-Control": "public, max-age=86400" },
+    });
+  } catch {
+    return c.body(null, 404);
+  }
+});
 
 app.get("/api/contas", async (c) => {
   try {

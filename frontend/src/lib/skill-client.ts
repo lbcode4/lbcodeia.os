@@ -5,7 +5,7 @@ export type SkillEvent =
   | { type: "error"; text: string }
   | { type: "data"; payload: unknown };
 
-const BACKEND = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8787";
+export const BACKEND = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8787";
 
 export type Conta = {
   cliente: string;

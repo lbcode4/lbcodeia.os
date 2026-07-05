@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Trophy, AlertTriangle, TrendingDown, Lightbulb, Target, ExternalLink, Play, Loader2 } from "lucide-react";
-import { fetchContas, runSkill, fetchLastResult, type Conta } from "@/lib/skill-client";
+import { fetchContas, runSkill, fetchLastResult, BACKEND, type Conta } from "@/lib/skill-client";
 
 export const Route = createFileRoute("/organico-instagram")({
   head: () => ({
@@ -19,7 +19,7 @@ type Tone = "success" | "info" | "warning" | "error";
 type Classe = "TOP" | "ALTO" | "MÉDIO" | "BAIXO";
 
 type Reel = {
-  rank: number; titulo: string; data: string; permalink: string;
+  rank: number; titulo: string; data: string; permalink: string; thumb?: string;
   alcance: number; likes: number; cmts: number; shares: number; saves: number; watch: number;
   engRate: number; classe: Classe;
   caption: string[]; insight: string; insightTone: Tone;
@@ -206,9 +206,25 @@ function WatchTimeChart({ reels }: { reels: Reel[] }) {
 
 function ReelThumb({ r, size = "lg" }: { r: Reel; size?: "sm" | "lg" }) {
   const dims = size === "sm" ? "w-10 h-10 text-[7px]" : "w-full aspect-[9/16] text-xs";
+  // thumb pode ser caminho local (/ig-thumbs/... servido pelo backend) ou URL
+  // remota do IG (fallback). Se falhar, cai no gradiente com label.
+  const [imgOk, setImgOk] = useState(true);
+  const src = r.thumb?.startsWith("/") ? `${BACKEND}${r.thumb}` : r.thumb;
   return (
     <div className={`${dims} rounded-md bg-gradient-to-br ${thumbColor(r.rank)} flex items-center justify-center text-white font-bold tracking-wide shadow-inner relative overflow-hidden`}>
-      <span className="px-1 text-center leading-tight">{thumbLabel(r.titulo)}</span>
+      {src && imgOk ? (
+        <img
+          src={src}
+          alt={r.titulo}
+          loading="lazy"
+          // IG scontent CDN rejeita (403) requests com Referer de outra origem
+          referrerPolicy="no-referrer"
+          onError={() => setImgOk(false)}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      ) : (
+        <span className="px-1 text-center leading-tight">{thumbLabel(r.titulo)}</span>
+      )}
     </div>
   );
 }

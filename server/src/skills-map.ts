@@ -118,6 +118,7 @@ const SKILLS: Record<string, SkillSpec> = {
         titulo: "string",
         data: "string (DD/MM/AA)",
         permalink: "string",
+        thumb: "string (caminho da capa; repassar EXATAMENTE o campo thumb do motor — já é um /ig-thumbs/... local)",
         alcance: "number",
         likes: "number",
         cmts: "number",

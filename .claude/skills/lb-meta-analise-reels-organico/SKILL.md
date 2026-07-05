@@ -43,7 +43,8 @@ Puxa dado real da Graph API → identifica o que viraliza no perfil → entrega 
 2. Identificar o cliente. Se não dito, listar os de `_memoria/contas-ads.md`.
 3. Rodar o motor (90 dias por padrão):
    `python integracoes/meta-ads/scripts/reels.py --cliente "<Cliente>" --days 90`
-   Retorna por Reel: `caption, timestamp, permalink, reach, likes, comments, shares, saves, watch, engagement_rate`.
+   Retorna por Reel: `caption, timestamp, permalink, thumb, reach, likes, comments, shares, saves, watch, engagement_rate`.
+   Repassar `thumb` (URL da capa) direto pro contrato — é o que renderiza a imagem real no painel.
 4. **Classificar cada Reel** pela média de engagement rate do período:
    - **TOP** — melhor Reel (maior eng rate)
    - **ALTO** — eng rate > média + 20%
